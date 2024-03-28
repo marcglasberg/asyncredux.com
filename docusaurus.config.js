@@ -9,7 +9,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Async Redux',
-  tagline: 'Easy and Powerful State Management',
+  tagline: 'A Non-Official Reimagining of Redux',
   favicon: 'img/favicon.ico',
 
   url: 'https://asyncredux.com',
@@ -50,10 +50,10 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
+
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://https://github.com/marcglasberg/asyncredux.com/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: 'https://https://github.com/marcglasberg/asyncredux.com/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         },
         blog: {
           showReadingTime: true,
@@ -172,7 +172,7 @@ const config = {
           width: 64,
           height: 64,
         },
-        copyright: `Copyright © 2024 Marcelo Glasberg`,
+        copyright: `Copyright © 2024 Marcelo Glasberg<br>I'm not affiliated with React, Redux or Meta`,
       },
       prism: {
         theme: prismThemes.github,
