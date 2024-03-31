@@ -31,3 +31,73 @@
     margin: 25px auto 0 auto;
     display: flex;
 }
+
+.tabContainer {
+    width: 100%;
+    max-width: 700px;
+    margin: 25px auto 0 auto;
+    display: flex;
+}
+
+hr.divider {
+    width: 100%;
+    border: 1px solid #444;
+    max-width: 700px;
+    margin: 0 auto 0 auto;
+    display: flex;
+}
+
+.tab:first-child {
+    margin: 25px 8px 0 18px;
+}
+
+.tab {
+    font-size: 1.2em;
+    border: 0;
+    border-bottom: none;
+    background-color: #ccc;
+    border-radius: 20px 20px 0 0;
+    color: #fff;
+    padding: 15px 20px 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 25px 0 0 0;
+    min-width: 120px;
+    min-height: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.tab:hover {
+    background-color: #eee;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    color: #444;
+}
+
+.tab:active {
+    background-color: #bbb;
+    color: #444;
+}
+
+.tabSelected {
+    border: 1px solid #666;
+    border-bottom: none;
+    background-color: #fff;
+    color: #444;
+    pointer-events: none;
+    user-select: none;
+    transform: translateY(2px);
+}
+
+.tabSelected:hover {
+    background-color: #444;
+}
+
+.tabSelected:active {
+    background-color: #444;
+
+}

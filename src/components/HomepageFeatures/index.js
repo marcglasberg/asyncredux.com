@@ -13,9 +13,9 @@ const FeatureList = [
     Svg: require('@site/static/img/react.svg').default,
     description: (
       <>
-        Async Redux is easier than Redux, Zustand, MobX and React Query.
-        Available since April 2024, in&nbsp;<a
-        href='https://www.npmjs.com/package/async-redux-react'>npm</a>
+        Async Redux aims to be easier to use than Redux, Zustand, MobX, and React Query. It has been
+        available on&nbsp;<a href='https://www.npmjs.com/package/async-redux-react'>npm</a> npm
+        since April 2024.
       </>
     ),
     page: 'react',
@@ -25,8 +25,8 @@ const FeatureList = [
     Svg: require('@site/static/img/flutter.svg').default,
     description: (
       <>
-        Async Redux is in the top 8% most used Flutter packages.
-        Available since 2020 in&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a>
+        Async Redux ranks among the top 8% of the most-used Flutter packages. It has been available
+        on&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a> since 2020.
       </>
     ),
     page: 'flutter',
@@ -65,6 +65,105 @@ export function HomepageFeatures() {
         </div>
       </div>
     </section>
+  );
+}
+
+function MarkdownFile({filename, marginTop, width}) {
+  const [post, setPost] = useState('');
+  const [isLoading, setIsLoading] = useState(true); // Add this line
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch(`landing-page-md/${filename}`)
+      .then(response => response.text())
+      .then(data => {
+        setIsLoading(false);
+        setPost(data);
+      })
+      .catch(err => {
+        setIsLoading(false);
+        console.log(err);
+      });
+  }, [filename]);
+
+  if (isLoading) {
+    return <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      height: '4000px'
+    }}>
+      Loading...
+    </div>;
+  } else
+    return (
+      <div className="container" style={{marginTop: marginTop, width: width}}>
+        <Markdown
+          children={post}
+          components={{
+            pre({children}) {
+              return children
+            },
+            code(props) {
+              const {children, className, node, ...rest} = props
+              const match = /language-(\w+)/.exec(className || '')
+              return match ? (
+                <SyntaxHighlighter
+                  {...rest}
+                  // showLineNumbers={true}
+                  // wrapLines ={true}
+                  // wrapLongLines ={true}
+                  PreTag="pre"
+                  children={String(children).replace(/\n$/, '')}
+                  language={match[1]}
+                  // style={dark}
+                  style={prism}
+                />
+              ) : (
+                <code {...rest} className={className}>
+                  {children}
+                </code>
+              )
+            }
+          }}
+        />
+      </div>
+    );
+}
+
+export function Overview() {
+  const [activeTab, setActiveTab] = useState('react');
+
+  return (
+    <div className="container">
+
+      <div className={styles.tabContainer}>
+        <button className={clsx(styles.tab, {[styles.tabSelected]: activeTab === 'react'})}
+                onClick={() => setActiveTab('react')}>React
+        </button>
+        <button className={clsx(styles.tab, {[styles.tabSelected]: activeTab === 'flutter'})}
+                onClick={() => setActiveTab('flutter')}>Flutter
+        </button>
+      </div>
+      <hr className={styles.divider}></hr>
+
+      <section className={styles.features}>
+        <div className="container">
+
+          {activeTab === 'react' && (
+            <div className={`row ${styles.overview}`}>
+              <MarkdownFile filename="overview-react.md"/>
+            </div>
+          )}
+          {activeTab === 'flutter' && (
+            <div className={`row ${styles.overview}`}>
+              <MarkdownFile filename="overview-flutter.md"/>
+            </div>
+          )}
+
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -268,64 +367,3 @@ const prism = {
     "fontStyle": "italic"
   }
 };
-
-function MarkdownFile({filename, marginTop, width}) {
-  const [post, setPost] = useState('');
-
-  useEffect(() => {
-    fetch(`landing-page-md/${filename}`)
-      .then(response => response.text())
-      .then(data => setPost(data))
-      .catch(err => console.log(err));
-  }, [filename]);
-
-  return (
-    <div className="container" style={{marginTop: marginTop, width: width}}>
-      <Markdown
-        children={post}
-        components={{
-          pre({children}) {
-            return children
-          },
-          code(props) {
-            const {children, className, node, ...rest} = props
-            const match = /language-(\w+)/.exec(className || '')
-            return match ? (
-              <SyntaxHighlighter
-                {...rest}
-                // showLineNumbers={true}
-                // wrapLines ={true}
-                // wrapLongLines ={true}
-                PreTag="pre"
-                children={String(children).replace(/\n$/, '')}
-                language={match[1]}
-                // style={dark}
-                style={prism}
-              />
-            ) : (
-              <code {...rest} className={className}>
-                {children}
-              </code>
-            )
-          }
-        }}
-      />
-    </div>
-  );
-}
-
-export function Overview() {
-  return (
-    <section className={styles.features}>
-      <div className="container">
-        {/*<p className={styles.titleCenter}>Easy and Powerful State Management</p>*/}
-
-        <div className={`row ${styles.overview}`}>
-          <MarkdownFile filename="overview.md"/>
-        </div>
-
-      </div>
-    </section>
-  );
-}
-
