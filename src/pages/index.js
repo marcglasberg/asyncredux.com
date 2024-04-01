@@ -18,13 +18,6 @@ function HomepageHeader() {
         </Heading>
         <p style={{fontSize: '1.5rem', marginBottom: 0}}>{siteConfig.tagline}</p>
         <p style={{fontSize: '1.5rem', marginBottom: 0}}>{siteConfig.customFields.subTagline}</p>
-        {/*<div className={styles.buttons}>*/}
-        {/*  <Link*/}
-        {/*    className="button button--secondary button--lg"*/}
-        {/*    to="/docs/intro">*/}
-        {/*    Tutorial - 10min ⏱️*/}
-        {/*  </Link>*/}
-        {/*</div>*/}
       </div>
     </header>
   );

@@ -66,13 +66,13 @@ var store = Store<String>(initialState: '');
 ```dart
 class LoadText extends Action {
 
-  // This reducer returns a Future.  
+  // This reducer returns a Future  
   Future<String> reduce() async {
   
-    // Download some information from the internet.
-    var response = await http.get('http://numbersapi.com/42');    
+    // Download some information from the internet
+    var response = await http.get('http://numbersapi.com/42');
     
-    // Change the state with the downloaded information.
+    // Change the state with the downloaded information
     return response.body;      
   }
 }
@@ -86,42 +86,31 @@ If some error happens, you can simply throw an `UserException`.
 A dialog (or other UI) will open automatically, showing the error message to the user.
 
 ```dart
-var store = Store<String>(initialState: '');
-```
-
-```dart
 class LoadText extends Action {
     
   Future<String> reduce() async {  
-    var response = await http.get('http://numbersapi.com/42');    
+    var response = await http.get('http://numbersapi.com/42');
 
     if (response.statusCode == 200) return response.body;
-    else throw UserException('Failed to load data');         
+    else throw UserException('Failed to load');         
   }
 }
 ```
 
 &nbsp;
 
-To show a spinner while the action is loading, use `isWaiting`.
+To show a spinner while the action is loading, use `isWaiting(action)`.
 
-To show an error message as a widget, use `isFailed`.
+To show an error message as a component, use `isFailed(action)`.
 
 ```dart
 class MyWidget extends StatelessWidget {
+
   Widget build(BuildContext context) {
-  
+    
     if (context.isWaiting(LoadText)) return CircularProgressIndicator();
     if (context.isFailed(LoadText)) return Text('Loading failed...');
-    
-    return Column(children: [
-      
-       Text(context.state), // Show the state
-                      
-       // Dispatch the action.
-       ElevatedButton(
-         onPressed: () => context.dispatch(LoadText()))                
-    ]);    
+    return Text(context.state);
   }
 }
 ```
@@ -242,11 +231,11 @@ test('Selecting an item', () async {
         selectedItem: -1, // No item selected
       ));
     
-    // Should select item 2.                
+    // Should select item 2                
     await store.dispatchAndWait(SelectItem(2));    
     expect(store.state.selectedItem, 'B');
     
-    // Fail to select item 42.
+    // Fail to select item 42
     var status = await store.dispatchAndWait(SelectItem(42));    
     expect(status.originalError, isA<>(UserException));
 });
@@ -273,9 +262,9 @@ var store = Store<String>(
 
 &nbsp;
 
-For example, the following `globalWrapError` handles `PlatformException` errors throw
-by Firebase. It converts them into `UserException` errors, which are built-in Async Redux types that
-automatically display their message to the user in an error dialog:
+For example, the following `globalWrapError` handles `PlatformException` errors thrown
+by Firebase. It converts them into `UserException` errors, which are built-in types that
+automatically show a message to the user in an error dialog:
 
 ```dart
 Object? wrap(error, stackTrace, action) =>
@@ -289,12 +278,11 @@ Object? wrap(error, stackTrace, action) =>
 
 # Advanced action configuration
 
-The Team Leads may create a base action class that all actions will extend, and add some common
-functionality to it. For example, add getter shortcuts to important parts of the state,
-and also selectors to help find more complex information.
+The Team Lead may create a base action class that all actions will extend, and add some common
+functionality to it. For example, getter shortcuts to important parts of the state,
+and selectors to help find information.
 
 ```dart
-// If this is the app state
 class AppState {  
   List<Item> items;    
   int selectedItem;
@@ -307,15 +295,15 @@ class Action extends ReduxAction<AppState> {
   Item get selectedItem => state.selectedItem;
   
   // Selectors 
-  Item? findItemById(int id) => items.firstWhereOrNull((item) => item.id == id);
-  Item? searchItemByText(String text) => items.firstWhereOrNull((item) => item.text.contains(text));
-  int get selectedItemIndex => items.indexOf(selectedItem);     
+  Item? findById(int id) => items.firstWhereOrNull((item) => item.id == id);
+  Item? searchByText(String text) => items.firstWhereOrNull((item) => item.text.contains(text));
+  int get selectedIndex => items.indexOf(selectedItem);     
 }
 ```
 
 &nbsp;
 
-Now, all actions can use these to access the state in their reducers:
+Now, all actions can use them to access the state in their reducers:
 
 ```dart
 class SelectItem extends Action {
@@ -323,19 +311,9 @@ class SelectItem extends Action {
   SelectItem(this.id);
     
   AppState reduce() {
-    Item? item = findItemById(id);
+    Item? item = findById(id);
     if (item == null) throw UserException('Item not found');
     return state.copy(selected: item);
   }    
 }
 ```
-
-&nbsp;
-
----
-
-Async Redux's mascot is a platypus with a keyboard. The platypus is a mix of different animals,
-just like Async Redux gets ideas from different state management solutions
-to create something unique. Async Redux is a Redux version which is not affiliated
-with the Redux team or Meta. It has no code in common with the original Redux or 
-with Redux Toolkit, but it follows similar principles.

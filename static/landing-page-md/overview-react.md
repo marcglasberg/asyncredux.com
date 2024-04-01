@@ -5,19 +5,17 @@ dispatching **actions**. Each action has its own **reducer**, which changes the 
 
 ```tsx
 // The store holds the app state
-const store = Store<int>({initialState: 1});
+const store = new Store<number>({initialState: 1});
 
 // Actions have a reducer to change the state
 class Increment extends Action {
   reduce() { 
-    return state + 1 
+    return state + 1; 
   };
 }
 
-void main() {
-  // Dispatch actions to change the state
-  store.dispatch(Increment());
-}
+// Dispatch actions to change the state
+store.dispatch(new Increment());
 ```
 
 &nbsp;
@@ -27,12 +25,13 @@ void main() {
 Add a `StoreProvider` to the top of your component tree.
 
 ```tsx
-Widget build(BuildContext context) {
-  return StoreProvider<int>(
-    store: store,
-    child: MaterialApp(home: MyHomePage()), ...
-    );
-}
+const App = () => {
+  return (
+    <StoreProvider store={store}>
+      <AppContent />
+    </StoreProvider>
+  );
+};
 ```
 
 &nbsp;
@@ -40,19 +39,21 @@ Widget build(BuildContext context) {
 You can then use it in any component:
 
 ```tsx
-class MyWidget extends StatelessWidget {
-  Widget build(BuildContext context) {
-    return Column(children: [
-        
-      // Use the state.
-      Text(context.state.toString()),
+const MyComponent = () => { 
+  const store = useStore();
+  const state = useAllState();
 
-      ElevatedButton(
-        // Dispatch the action.
-        onPressed: () => context.dispatch(Increment()))
-    ]);
-  }
-}
+  return (
+    <div>            
+      <p>{state}</p>                     
+            
+      <Button onClick={() => store.dispatch(new LoadText())}> 
+        Click me! 
+      </Button>
+                      
+    </div>
+  );
+};
 ```
 
 &nbsp;
@@ -62,22 +63,22 @@ class MyWidget extends StatelessWidget {
 They download information from the internet, or do any other async work.
 
 ```tsx
-var store = Store<String>(initialState: '');
+const store = new Store<string>({initialState: ''});
 ```
 
 ```tsx
 class LoadText extends Action {
 
-  // This reducer returns a Future.  
-  Future<String> reduce() async {
-  
-    // Download some information from the internet.
-    var response = await http.get('http://numbersapi.com/42');    
-    
-    // Change the state with the downloaded information.
-    return response.body;      
+  // This reducer returns a Promise
+  async reduce() {
+
+    // Download some information from the internet
+    let response = await fetch('http://numbersapi.com/random/42');
+    let text = await response.text(); 
+
+    // Change the state with the downloaded information
+    return (state) => text;
   }
-}
 ```
 
 &nbsp;
@@ -88,43 +89,33 @@ If some error happens, you can simply throw an `UserException`.
 A dialog (or other UI) will open automatically, showing the error message to the user.
 
 ```tsx
-var store = Store<String>(initialState: '');
-```
-
-```tsx
 class LoadText extends Action {
+  
+  async reduce() {    
+    let response = await fetch('http://numbersapi.com/random/42');
+    if (!response.ok) throw new UserException('Failed to load');
     
-  Future<String> reduce() async {  
-    var response = await http.get('http://numbersapi.com/42');    
-
-    if (response.statusCode == 200) return response.body;
-    else throw UserException('Failed to load data');         
+    let text = await response.text();     
+    return (state) => text;
   }
-}
 ```
 
 &nbsp;
 
-To show a spinner while the action is loading, use `isWaiting`.
+To show a spinner while the action is loading, use `isWaiting(action)`.
 
-To show an error message as a widget, use `isFailed`.
+To show an error message as a component, use `isFailed(action)`.
 
 ```tsx
-class MyWidget extends StatelessWidget {
-  Widget build(BuildContext context) {
+const MyComponent = () => {
+
+  const isWaiting = useIsWaiting(LoadText); 
+  const isFailed = useIsFailed(LoadText);  
+  const state = useAllState();  
   
-    if (context.isWaiting(LoadText)) return CircularProgressIndicator();
-    if (context.isFailed(LoadText)) return Text('Loading failed...');
-    
-    return Column(children: [
-      
-       Text(context.state), // Show the state
-                      
-       // Dispatch the action.
-       ElevatedButton(
-         onPressed: () => context.dispatch(LoadText()))                
-    ]);    
-  }
+  if (isWaiting) return <CircularProgress />
+  if (isFailed) return <p>Loading failed...</p>;
+  return <p>{state}</p>;
 }
 ```
 
@@ -137,78 +128,58 @@ And you can even use `dispatchAndWait` to wait for an action to finish.
 ```tsx
 class LoadTextAndIncrement extends Action {
 
-  Future<String> reduce() async {
-    var text = await dispatchAndWait(LoadText());
-    dispatch(Increment());
-    return text;
+  async reduce() {
+    let text = await dispatchAndWait(new LoadText());
+    this.dispatch(new Increment());
+    return (state) => text;
   }
 }
 ```
 
 &nbsp;
 
-# Check for Internet connectivity
-
-You can add **mixins** to your actions, to accomplish common tasks.
-
-`CheckInternet` ensures actions only run with internet,
-otherwise an **error dialog** prompts users to check their connection:
-
-```tsx
-class LoadText extends Action with CheckInternet {
-      
-   Future<String> reduce() async {
-      var response = await http.get('http://numbersapi.com/42');
-      ...      
-   }
-}   
-```
-
-&nbsp;
-
-`NoDialog` can be added to `CheckInternet` so that no dialog is opened.
-Instead, you can display some information in your widgets:
-
-```tsx
-class LoadText extends Action with CheckInternet, NoDialog { 
-  ... 
-  }
-
-class MyWidget extends StatelessWidget {
-  Widget build(BuildContext context) {     
-     if (context.isFailed(LoadText)) Text('No Internet connection');
-  }
-}   
-```
-
-&nbsp;
-
-`AbortWhenNoInternet` aborts the action silently (without showing any dialogs) if there is no
-internet connection.
-
-&nbsp;
-
 # Add features to your actions
 
-`NonReentrant` prevents reentrant actions,
-so that it gets aborted when you dispatch an action that's already running.
+To prevent an action from being dispatched while it's already running,
+you can add the `nonReentrant` property to your action class and set it to `true`.
 
 ```tsx
-class LoadText extends Action with NonReentrant {
-   ...
-   }
+class LoadText extends Action { 
+   nonReentrant = true;
+   
+   reduce() { ... }
+}
 ```
 
 &nbsp;
 
-`Retry` retries the action a few times with exponential backoff, if it fails.
-
-Add `UnlimitedRetries` to retry the action indefinitely:
+To retry an action a few times with exponential backoff, if it fails,
+you can add the `retry` property to your action class.
 
 ```tsx
-class LoadText extends Action with Retry, UnlimitedRetries {
-   ...
+class LoadText extends Action {   
+   retry = {on: true}
+         
+   reduce() { ... }
+}
+```
+
+&nbsp;
+
+And you can specify the retry policy:
+
+```tsx
+class LoadText extends Action {
+
+   retry = {
+     initialDelay: 350, // Millisecond delay before the first attempt
+     maxRetries: 3,     // Number of retries before giving up
+     multiplier: 2,     // Delay increase factor for each retry
+     maxDelay: 5000,    // Max millisecond delay between retries
    }
+   
+   reduce() { ... }
+}
 ```
 
 &nbsp;
@@ -216,11 +187,12 @@ class LoadText extends Action with Retry, UnlimitedRetries {
 # Persist the state
 
 You can add a `persistor` to save the state to the local device disk.
+It supports serializing JavaScript objects **and** ES6 classes out of the box.
 
 ```tsx
-var store = Store<String>(
-  persistor: MyPersistor(),  
-);  
+const store = new Store<string>({  
+  persistor: new Persistor(),
+});  
 ```
 
 &nbsp;
@@ -231,26 +203,32 @@ Just dispatch actions and wait for them to finish.
 Then, verify the new state or check if some error was thrown.
 
 ```tsx
-class State {  
-  List<String> items;    
-  int selectedItem;
+class State {
+  items: string[];
+  selectedItem: number;
+
+  constructor({ items, selectedItem } {
+    this.items = items;
+    this.selectedItem = selectedItem;
+  }
 }
 
-test('Selecting an item', () async {   
+test('Selecting an item', async () => {
 
-    var store = Store<State>(
-      initialState: State(        
-        items: ['A', 'B', 'C']
-        selectedItem: -1, // No item selected
-      ));
-    
-    // Should select item 2.                
-    await store.dispatchAndWait(SelectItem(2));    
-    expect(store.state.selectedItem, 'B');
-    
-    // Fail to select item 42.
-    var status = await store.dispatchAndWait(SelectItem(42));    
-    expect(status.originalError, isA<>(UserException));
+  const store = new Store<State>({      
+    initialState: new State({ 
+      items: ['A', 'B', 'C'], 
+      selectedItem: -1 // No item selected 
+    });    
+  });
+  
+  // Should select item 2
+  await store.dispatchAndWait(new SelectItem(2));
+  expect(store.state.selectedItem).toBe('B');
+  
+  // Fail to select item 42
+  let status = await store.dispatchAndWait(new SelectItem(42));    
+  expect(status.originalError).toBeInstanceOf(UserException);          
 });
 ```
 
@@ -266,78 +244,72 @@ an `actionObserver` to print information to the console during development,
 and a `globalWrapError` to catch all errors.
 
 ```tsx
-var store = Store<String>(    
-  stateObserver: [MyStateObserver()],
-  errorObserver: [MyErrorObserver()],
-  actionObservers: [MyActionObserver()],
-  globalWrapError: MyGlobalWrapError(),
+const store = new Store<string>({    
+  stateObserver: (action, prevState, newState, error, count) => { ... },
+  errorObserver: (error, action, store) => { ... }
+  actionObserver: (action, count, ini) => { ... }
+  globalWrapError: (error) => { ... }
+});  
 ```
 
 &nbsp;
 
-For example, the following `globalWrapError` handles `PlatformException` errors throw
-by Firebase. It converts them into `UserException` errors, which are built-in Async Redux types that
-automatically display their message to the user in an error dialog:
+For example, here we handle `FirestoreError` errors thrown by Firebase.
+We convert them into `UserException` errors, which are built-in types that
+automatically show a message to the user in an error dialog:
 
 ```tsx
-Object? wrap(error, stackTrace, action) =>
-  (error is PlatformException)
-    ? UserException('Error connecting to Firebase')
-    : error;
-}  
+globalWrapError: (error: any) => {
+        return (error instanceof FirestoreError)
+          ? new UserException('Error connecting to Firebase')
+          : error;
+      }  
 ```
 
 &nbsp;
 
 # Advanced action configuration
 
-The Team Leads may create a base action class that all actions will extend, and add some common
-functionality to it. For example, add getter shortcuts to important parts of the state,
-and also selectors to help find more complex information.
+The Team Lead may create a base action class that all actions will extend, and add some common
+functionality to it. For example, getter shortcuts to important parts of the state,
+and selectors to help find information.
 
 ```tsx
-// If this is the app state
 class State {  
-  List<Item> items;    
-  int selectedItem;
+  items: Item[];    
+  selectedItem: number;
 }
 
-class Action extends ReduxAction<State> {
+export abstract class Action extends ReduxAction<State> {
 
   // Getter shortcuts   
-  List<Item> get items => state.items;
-  Item get selectedItem => state.selectedItem;
+  get items() { return this.state.items; }
+  get selectedItem() { return this.state.selectedItem; }
   
   // Selectors 
-  Item? findItemById(int id) => items.firstWhereOrNull((item) => item.id == id);
-  Item? searchItemByText(String text) => items.firstWhereOrNull((item) => item.text.contains(text));
-  int get selectedItemIndex => items.indexOf(selectedItem);     
+  findById(id) { return this.items.find((item) => item.id === id); }
+  searchByText(text) { return this.items.find((item) => item.text.includes(text)); }
+  get selectedIndex() { return this.items.indexOf(this.selectedItem); }
 }
 ```
 
 &nbsp;
 
-Now, all actions can use these to access the state in their reducers:
+Now, all actions can use them to access the state in their reducers:
 
 ```tsx
 class SelectItem extends Action {
-  final int id;
-  SelectItem(this.id);
-    
-  State reduce() {
-    Item? item = findItemById(id);
-    if (item == null) throw UserException('Item not found');
-    return state.copy(selected: item);
-  }    
+  id: number;
+  
+  constructor(id: number) {
+    super();
+    this.id = id;
+  }
+
+  reduce() {
+    let item = this.findById(this.id);
+    if (item === undefined) throw new Error('Item not found');
+    return this.state.copy({selectedItem: item});
+  }
 }
 ```
-
-&nbsp;
-
----
-
-Async Redux's mascot is a platypus with a keyboard. The platypus is a mix of different animals,
-just like Async Redux gets ideas from different state management solutions
-to create something unique. Async Redux is a Redux version which is not affiliated
-with the Redux team or Meta. It has no code in common with the original Redux or 
-with Redux Toolkit, but it follows similar principles.

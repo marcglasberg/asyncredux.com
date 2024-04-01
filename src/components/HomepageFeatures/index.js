@@ -13,9 +13,9 @@ const FeatureList = [
     Svg: require('@site/static/img/react.svg').default,
     description: (
       <>
-        Async Redux aims to be easier to use than Redux, Zustand, MobX, and React Query. It has been
-        available on&nbsp;<a href='https://www.npmjs.com/package/async-redux-react'>npm</a> npm
-        since April 2024.
+        Async Redux aims to be easier to use than Redux, Zustand, MobX, and React Query. It's been
+        available on&nbsp;<a href='https://www.npmjs.com/package/async-redux-react'>npm</a> since
+        April 2024.
       </>
     ),
     page: 'react',
@@ -25,8 +25,9 @@ const FeatureList = [
     Svg: require('@site/static/img/flutter.svg').default,
     description: (
       <>
-        Async Redux ranks among the top 8% of the most-used Flutter packages. It has been available
-        on&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a> since 2020.
+        Async Redux aims to be easier to use than Bloc, Redux and MobX.
+        It ranks among the top 8% most-used packages.
+        On&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a> since 2020.
       </>
     ),
     page: 'flutter',
@@ -137,35 +138,81 @@ export function Overview() {
   return (
     <div className="container">
 
-      <div className={styles.tabContainer}>
-        <button className={clsx(styles.tab, {[styles.tabSelected]: activeTab === 'react'})}
-                onClick={() => setActiveTab('react')}>React
-        </button>
-        <button className={clsx(styles.tab, {[styles.tabSelected]: activeTab === 'flutter'})}
-                onClick={() => setActiveTab('flutter')}>Flutter
-        </button>
+      <div className={styles.sticky}>
+        <div className={styles.whiteBkg}>
+          <div className={styles.tabContainer}>
+            <button className={clsx(styles.tab, {[styles.tabSelected]: activeTab === 'react'})}
+                    onClick={() => setActiveTab('react')}>React
+            </button>
+            <button className={clsx(styles.tab, {[styles.tabSelected]: activeTab === 'flutter'})}
+                    onClick={() => setActiveTab('flutter')}>Flutter
+            </button>
+          </div>
+          <hr className={styles.divider}></hr>
+          <div style={{height: 15}}></div>
+        </div>
+        <div className={styles.gradient}></div>
       </div>
-      <hr className={styles.divider}></hr>
 
       <section className={styles.features}>
-        <div className="container">
 
+        <div className="container">
           {activeTab === 'react' && (
-            <div className={`row ${styles.overview}`}>
+            <div className={styles.overview}>
               <MarkdownFile filename="overview-react.md"/>
             </div>
           )}
           {activeTab === 'flutter' && (
-            <div className={`row ${styles.overview}`}>
+            <div className={styles.overview}>
               <MarkdownFile filename="overview-flutter.md"/>
             </div>
           )}
+
+          <hr></hr>
+          <FinalComment/>
 
         </div>
       </section>
     </div>
   );
 }
+
+const FinalComment = () => {
+  const containerStyle = {
+    display: 'flex',
+    width: 660,
+    alignItems: 'stretch',
+    gap: '12px',
+    margin: '0 auto',
+  };
+
+  const imageContainerStyle = {
+    flex: '0 1 auto',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const imageStyle = {height: 125, width: 125};
+
+  const textStyle = {fontSize: '0.9em', flex: 1, textAlign: 'justify'};
+
+  return (
+    <div style={containerStyle}>
+      <div style={imageContainerStyle}>
+        <img src="img/logo.svg" style={imageStyle}/>
+      </div>
+      <div style={textStyle}>
+        Async Redux's mascot is a platypus with a keyboard. The platypus is a mix of different
+        animals, just like Async Redux gets ideas from different state management solutions
+        to create something unique. Async Redux has no code in common with the original Redux,
+        but follows similar principles. I'm not affiliated with the Redux
+        team. <a href='https://redux.js.org/'>Go here</a> to find the original Redux from Dan
+        Abramov.
+      </div>
+    </div>
+  );
+};
 
 const prism = {
   "pre": {

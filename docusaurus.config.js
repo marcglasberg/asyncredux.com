@@ -172,7 +172,7 @@ const config = {
           width: 64,
           height: 64,
         },
-        copyright: `Copyright © 2024 Marcelo Glasberg<br>Async Redux is not affiliated with Redux or Meta`,
+        copyright: `Copyright © 2024 Marcelo Glasberg<br>Async Redux is a reimagining of Redux and is not affiliated with the original Redux authors`,
       },
       prism: {
         theme: prismThemes.github,
