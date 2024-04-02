@@ -123,15 +123,64 @@ const MyComponent = () => {
 
 # Actions can dispatch other actions
 
-And you can even use `dispatchAndWait` to wait for an action to finish.
+You can use `dispatchAndWait` to dispatch an action and wait for it to finish.
 
 ```tsx
 class LoadTextAndIncrement extends Action {
 
   async reduce() {
-    let text = await dispatchAndWait(new LoadText());
-    this.dispatch(new Increment());
-    return (state) => text;
+  
+    // Dispatch and wait for the action to finish   
+    await this.dispatchAndWait(new LoadText());
+    
+    // Only then, increment the state
+    return (state) => state.copy({ count: state.count + 1 });  
+  }
+}
+```
+
+&nbsp;
+
+You can also dispatch actions in **parallel** and wait for them to finish:
+
+```tsx
+class BuyAndSell extends Action {
+
+  async reduce() {  
+    
+    // Dispatch and wait for both actions to finish
+    await this.dispatchAndWaitAll([
+      new BuyAction('IBM'), 
+      new SellAction('TSLA')
+    ]);        
+
+    return (state) => state.copy({ 
+      message: `New cash balance is ${this.state.cash}` 
+    });
+  }
+}
+```
+
+&nbsp;
+
+You can also use `waitCondition` to wait until the `state` changes in a certain way:
+
+```tsx
+class SellStockForPrice extends Action {
+  constructor(public stock: string, public price: number) { super(); }
+
+  async reduce() {
+  
+    // Wait until the stock price is higher than the limit price
+    await this.waitCondition(
+      (state) => state.stocks[this.stock].price >= this.price
+    );
+    
+    // Only then, sell the stock
+    this.dispatch(new SellStock(this.stock));
+    
+    // No further state change
+    return null;
   }
 }
 ```
@@ -141,26 +190,26 @@ class LoadTextAndIncrement extends Action {
 # Add features to your actions
 
 To prevent an action from being dispatched while it's already running,
-you can add the `nonReentrant` property to your action class and set it to `true`.
+add the `nonReentrant` property to your action class and set it to `true`.
 
 ```tsx
 class LoadText extends Action { 
-   nonReentrant = true;
+  nonReentrant = true;
    
-   reduce() { ... }
+  reduce() { ... }
 }
 ```
 
 &nbsp;
 
 To retry an action a few times with exponential backoff, if it fails,
-you can add the `retry` property to your action class.
+add the `retry` property to your action class.
 
 ```tsx
 class LoadText extends Action {   
-   retry = {on: true}
+  retry = {on: true}
          
-   reduce() { ... }
+  reduce() { ... }
 }
 ```
 
@@ -171,14 +220,30 @@ And you can specify the retry policy:
 ```tsx
 class LoadText extends Action {
 
-   retry = {
-     initialDelay: 350, // Millisecond delay before the first attempt
-     maxRetries: 3,     // Number of retries before giving up
-     multiplier: 2,     // Delay increase factor for each retry
-     maxDelay: 5000,    // Max millisecond delay between retries
-   }
+  retry = {
+    initialDelay: 350, // Millisecond delay before the first attempt
+    maxRetries: 3,     // Number of retries before giving up
+    multiplier: 2,     // Delay increase factor for each retry
+    maxDelay: 5000,    // Max millisecond delay between retries
+  }
    
-   reduce() { ... }
+  reduce() { ... }
+}
+```
+
+&nbsp;
+
+To debounce an action, add the `debounce` property to your action class.
+
+```tsx
+class SearchText extends Action {
+  constructor(public searchTerm: string) { super(); }
+  
+  debounce = 350 // Milliseconds
+   
+  async reduce()  {      
+    let result = await loadJson('https://example.com/?q=', searchTerm);
+    return (state) => state.copy({searchResult: result}); 
 }
 ```
 
@@ -204,13 +269,10 @@ Then, verify the new state or check if some error was thrown.
 
 ```tsx
 class State {
-  items: string[];
-  selectedItem: number;
-
-  constructor({ items, selectedItem } {
-    this.items = items;
-    this.selectedItem = selectedItem;
-  }
+  constructor(
+    public items: string[], 
+    public selectedItem: number
+  ) {}
 }
 
 test('Selecting an item', async () => {
@@ -299,12 +361,7 @@ Now, all actions can use them to access the state in their reducers:
 
 ```tsx
 class SelectItem extends Action {
-  id: number;
-  
-  constructor(id: number) {
-    super();
-    this.id = id;
-  }
+  constructor(public id: number) { super(); }
 
   reduce() {
     let item = this.findById(this.id);

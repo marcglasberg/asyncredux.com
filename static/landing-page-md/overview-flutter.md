@@ -119,16 +119,64 @@ class MyWidget extends StatelessWidget {
 
 # Actions can dispatch other actions
 
-And you can even use `dispatchAndWait` to wait for an action to finish.
+You can use `dispatchAndWait` to dispatch an action and wait for it to finish.
 
 ```dart
 class LoadTextAndIncrement extends Action {
 
-  Future<String> reduce() async {
-    var text = await dispatchAndWait(LoadText());
-    dispatch(Increment());
-    return text;
+  Future<AppState> reduce() async {    
+    
+    // Dispatch and wait for the action to finish
+    await dispatchAndWait(LoadText());
+    
+    // Only then, increment the state
+    return state.copy(count: state.count + 1);
   }
+}
+```
+
+&nbsp;
+
+You can also dispatch actions in **parallel** and wait for them to finish:
+
+```dart
+class BuyAndSell extends Action {
+
+  Future<AppState> reduce() async {
+  
+    // Dispatch and wait for both actions to finish
+    await dispatchAndWaitAll([
+      BuyAction('IBM'), 
+      SellAction('TSLA')
+    ]);
+    
+    return state.copy(message: 'New cash balance is ${state.cash}');
+  }
+}
+```
+
+&nbsp;
+
+You can also use `waitCondition` to wait until the `state` changes in a certain way:
+
+```dart
+class SellStockForPrice extends Action {
+  final String stock;
+  final double limitPrice;
+  SellStockForPrice(this.stock, this.limitPrice);
+
+  Future<AppState?> reduce() async {  
+  
+    // Wait until the stock price is higher than the limit price
+    await waitCondition(
+      (state) => state.stocks[stock].price >= limitPrice
+    );
+      
+    // Only then, sell the stock
+    dispatch(SellStock(stock));
+    
+    // No further state change    
+    return null; 
 }
 ```
 
@@ -177,7 +225,7 @@ internet connection.
 
 # Add features to your actions
 
-`NonReentrant` prevents reentrant actions,
+Add `NonReentrant` to prevent reentrant actions,
 so that it gets aborted when you dispatch an action that's already running.
 
 ```dart
@@ -188,14 +236,59 @@ class LoadText extends Action with NonReentrant {
 
 &nbsp;
 
-`Retry` retries the action a few times with exponential backoff, if it fails.
-
-Add `UnlimitedRetries` to retry the action indefinitely:
+Add `Retry` to retry the action a few times with exponential backoff, if it fails. 
+Add `UnlimitedRetries` to retry indefinitely:
 
 ```dart
 class LoadText extends Action with Retry, UnlimitedRetries {
    ...
    }
+```
+
+&nbsp;
+
+To debounce an action, add `Debounce` to your action class.
+
+```dart
+class SearchText extends Action with Debounce {
+  final String searchTerm;
+  SearchText(this.searchTerm);
+  
+  final int debounce = 350; // Milliseconds
+
+  Future<AppState> reduce() async {
+      
+    var response = await http.get(
+      Uri.parse('https://example.com/?q=' + encoded(searchTerm))
+    );
+        
+    return state.copy(searchResult: response.body);
+  }
+}
+```
+
+&nbsp;
+
+# Events
+
+Flutter widgets like `TextField` and `ListView` hold their own internal state.
+You can use `Events` to interact with them.
+
+```dart
+// Action that changes the text of a TextField
+class ChangeText extends Action {
+  final String newText;
+  ChangeText(this.newText);    
+ 
+  AppState reduce() => state.copy(changeText: Event(newText));
+  }
+}
+
+// Action that scrolls a ListView to the top
+class ScrollToTop extends Action {
+  AppState reduce() => state.copy(scroll: Event(0));
+  }
+}
 ```
 
 &nbsp;
