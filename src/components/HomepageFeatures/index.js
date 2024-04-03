@@ -133,7 +133,7 @@ function MarkdownFile({filename, marginTop, width}) {
     );
 }
 
-export function Overview() {
+export function Overview(page) {
   const [activeTab, setActiveTab] = useState('react');
 
   return (
@@ -168,6 +168,20 @@ export function Overview() {
             </div>
           )}
 
+          <div style={{display: 'flex', width: '100%', maxWidth: 670, margin: '20px auto 0 auto', justifyContent: 'right'}}>
+            <Link
+              className="button button--primary button--lg"
+              style={{marginBottom: 5, alignItems: 'center'}}
+              to={`/${activeTab}/docs/intro`}>
+              <span style={{display: 'inline-block', transform: 'translateY(-6px)'}}>
+                Get Started &nbsp;<span style={{
+                fontSize: 30,
+                display: 'inline-block',
+                transform: 'translateY(2px)'
+              }}>»</span>
+              </span>
+            </Link>
+          </div>
           <hr></hr>
           <FinalComment/>
 
@@ -183,6 +197,7 @@ const FinalComment = () => {
     width: 660,
     alignItems: 'stretch',
     gap: '12px',
+    paddingBottom: 25,
     margin: '0 auto',
   };
 

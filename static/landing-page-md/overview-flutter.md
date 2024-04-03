@@ -298,7 +298,7 @@ class ScrollToTop extends Action {
 You can add a `persistor` to save the state to the local device disk.
 
 ```dart
-var store = Store<String>(
+var store = Store<AppState>(
   persistor: MyPersistor(),  
 );  
 ```

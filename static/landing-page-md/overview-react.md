@@ -1,28 +1,22 @@
-# Store, state, actions and reducers
+# Store and state
 
-The store holds all the application **state**, and you can only change the state by
-dispatching **actions**. Each action has its own **reducer**, which changes the state.
+The **store** holds all the application **state**. A few examples:
 
 ```tsx
-// The store holds the app state
-const store = new Store<number>({initialState: 1});
+// Here, the state is a number
+const store = createStore<number>({initialState: 1});
 
-// Actions have a reducer to change the state
-class Increment extends Action {
-  reduce() { 
-    return state + 1; 
-  };
-}
+// Here, the state is a plain JS object
+const store = createStore({initialState: {name: 'Mary', age: 25}});
 
-// Dispatch actions to change the state
-store.dispatch(new Increment());
+// Here, the state is an ES6 class object
+class State { constructor(public name: string, public age: number){} }
+const store = createStore<State>({initialState: new State('Mary', 25)});
 ```
 
 &nbsp;
 
-# Use the Store
-
-Add a `StoreProvider` to the top of your component tree.
+To use the store, add it in a `StoreProvider` at the top of your component tree.
 
 ```tsx
 const App = () => {
@@ -36,22 +30,118 @@ const App = () => {
 
 &nbsp;
 
-You can then use it in any component:
+# Components use the state
+
+The `useAllState` hook lets you access the state from any component.
+It will rebuild when the state changes.
 
 ```tsx
 const MyComponent = () => { 
-  const store = useStore();
-  const state = useAllState();
+  const state = useAllState();   
+  
+  return <div>{state.name} has {state.age} years old</div>;    
+};
+```
+
+&nbsp;
+
+The `useSelect` hook selects only the part of the state that your component needs.
+It will rebuild only when that part changes.
+
+```tsx
+const MyComponent = () => { 
+  const name = useSelect((state) => state.name);   
+  const age = useSelect((state) => state.age);
+     
+  return <div>{name} has {age} years old</div>;    
+};
+```
+
+&nbsp;
+
+The `useObject` hook is another alternative that only rebuilds when needed:
+
+```tsx
+const MyComponent = () => {
+ 
+  const state = useObject((state) => {
+    name: state.name, 
+    age: state.age
+  });
+       
+  return <div>{state.name} has {state.age} years old</div>;    
+};
+```
+
+&nbsp;
+
+# Actions and reducers
+
+An **action** is a class that contain its own **reducer**.
+
+```tsx
+class Increment extends Action {
+
+  reduce() { 
+    // The reducer has access to the current state
+    return this.state + 1; // It returns a new state 
+  };
+}
+```
+
+&nbsp;
+
+# Dispatch an action
+
+The store state is **immutable**.
+
+The only way to change the store **state** is by dispatching an **action**.
+The action's reducer returns a new state, that replaces the old one. 
+
+```tsx
+// Dispatch an action
+store.dispatch(new Increment());
+
+// Dispatch multiple actions
+store.dispatchAll([new Increment(), new LoadText()]);
+
+// Dispatch an action and wait for it to finish
+await store.dispatchAndWait(new Increment());
+
+// Dispatch multiple actions and wait for them to finish
+await store.dispatchAndWaitAll([new Increment(), new LoadText()]);
+```
+
+&nbsp;
+
+# Components can dispatch actions
+
+The hooks to dispatch actions are `useDispatch` , `useDispatchAll` etc.
+
+```tsx
+const MyComponent = () => { 
+  const dispatch = useDispatch();  
 
   return (
-    <div>            
-      <p>{state}</p>                     
-            
+      <Button onClick={() => dispatch(new LoadText())}> 
+        Click me! 
+      </Button>
+  );
+};
+```
+
+&nbsp;
+
+Or getting the store with `useStore` also allows you to dispatch actions:
+
+```tsx
+const MyComponent = () => { 
+  const store = useStore();  
+
+  return (
       <Button onClick={() => store.dispatch(new LoadText())}> 
         Click me! 
       </Button>
-                      
-    </div>
   );
 };
 ```
@@ -60,10 +150,10 @@ const MyComponent = () => {
 
 # Actions can do asynchronous work
 
-They download information from the internet, or do any other async work.
+They can download information from the internet, or do any other async work.
 
 ```tsx
-const store = new Store<string>({initialState: ''});
+const store = createStore<string>({initialState: ''});
 ```
 
 ```tsx
@@ -83,10 +173,21 @@ class LoadText extends Action {
 
 &nbsp;
 
+> If you want to understand the above code in terms of traditional Redux patterns,
+> the beginning of the `reduce` method is the equivalent of a middleware,
+> and the return function `(state) => text` is the equivalent of a traditional reducer.
+> It's still Redux, just written in a way that is easy and boilerplate-free.
+> No need for Thunks or Sagas.
+
+&nbsp;
+
 # Actions can throw errors
 
-If some error happens, you can simply throw an `UserException`.
-A dialog (or other UI) will open automatically, showing the error message to the user.
+If something bad happens, you can simply **throw an error**. In this case, the state will not
+change. Errors are caught globally and can be handled in a central place, later.
+
+In special, if you throw an `UserException`, which is a type provided by Async Redux,
+a dialog (or other UI) will open automatically, showing the error message to the user.
 
 ```tsx
 class LoadText extends Action {
@@ -102,9 +203,11 @@ class LoadText extends Action {
 
 &nbsp;
 
-To show a spinner while the action is loading, use `isWaiting(action)`.
+# Components can react to actions
 
-To show an error message as a component, use `isFailed(action)`.
+To show a spinner while an asynchronous action is running, use `isWaiting(action)`.
+
+To show an error message inside the component, use `isFailed(action)`.
 
 ```tsx
 const MyComponent = () => {
@@ -189,6 +292,11 @@ class SellStockForPrice extends Action {
 
 # Add features to your actions
 
+It's easy to add your own reusable "features" to your actions,
+but they come out of the box with some interesting ones:
+
+## NonReentrant
+
 To prevent an action from being dispatched while it's already running,
 add the `nonReentrant` property to your action class and set it to `true`.
 
@@ -201,6 +309,8 @@ class LoadText extends Action {
 ```
 
 &nbsp;
+
+## Retry
 
 To retry an action a few times with exponential backoff, if it fails,
 add the `retry` property to your action class.
@@ -233,17 +343,79 @@ class LoadText extends Action {
 
 &nbsp;
 
-To debounce an action, add the `debounce` property to your action class.
+## Debounce (soon)
+
+To limit how often an action occurs in response to rapid inputs, you can add a `debounce` property
+to your action class. For example, when a user types in a search bar, debouncing ensures that not
+every keystroke triggers a server request. Instead, it waits until the user pauses typing before
+acting.
 
 ```tsx
 class SearchText extends Action {
   constructor(public searchTerm: string) { super(); }
   
-  debounce = 350 // Milliseconds
+  debounce = 300 // Milliseconds
    
   async reduce()  {      
     let result = await loadJson('https://example.com/?q=', searchTerm);
-    return (state) => state.copy({searchResult: result}); 
+    return (state) => state.copy({searchResult: result});
+  }   
+}
+```
+
+&nbsp;
+
+## Throttle (soon)
+
+To prevent an action from running too frequently, you can add a `throttle` property to your
+action class. This means that once the action happens it's considered _fresh_, and it won't happen
+again for a set period of time, even if you try to trigger it.
+After this period ends, the action is considered _stale_ and is ready to be triggered again.
+
+```tsx
+class LoadPrices extends Action {  
+  
+  throttle = 5000 // Milliseconds
+   
+  async reduce()  {      
+    let result = await loadJson('https://example.com/prices');
+    return (state) => state.copy({prices: result});
+  } 
+}
+```
+
+&nbsp;
+
+## CheckInternet (soon)
+
+Automatically checks if there is internet before running the action.
+If there is no internet, the action aborts. Optionally, it can show a dialog to the user
+saying something like: "There is no Internet, please verify your connection".
+
+```tsx
+class LoadPrices extends Action {  
+  
+  checkInternet = { dialog: true } 
+   
+  async reduce() { ... } 
+}
+```
+
+&nbsp;
+
+## OptimisticUpdate (soon)
+
+To provide instant feedback on actions that save information to the server, this feature immediately
+applies state changes as if they were already successful, before confirming with the server.
+If the server update fails, the change is rolled back and, optionally, a notification can inform
+the user of the issue.
+
+```tsx
+class SaveName extends Action {  
+  
+  optimisticUpdate = { ... } 
+   
+  async reduce() { ... } 
 }
 ```
 
@@ -255,7 +427,7 @@ You can add a `persistor` to save the state to the local device disk.
 It supports serializing JavaScript objects **and** ES6 classes out of the box.
 
 ```tsx
-const store = new Store<string>({  
+const store = createStore<State>({  
   persistor: new Persistor(),
 });  
 ```
@@ -277,11 +449,8 @@ class State {
 
 test('Selecting an item', async () => {
 
-  const store = new Store<State>({      
-    initialState: new State({ 
-      items: ['A', 'B', 'C'], 
-      selectedItem: -1 // No item selected 
-    });    
+  const store = createStore<State>({      
+    initialState: new State(['A', 'B', 'C'], -1);    
   });
   
   // Should select item 2
@@ -306,7 +475,7 @@ an `actionObserver` to print information to the console during development,
 and a `globalWrapError` to catch all errors.
 
 ```tsx
-const store = new Store<string>({    
+const store = createStore<string>({    
   stateObserver: (action, prevState, newState, error, count) => { ... },
   errorObserver: (error, action, store) => { ... }
   actionObserver: (action, count, ini) => { ... }
@@ -350,8 +519,8 @@ export abstract class Action extends ReduxAction<State> {
   
   // Selectors 
   findById(id) { return this.items.find((item) => item.id === id); }
-  searchByText(text) { return this.items.find((item) => item.text.includes(text)); }
   get selectedIndex() { return this.items.indexOf(this.selectedItem); }
+  searchByText(text) { return this.items.find((item) => item.text.includes(text)); }
 }
 ```
 
