@@ -128,12 +128,13 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial (React)',
-                to: '/docs/intro',
+                label: 'For React',
+                to: '/flutter/docs/intro',
+
               },
               {
-                label: 'Tutorial (Flutter)',
-                to: '/docs/intro',
+                label: 'For Flutter',
+                to: '/react/docs/intro',
               },
             ],
           },

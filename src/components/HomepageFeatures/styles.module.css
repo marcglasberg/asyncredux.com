@@ -1,7 +1,7 @@
 .features {
     display: flex;
     align-items: center;
-    padding: 2rem 0;
+    padding: 2rem 0 0 0 ;
     width: 100%;
 }
 
@@ -151,4 +151,10 @@ hr.divider {
 .tabSelected:active {
     background-color: #444;
 
+}
+
+.getStartedTextAndLogo {
+    text-align: center;
+    width: 300px;
+    margin: 0 auto 20px auto;
 }

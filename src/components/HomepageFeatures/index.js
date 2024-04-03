@@ -14,8 +14,8 @@ const FeatureList = [
     description: (
       <>
         Async Redux aims to be easier to use than Redux, Zustand, MobX, and React Query. It's been
-        available on&nbsp;<a href='https://www.npmjs.com/package/async-redux-react'>npm</a> since
-        April 2024.
+        available&nbsp;on <a
+        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;since&nbsp;April&nbsp;2024.
       </>
     ),
     page: 'react',
@@ -27,7 +27,7 @@ const FeatureList = [
       <>
         Async Redux aims to be easier to use than Bloc, Redux and MobX.
         It ranks among the top 8% most-used packages.
-        On&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a> since 2020.
+        On&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a>&nbsp;since&nbsp;2020.
       </>
     ),
     page: 'flutter',
@@ -40,13 +40,14 @@ function Feature({Svg, title, page, description}) {
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img"/>
       </div>
-      <div className="text--center padding-horiz--md">
+      <div className={styles.getStartedTextAndLogo}>
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>
       <div style={{display: 'flex', justifyContent: 'center'}}>
         <Link
           className="button button--primary button--lg"
+          style={{marginBottom: 50}}
           to={`/${page}/docs/intro`}>
           Get Started
         </Link>
@@ -136,8 +137,7 @@ export function Overview() {
   const [activeTab, setActiveTab] = useState('react');
 
   return (
-    <div className="container">
-
+    <div>
       <div className={styles.sticky}>
         <div className={styles.whiteBkg}>
           <div className={styles.tabContainer}>

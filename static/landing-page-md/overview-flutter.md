@@ -55,7 +55,7 @@ class MyWidget extends StatelessWidget {
 
 &nbsp;
 
-# Action can do asynchronous work
+# Actions can do asynchronous work
 
 They download information from the internet, or do any other async work.
 
@@ -80,7 +80,7 @@ class LoadText extends Action {
 
 &nbsp;
 
-# Action can throw errors
+# Actions can throw errors
 
 If some error happens, you can simply throw an `UserException`.
 A dialog (or other UI) will open automatically, showing the error message to the user.
