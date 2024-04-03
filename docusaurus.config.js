@@ -49,16 +49,16 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: './sidebars.js',
+          path: 'react',
+          routeBasePath: 'react',
+          sidebarPath: './sidebarsReact.js',
 
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
+          // Please change this to your repo. Remove this to remove the "edit this page" links.
           editUrl: 'https://https://github.com/marcglasberg/asyncredux.com/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
+          // Please change this to your repo. Remove this to remove the "edit this page" links.
           editUrl:
             'https://https://github.com/marcglasberg/asyncredux.com/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         },
@@ -66,6 +66,18 @@ const config = {
           customCss: './src/css/custom.css',
         },
       }),
+    ],
+  ],
+
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'flutter',
+        path: 'flutter',
+        routeBasePath: 'flutter',
+        sidebarPath: './sidebarsFlutter.js',
+      },
     ],
   ],
 
@@ -86,13 +98,15 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'Tutorial (React)',
+            label: 'For React',
+            href: '/react/docs/intro',
           },
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'Tutorial (Flutter)',
+            label: 'For Flutter',
+            href: '/flutter/docs/intro',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
           {

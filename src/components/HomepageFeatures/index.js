@@ -34,7 +34,7 @@ const FeatureList = [
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({Svg, title, page, description}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
@@ -47,7 +47,7 @@ function Feature({Svg, title, description}) {
       <div style={{display: 'flex', justifyContent: 'center'}}>
         <Link
           className="button button--primary button--lg"
-          to="/docs/intro">
+          to={`/${page}/docs/intro`}>
           Get Started
         </Link>
       </div>
