@@ -1,55 +1,99 @@
 # Store, state, actions and reducers
 
-The store holds all the application **state**, and you can only change the state by
-dispatching **actions**. Each action has its own **reducer**, which changes the state.
+The store holds all the application **state**. A few examples:
 
 ```dart
-// The store holds the app state
+// Here, the state is a number
 var store = Store<int>(initialState: 1);
+```
 
-// Actions have a reducer to change the state
-class Increment extends Action {
-  int reduce() => state + 1;
+```dart
+// Here, the state is an object
+class AppState {
+  final String name;
+  final int age;
+  State(this.name, this.age);
 }
 
-void main() {
-  // Dispatch actions to change the state
-  store.dispatch(Increment());
-}
+var store = Store<AppState>(initialState: AppState('Mary', 25));
 ```
 
 &nbsp;
 
-# Use the Store
-
-Add a `StoreProvider` to the top of your widget tree.
+To use the store, add it in a `StoreProvider` at the top of your widget tree.
 
 ```dart
-Widget build(BuildContext context) {
+Widget build(context) {
   return StoreProvider<int>(
     store: store,
-    child: MaterialApp(home: MyHomePage()), ...
-    );
+    child: MaterialApp( ... ), 
+    );                      
 }
 ```
 
 &nbsp;
 
-You can then use it in any widget:
+# Widgets use the state
 
 ```dart
 class MyWidget extends StatelessWidget {
-  Widget build(BuildContext context) {
-    return Column(children: [
-        
-      // Use the state.
-      Text(context.state.toString()),
 
-      ElevatedButton(
-        // Dispatch the action.
-        onPressed: () => context.dispatch(Increment()))
-    ]);
+  Widget build(context) {
+    return Text('${context.state.name} has ${context.state.age} years old');
   }
+}
+```
+
+&nbsp;
+
+# Actions and reducers
+
+An **action** is a class that contain its own **reducer**.
+
+```dart
+class Increment extends Action {
+
+  // The reducer has access to the current state
+  int reduce() => state + 1; // It returns a new state
+}
+```
+
+&nbsp;
+
+# Dispatch an action
+
+The store state is **immutable**.
+
+The only way to change the store **state** is by dispatching an **action**.
+The action's reducer returns a new state, that replaces the old one.
+
+```tsx
+// Dispatch an action
+store.dispatch(Increment());
+
+// Dispatch multiple actions
+store.dispatchAll([Increment(), LoadText()]);
+
+// Dispatch an action and wait for it to finish
+await store.dispatchAndWait(Increment());
+
+// Dispatch multiple actions and wait for them to finish
+await store.dispatchAndWaitAll([Increment(), LoadText()]);
+```
+
+&nbsp;
+
+# Widgets can dispatch actions
+
+The context extensions to dispatch actions are `dispatch` , `dispatchAll` etc.
+
+```dart
+class MyWidget extends StatelessWidget {
+ 
+  Widget build(context) { 
+    return ElevatedButton(
+      onPressed: () => context.dispatch(Increment());
+    }     
 }
 ```
 
@@ -80,10 +124,21 @@ class LoadText extends Action {
 
 &nbsp;
 
+> If you want to understand the above code in terms of traditional Redux patterns,
+> all code until the last `await` in the `reduce` method is the equivalent of a middleware,
+> and all code after that is the equivalent of a traditional reducer.
+> It's still Redux, just written in a way that is easy and boilerplate-free.
+> No need for Thunks or Sagas.
+
+&nbsp;
+
 # Actions can throw errors
 
-If some error happens, you can simply throw an `UserException`.
-A dialog (or other UI) will open automatically, showing the error message to the user.
+If something bad happens, you can simply **throw an error**. In this case, the state will not
+change. Errors are caught globally and can be handled in a central place, later.
+
+In special, if you throw an `UserException`, which is a type provided by Async Redux,
+a dialog (or other UI) will open automatically, showing the error message to the user.
 
 ```dart
 class LoadText extends Action {
@@ -99,14 +154,14 @@ class LoadText extends Action {
 
 &nbsp;
 
-To show a spinner while the action is loading, use `isWaiting(action)`.
+To show a spinner while an asynchronous action is running, use `isWaiting(action)`.
 
-To show an error message as a component, use `isFailed(action)`.
+To show an error message inside the widget, use `isFailed(action)`.
 
 ```dart
 class MyWidget extends StatelessWidget {
 
-  Widget build(BuildContext context) {
+  Widget build(context) {
     
     if (context.isWaiting(LoadText)) return CircularProgressIndicator();
     if (context.isFailed(LoadText)) return Text('Loading failed...');
@@ -182,9 +237,11 @@ class SellStockForPrice extends Action {
 
 &nbsp;
 
-# Check for Internet connectivity
+# Add features to your actions
 
 You can add **mixins** to your actions, to accomplish common tasks.
+
+## Check for Internet connectivity
 
 `CheckInternet` ensures actions only run with internet,
 otherwise an **error dialog** prompts users to check their connection:
@@ -210,7 +267,7 @@ class LoadText extends Action with CheckInternet, NoDialog {
   }
 
 class MyWidget extends StatelessWidget {
-  Widget build(BuildContext context) {     
+  Widget build(context) {     
      if (context.isFailed(LoadText)) Text('No Internet connection');
   }
 }   
@@ -223,10 +280,10 @@ internet connection.
 
 &nbsp;
 
-# Add features to your actions
+## NonReentrant
 
-Add `NonReentrant` to prevent reentrant actions,
-so that it gets aborted when you dispatch an action that's already running.
+To prevent an action from being dispatched while it's already running,
+add the `NonReentrant` mixin to your action class.
 
 ```dart
 class LoadText extends Action with NonReentrant {
@@ -236,7 +293,9 @@ class LoadText extends Action with NonReentrant {
 
 &nbsp;
 
-Add `Retry` to retry the action a few times with exponential backoff, if it fails. 
+## Retry
+
+Add `Retry` to retry the action a few times with exponential backoff, if it fails.
 Add `UnlimitedRetries` to retry indefinitely:
 
 ```dart
@@ -247,7 +306,12 @@ class LoadText extends Action with Retry, UnlimitedRetries {
 
 &nbsp;
 
-To debounce an action, add `Debounce` to your action class.
+## Debounce (soon)
+
+To limit how often an action occurs in response to rapid inputs, you can add the `Debounce` mixin
+to your action class. For example, when a user types in a search bar, debouncing ensures that not
+every keystroke triggers a server request. Instead, it waits until the user pauses typing before
+acting.
 
 ```dart
 class SearchText extends Action with Debounce {
@@ -268,6 +332,41 @@ class SearchText extends Action with Debounce {
 ```
 
 &nbsp;
+
+## Throttle (soon)
+
+To prevent an action from running too frequently, you can add the `Throttle` mixin to your
+action class. This means that once the action happens it's considered _fresh_, and it won't happen
+again for a set period of time, even if you try to trigger it.
+After this period ends, the action is considered _stale_ and is ready to be triggered again.
+
+```tsx
+class LoadPrices extends Action with Throttle {  
+  
+  final int throttle = 5000; // Milliseconds
+
+  Future<AppState> reduce() async {      
+    var result = await loadJson('https://example.com/prices');              
+    return state.copy(prices: result);
+  }
+}
+```
+
+&nbsp;
+
+## OptimisticUpdate (soon)
+
+To provide instant feedback on actions that save information to the server, this feature immediately
+applies state changes as if they were already successful, before confirming with the server.
+If the server update fails, the change is rolled back and, optionally, a notification can inform
+the user of the issue.
+
+```tsx
+class SaveName extends Action with OptimisticUpdate { 
+   
+  async reduce() { ... } 
+}
+```
 
 # Events
 
