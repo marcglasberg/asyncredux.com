@@ -2,46 +2,78 @@
 sidebar_position: 1
 ---
 
-# Flutter Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Async Redux is an optimized Redux version, which is very easy to learn and use,
+yet powerful and tailored for Flutter.
+It helps you write Flutter apps that are **easy to test, maintain and extend**.
 
-## Getting Started
+## Example projects
 
-Get started by **creating a new site**.
+Please visit:
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+* **Fully documented:**
+  > The <a href="https://github.com/marcglasberg/SameAppDifferentTech/">Same App
+  Different Tech
+  Project</a> is a repository in GitHub, containing the same mobile app implemented using a variety
+  of different tech stacks, including
+  a <a href="https://github.com/marcglasberg/SameAppDifferentTech/blob/main/MobileAppFlutterRedux/README.md">
+  Redux App Example</a>.
 
-### What you'll need
+* **Documented in the source code only:**
+  > The <a href="https://github.com/marcglasberg/redux_app_example">Redux App Example</a>
+  repository in GitHub also contains a full-fledged example with a complete app showcasing the
+  fundamentals and best practices described in this Readme.
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## What is Redux?
 
-## Generate a new site
+A single **store** object holds all the **state**, which is immutable. When you need to modify some
+state, you **dispatch** an **action**. Then a **reducer** creates a new copy of the state, with the
+desired changes. Your widgets know when the state changes, and rebuild as needed.
 
-Generate a new Docusaurus site using the **classic template**.
+## Why use this Redux version over others?
 
-The classic template will automatically be added to your project after you run the command:
+Plain vanilla Redux is too low-level, which makes it very flexible but results in a lot of
+boilerplate, and a steep learning curve. Combining reducers is a manual task, and you have to list
+them one by one. If you forget to list some reducer, you will not know it until your tests point out
+that some state is not changing as you expected.
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+Reducers can't be async, so you need to create middleware, which is also difficult to set up and
+use. You have to list them one by one, and if you forget one of them you will also not know it until
+your tests point it out. The `redux_thunk` package can help with that, but adds some more
+complexity.
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+It's difficult to know which actions fire which reducers, and hard to navigate the code in the IDE.
+In IntelliJ, you may press CTRL+B to navigate between a method use and its declaration. However,
+this is of no use if actions and reducers are independent classes. You have to search for action
+"usages", which is not so convenient since it also list dispatches.
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+It's also difficult to list all actions and reducers, and you may end up implementing some reducer
+just to realize it already exists with another name.
 
-## Start your site
+Testing reducers is simple, since they are pure functions, but integration tests are difficult. In
+the real world you need to test complex middleware that fires other middleware and many reducers,
+with intermediate state changes that you want to test for. Especially if you are doing BDD or
+Acceptance Tests you may need to wait for some middleware to finish, and then dispatch some other
+actions, and test for intermediate states.
 
-Run the development server:
+Another problem is that vanilla Redux assumes it holds all the application state, and this is not
+practical in a real Flutter app. If you add a simple `TextField` with a `TextEditingController`, or
+a `ListView` with a `ScrollController`, then you have state outside the Redux store. Suppose your
+middleware is downloading some information, and it wishes to scroll a `ListView` as soon as the info
+arrives. This would be simple if the list scroll position is saved in the Redux store. However, this
+state must be in the `ScrollController`, not the store.
 
-```bash
-cd my-website
-npm run start
-```
+**AsyncRedux solves all of these problems and more:**
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+* It's much easier to learn and use than regular Redux.
+* It comes with its own testing tools that make even complex tests easy to set up and run.
+* You can navigate between action dispatches and their corresponding reducers with a single IDE
+  command or click.
+* You can also use your IDE to list all actions/reducers.
+* You don't need to add or list reducers and middleware anywhere.
+* In fact, reducers can be async, so you don't need middleware.
+* There is no need for generated code (as some Redux versions do).
+* It has the concept of "events", to deal with Flutter state controllers.
+* It helps you show errors thrown by reducers to the user.
+* It's easy to add both logging and store persistence.

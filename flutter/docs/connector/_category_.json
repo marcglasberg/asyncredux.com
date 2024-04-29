@@ -1,0 +1,8 @@
+{
+  "label": "Connector",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Dumb and Smart widgets."
+  }
+}
