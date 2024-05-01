@@ -261,7 +261,7 @@ helping construct your view-model:
 To see the `converter` parameter in action, please run
 <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_static_view_model.dart">this example</a>.
 
-#### Will a state change always trigger the StoreConnectors?
+## Will a state change always trigger the StoreConnectors?
 
 Usually yes, but if you want you can order some action not to trigger the `StoreConnector`, by
 providing a `notify: false` when dispatching:
