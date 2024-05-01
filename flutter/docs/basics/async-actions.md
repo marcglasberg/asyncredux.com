@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# Async Actions
+# Async actions
 
 If you want to do some asynchronous work, simply declare the action reducer to
 return `Future<AppState?>`.

@@ -2,7 +2,7 @@
 sidebar_position: 8
 ---
 
-# Dispatching Actions
+# Dispatching actions
 
 As discussed, the only way to change the store state is by **dispatching actions**.
 

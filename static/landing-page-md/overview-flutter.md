@@ -368,6 +368,8 @@ class SaveName extends Action with OptimisticUpdate {
 }
 ```
 
+&nbsp;
+
 # Events
 
 Flutter widgets like `TextField` and `ListView` hold their own internal state.

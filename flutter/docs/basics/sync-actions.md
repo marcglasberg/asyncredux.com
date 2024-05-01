@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Sync Actions
+# Sync actions
 
 If you want to modify the state synchronously, 
 simply declare the reducer to return `AppState?` and 

@@ -21,10 +21,12 @@ var store = Store<AppState>(
 
 This is an example output to the console, showing how `MyWidgetConnector` responded to 3 state
 changes:
-
-    Model D:1 R:1 = Rebuid:true, Connector: MyWidgetConnector, Model: MyViewModel{B}.
-    Model D:2 R:2 = Rebuid:false, Connector: MyWidgetConnector, Model: MyViewModel{B}.
-    Model D:3 R:3 = Rebuid:true, Connector: MyWidgetConnector, Model: MyViewModel{C}.
+    
+```
+Model D:1 R:1 = Rebuid:true, Connector:MyWidgetConnector, Model:MyViewModel{B}.
+Model D:2 R:2 = Rebuid:false, Connector:MyWidgetConnector, Model:MyViewModel{B}.
+Model D:3 R:3 = Rebuid:true, Connector:MyWidgetConnector, Model:MyViewModel{C}.
+```
 
 You can see above that the first and third state changes resulted in a rebuild (`Rebuid:true`), but
 the second one did not, probably because the part of the state that changed was not part

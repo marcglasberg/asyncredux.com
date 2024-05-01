@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Actions and Reducers
+# Actions and reducers
 
 As discussed, the `AppState` class that represents the state is _immutable_.
 

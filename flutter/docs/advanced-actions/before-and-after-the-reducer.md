@@ -1,76 +1,125 @@
 ---
-sidebar_position: 6
+sidebar_position: 1
 ---
 
-# Before and After the Reducer
+# Before and after the reducer
 
-Sometimes, while an async reducer is running, you want to prevent the user from touching the screen.
-Also, sometimes you want to check preconditions like the presence of an internet connection, and
-don't run the reducer if those preconditions are not met.
+Suppose you want to prevent the user from touching the screen, while `MyAction` is running.
+This means adding a modal barrier before the action starts, and removing it after the action ends.
 
-To help you with these use cases, you may override methods `ReduxAction.before()`
-and `ReduxAction.after()`, which run respectively before and after the reducer.
+It is indeed common to have some side effects before and after the reducer runs.
+To help you with these use cases, you may override you action methods `before()`
+and `after()`, which run respectively before and after the reducer.
 
-The `before()` method runs before the reducer. If you want it to run synchronously, it should
-return `void`:
+> Note: implementing the `reduce()` method is mandatory, but `before()` and `after()` are optional.
+> Their default implementation is to do nothing.
+
+## Before
+
+The `before()` method runs before the reducer.
+
+To run synchronously, return `void`. To run it asynchronously, return `Future<void>`:
 
 ```dart
+// Sync
 void before() { ... }
-```
 
-To run it asynchronously, return `Future<void>`:
-
-```dart
+// Async
 Future<void> before() async { ... }
 ```
 
-If it throws an error, then `reduce()` will NOT run. This means you can use it to check any
-preconditions and throw an error if you want to prevent the reducer from running. For example:
+What happens if method `before()` throws an error? In this case, the `reduce()` method will NOT run.
+This means you can use `before()` to check any preconditions,
+and maybe throw an error to prevent the reducer from running. For example:
 
 ```dart
-Future<void> before() async => await checkInternetConnection();
+// Shows a dialog if there is no internet connection, 
+// and prevents the reducer from running.
+Future<void> before() async {
+  if (!await hasInternetConnection()) 
+    throw UserException('No internet connection');
+}
 ```
 
-This method is also capable of dispatching actions, so it can be used to turn on a modal barrier:
+> Note: If method `before()` returns a future, then the action is also async
+> (will complete in a later microtask), regardless of the `reduce()` method being sync or not.
+
+## After
+
+The `after()` method runs after the reducer.
+
+It's important to note the `after()` method is akin to a _finally block_,
+since it will always run, even if an error was thrown by `before()` or `reduce()`.
+This is important so that it can undo any side effects that were done in `before()`, 
+even if there was an error later in the reducer.
+
+> Note: Make sure your `after()` method doesn't throw an error.
+> If it does, the error will be thrown _asynchronously_ (after the "asynchronous gap")
+> so that it doesn't interfere with the action, but still shows up in the console.
+
+## Example
+
+In our model barrier example described above,
+we could dispatch an action to turn on a modal barrier on and off.
+
+Suppose we define a `BarrierAction`:
 
 ```dart
-void before() => dispatch(BarrierAction(true));
+class BarrierAction extends AppAction {
+  final bool hasBarrier;
+  BarrierAction(this.hasBarrier);
+  AppState reduce() => state.copy(hasBarrier: hasBarrier);
+}
 ```
 
-Note: If this method runs asynchronously, then `reduce()` will also be async, since it must wait for
-this one to finish.
-
-The `after()` method runs after `reduce()`, even if an error was thrown by `before()` or `reduce()`
-(akin to a "finally" block).
-
-Avoid `after()` methods which can throw errors. If the `after()` method throws an error, then this
-error will be thrown *asynchronously* (after the "asynchronous gap")
-so that it doesn't interfere with the action. Also, this error will be missing the original
-stacktrace.
-
-The `after()` method can also dispatch actions, so it can be used to turn off some modal barrier
-when the reducer ends, even if there was some error in the process:
+And then your widget tree contains a modal barrier, 
+which is shown only when `hasBarrier` is true:
 
 ```dart
-void after() => dispatch(BarrierAction(false));
+return context.state.hasBarrier 
+  ? ModalBarrier() 
+  : Container();
 ```
 
-Complete example:
+After this is set up, you may use `before()` and `after()` to dispatch the `BarrierAction`:
 
 ```dart
-// This action increments a counter by 1, and then gets some description text.
-class IncrementAndGetDescriptionAction extends ReduxAction<AppState> {
-
-  @override
-  Future<AppState> reduce() async {
-	dispatch(IncrementAction());
+class MyAction extends AppAction {
+  
+  Future<AppState> reduce() async {	
 	String description = await read(Uri.http("numbersapi.com","${state.counter}");
 	return state.copy(description: description);
   }
 
   void before() => dispatch(BarrierAction(true));
-
   void after() => dispatch(BarrierAction(false));
+}
+```
+
+The above `BarrierAction` is demonstrated
+in <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_event_redux.dart">
+this example</a>.
+           
+### Creating a Mixin
+
+You may also create a mixin to make it easier to add this behavior to multiple actions:
+
+```dart
+mixin Barrier on AppAction {
+  void before() => dispatch(BarrierAction(true));
+  void after() => dispatch(BarrierAction(false));
+}
+```
+
+Which allows you to write `with Barrier`:
+
+```dart
+class MyAction extends AppAction with Barrier {
+
+  Future<AppState> reduce() async {	
+    String description = await read(Uri.http("numbersapi.com","${state.counter}");
+    return state.copy(description: description);
+  }
 }
 ```
 

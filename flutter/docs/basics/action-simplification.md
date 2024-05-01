@@ -2,7 +2,7 @@
 sidebar_position: 7
 ---
 
-# Action Simplification
+# Action simplification
 
 As discussed, all your actions are classes that extend the abstract base
 class `ReduxAction<AppState>`.

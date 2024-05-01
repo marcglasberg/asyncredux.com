@@ -1,18 +1,56 @@
 ---
-sidebar_position: 16
+sidebar_position: 4
 ---
 
-# Errors thrown by Actions
+# Errors thrown by actions
 
-AsyncRedux has special provisions for dealing with errors, including observing errors, showing
-errors to users, and wrapping errors into more meaningful descriptions.
+When your action runs, it may encounter problems. Examples include:
 
-Let's see an example. Suppose a logout action that checks if there is an internet connection, and
-then deletes the database and sets the store to its initial state:
+* A bug in your code
+* A network request fails
+* A database operation fails
+* A file is not found
+* A user types an invalid value in a form
+* A user tries to log in with an invalid password
+* A user tries to delete a non-existing item
+
+In Async Redux, if your action encounters a problem, you are allowed to do the obvious thing
+and simply throw an error. In this case, we say that the action "failed".
+
+AsyncRedux has special provisions for dealing with errors thrown by actions,
+including observing errors, showing errors to users, and wrapping errors into more meaningful
+descriptions.
+
+## Stopping the action
+
+As previously discussed, apart from the `reduce()` method that all actions must override,
+there are also two other methods that you _may_ override,
+called [before and after](./before-and-after-the-reducer).
+
+If an action throws an error in its `before()` method, the reducer will not even be executed.
+If an action throws an error in its `reduce()` method, the reducer will stop before completing.
+In both cases, the reducer will not return a new state,
+and **the store state will not be modified**.
+
+However, the action's `after()` method will always be called,
+no matter if the action throws an error or not.
+This means that if you need to clean up some action resources,
+you should do it in the `after()` method.
+
+And if at any point you need to know if the action failed,
+you can check the [action status](./action-status).
+
+## Example
+
+Let's create an example to help us think about error handling in actions.
+
+Suppose that a "logout action" first checks if there is an internet connection.
+If there is, it deletes the app database, sets the store to its initial state,
+and navigates to the login screen:
 
 ```dart
-class LogoutAction extends ReduxAction<AppState> {
-  @override
+class LogoutAction extends AppAction {
+
   Future<AppState> reduce() async {
 	await checkInternetConnection();
 	await deleteDatabase();
@@ -22,197 +60,163 @@ class LogoutAction extends ReduxAction<AppState> {
 }
 ```
 
-In the above code, the `checkInternetConnection()` function checks if there is an
+In the above code, suppose the `checkInternetConnection()` function checks if there is an
 <a href="https://pub.dev/packages/connectivity">internet connection</a>, and if there isn't it
 throws an error:
 
 ```dart
 Future<void> checkInternetConnection() async {
 	if (await Connectivity().checkConnectivity() == ConnectivityResult.none)
-		throw NoInternetConnectionException();
+		throw NoInternetConnectionError();
 }
 ```
 
-All errors thrown by action reducers are sent to the **ErrorObserver**, which you may define during
-store creation. For example:
+With this example in mind, let's explore our options.
+
+## Local error handling
+
+If your action throws some error,
+you probably want to collect as much information as possible about it.
+This can be useful for debugging, or for showing the user a more informative error message.
+
+In the above code, if `checkInternetConnection()` throws an error,
+you want to know that you have a connection problem,
+but you also want to know this happened during the logout action.
+In fact, you want all errors thrown by this action to reflect that.
+
+The solution is overriding your action's `wrapError()` method.
+It acts as a sort of "catch" statement of the action.
+
+It automatically gets all errors thrown by the action,
+and it has a return value which is the new error to be thrown.
+
+In other words:
+
+* To modify the error, override the `wrapError()` method and return something.
+* To keep the error the same, just return it unaltered, or don't override `wrapError()`.
+
+Usually you'll want to wrap the error inside another that better describes the failed action,
+or contains more information.
+
+This is how you could do it in the `LogoutAction`:
 
 ```dart
-var store = Store<AppState>(
-  initialState: AppState.initialState(),
-  errorObserver: MyErrorObserver<AppState>(),
-);
-
-class MyErrorObserver<St> implements ErrorObserver<St> {
-  @override
-  bool observe(Object error, StackTrace stackTrace, ReduxAction<St> action, Store store) {
-    print("Error thrown during $action: $error");
-    return true;
-  }
-}                                                                                               
-```
-
-If your error observer returns `true`, the error will be rethrown after the `errorObserver`
-finishes. If it returns `false`, the error is considered dealt with, and will be "swallowed" (not
-rethrown).
-
-<br></br>
-
-### Giving better error messages
-
-If your reducer throws some error you probably want to collect as much information as possible. In
-the above code, if `checkInternetConnection()` throws an error, you want to know that you have a
-connection problem, but you also want to know this happened during the logout action. In fact, you
-want all errors thrown by this action to reflect that.
-
-The solution is implementing the optional `wrapError(error)` method:
-
-```dart
-class LogoutAction extends ReduxAction<AppState> {
-
-  @override
+class LogoutAction extends AppAction {
+  
   Future<AppState> reduce() async { ... }
-
-  @override
-  Object wrapError(error)
-	  => LogoutError("Logout failed.", cause: error);
+  
+  Object wrapError(error, stacktrace)
+	  => LogoutError("Logout failed", cause: error);
 }
 ```
 
-Note the `LogoutError` above gets the original error as cause, so no information is lost.
+Note the `LogoutError` above includes the original error as a cause, so no information is lost.
 
-In other words, the `wrapError(error)` method acts as the "catch" statement of the action.
+## Showing a dialog to the user
 
-<br></br>
+Consider an action that tries to convert a String into a number using the `parse()` function.
+If the conversion fails, you may want to show a dialog to the user, asking them to
+enter a valid number.
 
-### User exceptions
+The `parse` method throws a `FormatException` in case of failure,
+but we actually needed a `UserException`.
 
-To show error messages to the user, make your actions throw an `UserException`, and then wrap your
-home-page with `UserExceptionDialog`, below `StoreProvider` and `MaterialApp`:
+As previously discussed, throwing an `UserException` will automatically show a dialog to the
+user, where the dialog's message is the exception's message.
+
+This is a possible solution, using `try/catch`:
 
 ```dart
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context)
-	  => StoreProvider<AppState>(
-		  store: store,
-		  child: MaterialApp(
-		    navigatorKey: navigatorKey,
-			home: UserExceptionDialog<AppState>(
-			  child: MyHomePage(),
-			)));
+class ConvertAction extends AppAction {  
+  final String text;
+  ConvertAction(this.text);
+  
+  AppState reduce() async {
+    try {
+      var value = int.parse(text);
+      return state(counter: value); 
+    } catch (error) {
+      throw UserException('Please enter a valid number').addCause(error);
+    }
+  }
+}    
+```
+
+However, you can achieve the same by overriding the `wrapError()` method:
+
+```dart
+class ConvertAction extends AppAction {
+  final String text;
+  ConvertAction(this.text);
+  
+  Future<AppState> reduce() async {
+    return int.parse(text);
+  }
+  
+  Object wrapError(error, stacktrace)
+      => UserException('Please enter a valid number').addCause(error);
 }
 ```
 
-Note: If you are not using the `home` parameter of the `MaterialApp` widget, you can also put the
-`UserExceptionDialog` the `builder` parameter. Please note, if you do that you **must** define the
-`NavigateAction.navigatorKey` of the Navigator. Please, see the documentation of the
-`UserExceptionDialog.useLocalContext` parameter for more information.
+### Creating a Mixin
 
-Try running
-the: <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_show_error_dialog.dart">
-Show Error Dialog Example</a>.
-
-**In more detail:**
-
-Sometimes, actions fail because the user provided invalid information. These failings don't
-represent errors in the code, so you usually don't want to log them as errors. What you want,
-instead, is just warn the user by opening a dialog with some corrective information. For example,
-suppose you want to save the user's name, and you only accept names with at least 4 characters:
+You may also create a mixin to make it easier to add this behavior to multiple actions:
 
 ```dart
-class SaveUserAction extends ReduxAction<AppState> {
-   final String name;
-   SaveUserAction(this.name);
+mixin ShowUserException on AppAction {
 
-   @override
-   Future<AppState> reduce() async {
-	 if (name.length < 4) dispatch(ShowDialogAction("Name must have at least 4 letters."));
-	 else await saveUser(name);
-	 return null;
-   }
+  abstract String getErrorMessage();
+  
+  Object wrapError(error, stacktrace)
+    => UserException(getErrorMessage()).addCause(error);
 }
 ```
 
-Clearly, there is no need to log as an error the user's attempt to save a 3-char name. The above
-code dispatches a `ShowDialogAction`, which you would have to wire into a Flutter error dialog
-somehow.
-
-However, there's an easier approach. Just throw AsyncRedux's built-in `UserException`:
+Which allows you to write `with ShowUserException`:
 
 ```dart
-class SaveUserAction extends ReduxAction<AppState> {
-   final String name;
-   SaveUserAction(this.name);
-
-   @override
-   Future<AppState> reduce() async {
-	 if (name.length < 4) throw UserException("Name must have at least 4 letters.");
-	 await saveName(name);
-	 return null;
-   }
+class ConvertAction extends AppAction with ShowUserException {  
+  final String text;
+  ConvertAction(this.text);
+  
+  Future<AppState> reduce() async {
+    return int.parse(text);
+  }
+  
+  String getErrorMessage() => "Please enter a valid number.";
 }
 ```
 
-The special `UserException` error class represents "user errors" which are meant as warnings to the
-user, and not as code errors to be logged. By default, if you don't define your own `errorObserver`,
-only errors which are not `UserException` are thrown. And if you do define an `errorObserver`,
-you'd probably want to replicate this behavior.
+## Global error handling
 
-In any case, `UserException`s are put into a special error queue, from where they may be shown to
-the user, one by one. You may use `UserException` as is, or subclass it, returning title and message
-for the alert dialog shown to the user. _Note: In the `Store` constructor you can set the maximum
-number of errors that queue can hold._
+Third-party code may also throw errors which should not be considered bugs,
+but simply messages to be displayed in a dialog to the user.
 
-As explained in the beginning of this section, if you use the build-in error handling you must wrap
-your home-page with `UserExceptionDialog`. There, you may pass the `onShowUserExceptionDialog`
-parameter to change the default dialog, show a toast, or some other suitable widget:
+For example, Firebase my throw some `PlatformException`s
+in response to a bad connection to the server.
 
-```dart
-UserExceptionDialog<AppState>(
-	  child: MyHomePage(),
-	  onShowUserExceptionDialog:
-		  (BuildContext context, UserException userException) => showDialog(...),
-);
-``` 
+In this case, it may be a good idea to convert this error into a `UserException`,
+so that a dialog appears to the user, as already explained above.
 
-> Note: The `UserExceptionDialog` can display any error widget you want in front of all the others
-> on the screen. If this is not what you want, you can easily create your
-> own `MyUserExceptionWidget` to intercept the errors and do whatever you want. Start by
-> copying `user_exception_dialog.dart` (which contains `UserExceptionDialog` and its `_ViewModel`)
-> into another file, and search for the `didUpdateWidget` method. This method will be called each
-> time an error is available, and there you can record this information in the widget's own state.
-> You can then change the screen in any way you want, according to that saved state, in this
-> widget's `build` method.
-
-<br></br>
-
-### Converting third-party errors into UserExceptions
-
-Third-party code may also throw errors which should not be considered bugs, but simply messages to
-be displayed in a dialog to the user.
-
-For example, Firebase my throw some `PlatformException`s in response to a bad connection to the
-server. In this case, you can convert this error into a `UserException`, so that a dialog appears to
-the user, as already explained above. There are two ways to do that.
-
-The first is to do this conversion in the action itself by implementing the
-optional `ReduxAction.wrapError(error)` method:
+There are two ways to do that. One of them we discussed above:
+Just convert it in the action itself
+by implementing the optional `wrapError()` method:
 
 ```dart
-class MyAction extends ReduxAction<AppState> {
-
-  @override
-  Object? wrapError(error) {
+class MyAction extends AppAction {
+  
+  Object? wrapError(error, stacktrace) {
      if ((error is PlatformException) && (error.code == "Error performing get") &&
                (error.message == "Failed to get document because the client is offline."))
-        return UserException("Check your internet connection.").addCause(error);
+        return UserException('Check your internet connection').addCause(error);
      else 
         return error; 
   }    
 ```
 
-However, then you'd have to add this to all actions that use Firebase. A better way is doing this
-globally by passing a `GlobalWrapError` object to the store:
+However, then you'd have to add this code to all actions that use Firebase.
+
+A better way is doing this globally by using a `GlobalWrapError` object when you create the store:
 
 ```dart              
 var store = Store<AppState>(
@@ -221,11 +225,11 @@ var store = Store<AppState>(
 );
 
 class MyGlobalWrapError extends GlobalWrapError {
-  @override
+  
   Object? wrap(error, stackTrace, action) {
     if ((error is PlatformException) && (error.code == "Error performing get") &&
-          (error.message == "Failed to get document because the client is offline.")) 
-        return UserException("Check your internet connection.").addCause(error);
+          (error.message == 'Failed to get document because the client is offline')) 
+        return UserException('Check your internet connection').addCause(error);
     else 
         return error;
   }
@@ -236,20 +240,100 @@ The `GlobalWrapError` object will be given all errors. It may then return a `Use
 will be used instead of the original exception. Otherwise, it just returns the original `eerror`,
 so that it will not be modified. It may also return `null` to disable (swallow) the error.
 
-Note this wrapper is called **after** `ReduxAction.wrapError`, and **before** the `ErrorObserver`.
+> Note: The global error wrapper is called **after** the action's `wrapError()` method,
+> and **before** the `ErrorObserver` that we'll discuss below.
 
-<br></br>
+## Disabling errors
 
-### UserExceptionAction
+If you want the action's `wrapError()` to disable the error, simply return `null`.
 
-If you want the `UserExceptionDialog` to display some `UserException`, you must throw the exception
-from inside an action's `before()` or `reduce()` methods.
+For example, suppose you want to let all errors pass through, except for errors of
+type `MyException`:
 
-However, sometimes you need to create some **callback** that throws an `UserException`. If this
-callback is called **outside** an action, the dialog will **not** display the exception. To solve
-this, the callback should not throw an exception, but instead call the
-provided `UserExceptionAction`, which will then simply throw the exception in its own `reduce()`
-method.
+```dart
+wrapError(error, stacktrace) 
+  => (error is MyException) ? null : error
+```
 
-The `UserExceptionAction` is also useful even inside of actions, when you want to display an error
-dialog to the user, but you don't want to interrupt the action by throwing an exception.
+If you want this to happen globally, use the `GlobalWrapError` object instead:
+
+```dart
+class MyGlobalWrapError extends GlobalWrapError {
+  
+  Object? wrap(error, stackTrace, action) 
+    => (error is MyException) ? null : error;
+}
+```
+
+## Error observer
+
+When the store is created, you have the opportunity to pass an `ErrorObserver` object.
+
+All errors thrown by actions are sent to this **ErrorObserver**, together with their stack traces,
+and a reference to the action that threw the error, and the store itself.
+
+For example:
+
+```dart
+var store = Store<AppState>(
+  initialState: AppState.initialState(),
+  errorObserver: MyErrorObserver<AppState>(),
+);
+
+class MyErrorObserver<St> implements ErrorObserver<St> {
+  
+  bool observe(Object error, StackTrace stackTrace, ReduxAction<St> action, Store store) {
+    print("Error thrown during $action: $error");
+    return true;
+  }
+}                                                                                               
+```
+
+As you can see, the `observe` method returns a boolean:
+
+* If it returns `true`, the error will be rethrown after the `errorObserver` finishes.
+* If it returns `false`, the error is considered dealt with, and will be "swallowed" (not rethrown).
+
+## UserExceptionAction
+
+As [previously discussed](../basics/failed-actions), the `UserException` is a special type of error
+that Async Redux automatically catches and shows to the user in a dialog, or other UI of your
+choice.
+
+For this to work, you must throw the `UserException` from inside an
+action's `before()` or `reduce()` methods. Only then, Async Redux will be able to
+catch the exception and show it to the user.
+
+However, if you are **not** inside an action, but you still want to show an error dialog to the
+user, you may use the provided `UserExceptionAction`.
+
+```dart
+dispatch(UserExceptionAction('Please enter a valid number'));
+```
+
+This action simply throws a corresponding `UserException` from its own `reduce()` method.
+
+The `UserExceptionAction` is also useful inside of actions themselves,
+if you want to display an error dialog to the user,
+but you don't want to interrupt the action by throwing an exception.
+
+For example, here an invalid number will show an error dialog to the user,
+but the action will continue running and set the counter state to `0`:
+
+```dart
+class ConvertAction extends AppAction {  
+  final String text;
+  ConvertAction(this.text);
+  
+  Future<AppState> reduce() async {
+    var value = int.tryParse(text);
+    
+    if (value == null) { 
+      dispatch(UserExceptionAction('Please enter a valid number'));
+    }  
+          
+    return state(counter: value ?? 0);
+  }
+}    
+```
+

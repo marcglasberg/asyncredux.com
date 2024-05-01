@@ -2,7 +2,7 @@
 sidebar_position: 11
 ---
 
-# Process states
+# Wait, fail, succeed
 
 A very common pattern is having some process that can succeed or fail, and you want to show a
 spinner while the process is running, show the result when it's done, and show an error message if

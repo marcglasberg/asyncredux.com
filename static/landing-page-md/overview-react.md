@@ -194,7 +194,7 @@ class LoadText extends Action {
   
   async reduce() {    
     let response = await fetch('http://numbersapi.com/random/42');
-    if (!response.ok) throw new UserException('Failed to load');
+    if (!response.ok) throw UserException('Failed to load');
     
     let text = await response.text();     
     return (state) => text;
@@ -492,7 +492,7 @@ automatically show a message to the user in an error dialog:
 ```tsx
 globalWrapError: (error: any) => {
         return (error instanceof FirestoreError)
-          ? new UserException('Error connecting to Firebase')
+          ? UserException('Error connecting to Firebase')
           : error;
       }  
 ```
