@@ -1,5 +1,5 @@
 ---
-sidebar_position: 12
+sidebar_position: 1
 ---
 
 # Connector pattern
@@ -75,10 +75,20 @@ If the view-model didn't change, the connector doesn't rebuild. This makes sense
 the view-model contains all the information the dumb widget needs, and if that information
 didn't change, there is no need to rebuild the dumb widget.
 
-> Note: Whenever the state changes, all the `StoreConnector`s will recalculate the view-model,
-> always. This means that creating the view-model should be a fast operation. If it's not, you
-> should consider using a `Selector` widget to optimize the process (more on that later).
-> However, if the view-model did not chance, no dumb widget rebuilding takes place.
+### Not triggering the StoreConnectors
+
+If you use the `notify: false` parameter when dispatching an action,
+then the `StoreConnector`s will not be triggered (will not calculate the current view-model
+and will not rebuild) as a consequence of that action changing the store state:
+
+```dart
+dispatch(MyAction1(), notify: false); 
+```
+
+> Note: When `notify` is true or is omitted, all the `StoreConnector`s will at least recalculate
+> their view-model whenever the state changes. This means that creating the view-model should be a
+> fast operation. If it's not, you should consider using a cached "selector" to optimize the
+> process (more on that later).
 
 ## Example
 
@@ -188,15 +198,15 @@ ViewModel({
   required this.field2,
 }) : super(equals: [field1, field2]);
 ```      
-        
-## The VmEquals interface 
+
+## The VmEquals interface
 
 Each state passed in the `equals` parameter will, by default, be compared by equality (`==`).
 This is almost always what you want.
 
 However, you can provide your own comparison method, if you want. To that end, your state classes
 must implement the `VmEquals` interface. As a default, objects of type `VmEquals` are compared by
-their own `VmEquals.vmEquals()` method, which by default is an identity comparison. 
+their own `VmEquals.vmEquals()` method, which by default is an identity comparison.
 
 You may then override this method to provide your custom comparisons.
 
@@ -242,7 +252,8 @@ class Factory
 ```
 
 The `fromStore` method is called automatically by Async Redux, when necessary.
-Note it has direct access to the `state` and to all dispatch methods like `dispatch`, `dispatchAndWait`
+Note it has direct access to the `state` and to all dispatch methods
+like `dispatch`, `dispatchAndWait`
 etc.
 
 You can also create helper methods to assist you in creating the view-model.
@@ -268,7 +279,7 @@ class Factory
 
 This may not seem necessary in this simple example, but for more complex view-models it can be
 very useful being able to separate the view-model creation into smaller methods.
-               
+
 ## The complete example
 
 Here is the complete example:
