@@ -48,7 +48,7 @@ function Feature({Svg, title, page, description}) {
         <Link
           className="button button--primary button--lg"
           style={{marginBottom: 50}}
-          to={`/${page}/docs/intro`}>
+          to={`/${page}/intro`}>
           Get Started
         </Link>
       </div>
@@ -172,7 +172,7 @@ export function Overview(page) {
             <Link
               className="button button--primary button--lg"
               style={{marginBottom: 5, alignItems: 'center'}}
-              to={`/${activeTab}/docs/intro`}>
+              to={`/${activeTab}/intro`}>
               <span style={{display: 'inline-block', transform: 'translateY(-6px)'}}>
                 Get Started &nbsp;<span style={{
                 fontSize: 30,

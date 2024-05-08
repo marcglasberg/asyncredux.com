@@ -99,14 +99,14 @@ const config = {
             sidebarId: 'tutorialSidebar',
             position: 'left',
             label: 'For React',
-            href: '/react/docs/intro',
+            href: '/react/intro',
           },
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
             label: 'For Flutter',
-            href: '/flutter/docs/intro',
+            href: '/flutter/intro',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
           {
@@ -129,12 +129,12 @@ const config = {
             items: [
               {
                 label: 'For React',
-                to: '/flutter/docs/intro',
+                to: '/flutter/intro',
 
               },
               {
                 label: 'For Flutter',
-                to: '/react/docs/intro',
+                to: '/react/intro',
               },
             ],
           },
