@@ -36,11 +36,17 @@ here</a>. Then:
 * The **presentation test** would create the `MyHomePage` widget, pass `counter:0`
   and `description:"abc"` parameters in its constructor, and make sure they appear in the screen as
   expected. It would also test that the callback is called when the "+" button is tapped.
+         
+## Naming convention
 
 Since each widget will have a bunch of related files, you should have some consistent naming
-convention. For example, if some dumb-widget is called `MyWidget`, its file could
-be `my_widget.dart`. Then the corresponding connector-widget could be `MyWidgetConnector`
-in `my_widget_CONNECTOR.dart`. The three corresponding test files could be
-named `my_widget_STATE_test.dart`, `my_widget_CONNECTOR_test.dart`
-and `my_widget_PRESENTATION_test.dart`. If you don't like this convention use your own,
+convention. For example, this is my convention:
+
+* If some dumb-widget is called `MyWidget`, its file could be `my_widget.dart`.
+* The corresponding connector-widget could be `MyWidgetConnector` in `my_widget_CONNECTOR.dart`.
+* The three corresponding test files could be
+  named `my_widget_STATE_test.dart`, `my_widget_CONNECTOR_test.dart`
+  and `my_widget_PRESENTATION_test.dart`.
+
+If you don't like this convention use your own,
 but just choose one early and stick to it.

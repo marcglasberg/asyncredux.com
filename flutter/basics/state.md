@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # State
 
-We call the application **state** all the data that your app needs to function,
+The application **state** is all the data that your app needs to function,
 and that can change over time.
 
 Usually you'd have a class that represents your app state.

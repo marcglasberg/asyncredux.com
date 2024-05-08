@@ -9,8 +9,9 @@ verifying app flow in unit tests, instead of widget or driver tests.
 
 For example:
 
-```dart         
-var navigateAction = actions.get(NavigateAction).action as NavigateAction;
+```dart
+var action = NavigateAction.pushNamed("myRoute"); 
+dispatch(action);
 expect(navigateAction.type, NavigateType.pushNamed);
 expect((navigateAction.details as NavigatorDetails_PushNamed).routeName, "myRoute");
 ```
