@@ -54,13 +54,12 @@ const config = {
           sidebarPath: './sidebarsReact.js',
 
           // Please change this to your repo. Remove this to remove the "edit this page" links.
-          editUrl: 'https://https://github.com/marcglasberg/asyncredux.com/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: undefined,
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo. Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://https://github.com/marcglasberg/asyncredux.com/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: undefined,
         },
         theme: {
           customCss: './src/css/custom.css',

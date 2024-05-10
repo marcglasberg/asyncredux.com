@@ -13,9 +13,9 @@ const FeatureList = [
     Svg: require('@site/static/img/react.svg').default,
     description: (
       <>
-        Async Redux aims to be easier to use than Redux, Zustand, MobX, and React Query. It's been
-        available&nbsp;on <a
-        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;since&nbsp;April&nbsp;2024.
+        Async Redux aims to be easier to use than Redux, Zustand, MobX, and TanStack Query.
+        It will be available&nbsp;on <a
+        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;in&nbsp;June&nbsp;2024.
       </>
     ),
     page: 'react',
@@ -168,7 +168,13 @@ export function Overview(page) {
             </div>
           )}
 
-          <div style={{display: 'flex', width: '100%', maxWidth: 670, margin: '20px auto 0 auto', justifyContent: 'right'}}>
+          <div style={{
+            display: 'flex',
+            width: '100%',
+            maxWidth: 670,
+            margin: '20px auto 0 auto',
+            justifyContent: 'right'
+          }}>
             <Link
               className="button button--primary button--lg"
               style={{marginBottom: 5, alignItems: 'center'}}
@@ -259,7 +265,7 @@ const prism = {
   "pre[class*=\"language-\"]": {
     "color": "black",
     "background": "#F9F5F5",
-    "textShadow": "0 1px white",
+    "textShadow": "0",
     "fontFamily": "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
     "fontSize": "1em",
     "fontWeight": "600",
