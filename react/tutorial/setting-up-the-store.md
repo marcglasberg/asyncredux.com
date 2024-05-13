@@ -1,0 +1,62 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Setting up the Store
+
+This tutorial shows how easy it is to use Async Redux.
+We'll create a simple Todo app, with a list of todos and a button to add a new todo.
+
+Start by declaring `App` as the root React component:           
+
+<Tabs>
+<TabItem value="rw" label="React Web">
+
+```tsx title="main.tsx"
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { App } from './infra/App'
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<React.StrictMode><App/></React.StrictMode>);
+```
+
+</TabItem>
+<TabItem value="rn" label="React Native">
+
+```tsx title="index.js"
+import { AppRegistry } from 'react-native';
+import { App } from './src/infra/App';
+import { name as appName } from './app.json';
+
+AppRegistry.registerComponent(appName, () => App);
+```
+
+</TabItem>
+</Tabs>
+
+<br></br>
+
+We then create the Async Redux **store**, and make it available:
+
+```tsx title="App.tsx"
+import React from "react";
+import { Store, StoreProvider } from 'async-redux-react';
+
+const store = new Store<State>({
+  initialState: State.initialState,  
+});
+
+export const App: React.FC = () => {
+  return (
+    <StoreProvider store={store}>
+      <AppContent />
+    </StoreProvider>
+  );
+}
+```
+
