@@ -9,12 +9,12 @@ import TabItem from '@theme/TabItem';
 
 We've seen [here](the-basic-ui#todoinput) how the `TodoInput` component dispatches
 an `AddTodoAction` to add a new todo item in the todos list.
-Then [here](sync-action#if-the-item-already-exists) we've seen that
+Then [here](sync-action#what-if-the-item-already-exists) we've seen that
 the action checks if the new todo item already exists in the list and throws a `UserException`
 if it does.
 
-Now let's go back to the `TodoInput` and modify it to show an error message when the user tries to
-add an existing todo item.
+Now let's go back to the `TodoInput` code
+and modify it to show an error message when the user tries to add an existing todo item.
 
 Let's start by adding the following 3 hooks to the `TodoInput` component:
 
@@ -26,7 +26,7 @@ let clearExceptionFor = useClearExceptionFor();
 
 The `isFailed` variable will be `true` when the action fails.
 
-In this case, the `errorText` variable will contain the `errorText` message of the exception,
+And when it fails, the `errorText` variable will contain the `errorText` message of the exception,
 which was defined in the `AddTodoAction` action:
 
 ```tsx 
@@ -39,7 +39,7 @@ throw new UserException(
 Finally, the `clearExceptionFor` function will clear the error for the `AddTodoAction` action.
 Note the error is already cleared automatically when the action is dispatched again.
 We only need to clear it manually if we want to clear the error message without dispatching
-the action. In the code below we are doing this as soon as the user starts typing again 
+the action. In the code below we are clearing the error as soon as the user starts typing again
 in the input field.
 
 The `TodoInput` component now looks like this:
@@ -126,12 +126,14 @@ const TodoInput: React.FC = () => {
 </TabItem>
 </Tabs>
 
-To test it, try adding a todo item with the text `Buy milk` and then try to add it again.
+To test it, add a todo item with the text `Buy milk`,
+and then try adding another todo with the same text again.
+A dialog will pop up with the following error message:
 
-As soon as you add it again, a dialog will appear with the error message: 
 > The item "Buy milk" already exists
 
-Then, an error text will appear below the input field with the error text: 
+At the same time, an error text will appear below the input field with the `errorText`
+that was defined in the user exception thrown by the action reducer:
 > Type something else other than "Buy milk"
 
 As soon as you start typing in the input field, the error text will disappear.

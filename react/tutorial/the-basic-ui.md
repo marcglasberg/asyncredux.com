@@ -49,13 +49,13 @@ export const AppContent: React.FC = () => {
 </TabItem>
 </Tabs>
 
-I'll not be including the CSS in this tutorial, but you can find the full code in the GitHub
-repository.
+I'll not be including the CSS in this tutorial, but you can find the full code with CSS in the
+GitHub repository.
 
 ## TodoInput
 
 The `TodoInput` component is a simple input field that allows the user to type a new todo item,
-and then press Enter or click a button to add it to the list.
+and then press `Enter` or click a button to add it to the list.
 
 <Tabs>
 <TabItem value="rw" label="React Web">
@@ -120,7 +120,7 @@ const TodoInput: React.FC = () => {
 
 As you can see above, the `sendInputToStore` function is called when the user presses `Enter`
 or clicks the "Add" button. This function uses the `useStore` hook to get the store and then
-dispatches an `AddTodoAction` with the input text. 
+dispatches an `AddTodoAction` with the input text.
 
 A simplified version of the `sendInputToStore` could simply use the store's `dispatch`
 method:
@@ -133,12 +133,12 @@ async function sendInputToStore(text: string) {
 
 However, when the action succeeds, we want to clear the input field. To do this, we need to
 wait until the action is completed, check if it completed successfully, and then clear the
-input field with `setInputText('')`. 
+input field with `setInputText('')`.
 
 This is why we use the `dispatchAndWait` method instead. It returns a Promise that
-completes when the action is completed, and also return the `Status` object that allows us to
-check if the action was successful:
-               
+completes when the action is completed, and also returns a `Status` object 
+that tells us if the action was successful:
+
 ```tsx
 async function sendInputToStore(text: string) {
   let status = await store.dispatchAndWait(new AddTodoAction(text));
