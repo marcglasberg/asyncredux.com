@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 # Error handling
 
 We've seen [here](the-basic-ui#todoinput) how the `TodoInput` component dispatches
-an `AddTodoAction` to add a new todo item in the todos list.
+an `AddTodoAction` to add a new todo item in the todo list.
 Then [here](sync-action#what-if-the-item-already-exists) we've seen that
 the action checks if the new todo item already exists in the list and throws a `UserException`
 if it does.
@@ -39,8 +39,8 @@ throw new UserException(
 Finally, the `clearExceptionFor` function will clear the error for the `AddTodoAction` action.
 Note the error is already cleared automatically when the action is dispatched again.
 We only need to clear it manually if we want to clear the error message without dispatching
-the action. In the code below we are clearing the error as soon as the user starts typing again
-in the input field.
+the action. In the code below, we'll be clearing the error as soon as the user starts typing
+again in the input field.
 
 The `TodoInput` component now looks like this:
 
@@ -126,14 +126,46 @@ const TodoInput: React.FC = () => {
 </TabItem>
 </Tabs>
 
-To test it, add a todo item with the text `Buy milk`,
+To see it working, just add a todo item with the text `Buy milk`
 and then try adding another todo with the same text again.
 A dialog will pop up with the following error message:
 
 > The item "Buy milk" already exists
 
+<br></br>
+
 At the same time, an error text will appear below the input field with the `errorText`
 that was defined in the user exception thrown by the action reducer:
+
 > Type something else other than "Buy milk"
 
+<br></br>
+
+This is the code used above to show the error text below the input field: 
+
+```tsx 
+// React Web
+helperText={isFailed ? errorText : ""}
+
+// React Native
+{isFailed && <Text>{errorText}</Text>}
+```
+        
+<br></br>
+
 As soon as you start typing in the input field, the error text will disappear.
+This is the code used above to clear the error text when the user starts typing again: 
+
+```tsx 
+// React Web
+onChange={(e) => {          
+  setInputText(e.target.value);
+  clearExceptionFor(AddTodoAction);
+}}
+
+// React Native
+onChangeText={(text) => {            
+  setInputText(text);
+  clearExceptionFor(AddTodoAction);
+}}
+```

@@ -118,9 +118,9 @@ const TodoInput: React.FC = () => {
 </TabItem>
 </Tabs>
 
-As you can see above, the `sendInputToStore` function is called when the user presses `Enter`
-or clicks the "Add" button. This function uses the `useStore` hook to get the store and then
-dispatches an `AddTodoAction` with the input text.
+As you can see above, the `sendInputToStore` function is called whenever the user presses `Enter`
+or clicks the "Add" button. This function uses the `useStore` hook to get a reference to the store,
+and then dispatches an `AddTodoAction` with the input text.
 
 A simplified version of the `sendInputToStore` could simply use the store's `dispatch`
 method:
@@ -131,13 +131,17 @@ async function sendInputToStore(text: string) {
 }
 ```
 
-However, when the action succeeds, we want to clear the input field. To do this, we need to
-wait until the action is completed, check if it completed successfully, and then clear the
-input field with `setInputText('')`.
+However, when the action succeeds, we want to clear the input field. To do this, we need
+to **wait** until the action is completed, check if it completed **successfully**, and then clear
+the input field with `setInputText('')`.
 
-This is why we use the `dispatchAndWait` method instead. It returns a Promise that
-completes when the action is completed, and also returns a `Status` object 
-that tells us if the action was successful:
+This is why instead of `dispatch` we want to use the `dispatchAndWait` method.
+It returns a `Promise` that completes when the action is completed.
+If we await it we get a status of type `ActionStatus`
+that tells us if the action was successful or not.
+
+In other words, we get the `status`, 
+and if `status.isCompletedOk` is true we can clear the input field:
 
 ```tsx
 async function sendInputToStore(text: string) {

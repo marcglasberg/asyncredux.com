@@ -24,26 +24,26 @@ export class AddTodoAction extends Action {
 
 All actions must also contain a `reduce()` function,
 which has access to the current state of the app and returns a new state.
-In this case, it must return a new todos list, equal to the current list plus the new todo item.
+In this case, it must return a new todo list, equal to the current list plus the new todo item.
 
 The current state of the app is readily available in the `reduce()` function
 through the `this.state` property of the action.
-From there, we get the current todo list with `this.state.todosList`:
+From there, we get the current todo list with `this.state.todoList`:
 
 ```tsx title="AddTodoAction.ts"
 export class AddTodoAction extends Action {
   constructor(readonly text: string) { super(); }
 
   reduce() {  
-    let currentTodosList = this.state.todosList;
+    let currentTodoList = this.state.todoList;
     ...
   }
 }
 ```
 
-Since the current todo list is of type `TodosList`,
-we can then use all functions from the `TodosList` class.
-Let's [recap](./creating-the-state#todoslist) the available functions in that class:
+Since the current todo list is of type `TodoList`,
+we can then use all functions from the `TodoList` class.
+Let's [recap](./creating-the-state#todolist) the functions we've made available in that class:
 
 * `addTodoFromText` - Add a new todo item to the list from a text string.
 * `addTodo` - Add a new todo item to the list.
@@ -56,6 +56,7 @@ Let's [recap](./creating-the-state#todoslist) the available functions in that cl
 * `empty` - A static empty list of todos.
 
 One of these functions is `addTodoFromText()`, which adds a new todo item to the list.
+Exactly what we want.
 
 This is the resulting action code:
 
@@ -64,16 +65,16 @@ export class AddTodoAction extends Action {
   constructor(readonly text: string) { super(); }
 
   reduce() {
-    let currentTodosList = this.state.todosList;
-    let newTodosList = currentTodosList.addTodoFromText(this.text);
+    let currentTodoList = this.state.todoList;
+    let newTodoList = currentTodoList.addTodoFromText(this.text);
     
-    return this.state.withTodosList(newTodosList);
+    return this.state.withTodoList(newTodoList);
   }
 }
 ```
 
-Note we also used the `withTodosList()` function to update the state with the new todos list,
-and then returned this new state.
+Note we also used function `state.withTodoList()` to create a new state with the new todo list,
+and then returned this new state from the reducer.
 
 ## What if the item already exists?
 
@@ -90,23 +91,23 @@ export class AddTodoAction extends Action {
 
   reduce() {
   
-    let currentTodosList = this.state.todosList;
+    let currentTodoList = this.state.todoList;
   
     // Check if the item already exists
-    if (currentTodosList.ifExists(this.text)) {
+    if (currentTodoList.ifExists(this.text)) {
       throw new UserException(
         `The item "${this.text}" already exists.`, {
           errorText: `Type something else other than "${this.text}"`
         });
     }
 
-    let newTodosList = currentTodosList.addTodoFromText(this.text);
-    return this.state.withTodosList(newTodosList);
+    let newTodoList = currentTodoList.addTodoFromText(this.text);
+    return this.state.withTodoList(newTodoList);
   }
 }
 ```
 
-In the code above, we use the `ifExists()` function defined in the `TodosList` class to check if the
+In the code above, we use the `ifExists()` function defined in the `TodoList` class to check if the
 new todo item already exists in the list. When it does, we throw a `UserException` with an error
 message.
 
