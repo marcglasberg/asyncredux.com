@@ -139,11 +139,7 @@ and just add the `TodoList` to it:
 
 ```tsx title="State.ts"
 export class State {
-  readonly todoList: TodoList;  
-
-  constructor({todoList}: { todoList: TodoList }) {
-    this.todoList = todoList;
-  }      
+  constructor({todoList}: { todoList: TodoList }) {}      
   
   withTodoList(todoList: TodoList): State {
     return new State({todoList: todoList || this.todoList});

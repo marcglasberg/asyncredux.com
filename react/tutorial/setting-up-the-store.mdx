@@ -11,8 +11,8 @@ This tutorial's goal is to show how easy it is to use Async Redux.
 
 We'll create a simple _Todo List_ app, with a list of todos and a button to add a new todo.
 
-Start by declaring `App` as the root React component:           
-    
+Start by declaring `App` as the root React component:
+
 <Tabs>
 <TabItem value="rw" label="React Web">
 
@@ -48,7 +48,7 @@ import React from "react";
 import { Store, StoreProvider } from 'async-redux-react';
 
 const store = new Store<State>({
-  initialState: State.initialState,  
+  initialState: State.initialState,
 });
 
 export const App: React.FC = () => {
@@ -59,4 +59,3 @@ export const App: React.FC = () => {
   );
 }
 ```
-
