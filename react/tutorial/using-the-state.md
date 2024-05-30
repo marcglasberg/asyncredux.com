@@ -9,8 +9,7 @@ import TabItem from '@theme/TabItem';
                                                     
 # ADD TO THIS TUTORIAL:
 - Implement the RemoveAllButton and it's corresponding action
-- Show how to use the state in a component: TodoList 
-- Change the name from Todos to TodoList 
+- Show how to use the state in a component: TodoList
 - Talk about the filter
 - Refer to the GitHub repo
 - Show the user exception dialog setup

@@ -46,15 +46,15 @@ export class TodoItem {
 }
 ```
 
-This class is **immutable**, as it doesn't have any setters, and its single function returns
-a new `TodoItem` object, instead of modifying the current one.
+This class is **immutable**, as it doesn't have any setters, and its single 
+function `toggleCompleted` returns a new `TodoItem` object, instead of modifying the current one.
 
 ## TodoList
 
 The `TodoList` class is a simple list of todo items of type `TodoItem`:
 
 ```tsx title="TodoList.ts"
-export class Todos {  
+export class TodoList {  
   constructor(public readonly items: TodoItem[] = []) {}  
 }
 ```
@@ -78,13 +78,13 @@ Here is the full code of the `TodoList` class, with all the above functions impl
 export class TodoList {  
   constructor(public readonly items: TodoItem[] = []) {}  
   
-  addTodoFromText(text: string): Todos {
+  addTodoFromText(text: string): TodoList {
     const trimmedText = text.trim();
     const capitalizedText = trimmedText.charAt(0).toUpperCase() + trimmedText.slice(1);
     return this.addTodo(new TodoItem(capitalizedText));
   }
   
-  addTodo(newItem: TodoItem): Todos {
+  addTodo(newItem: TodoItem): TodoList {
     if ((newItem.text === '') || this.ifExists(newItem.text))
       return this;
     else
@@ -95,11 +95,11 @@ export class TodoList {
     return this.items.some(todo => todo.text === text);
   }
   
-  removeTodo(item: TodoItem): Todos {
+  removeTodo(item: TodoItem): TodoList {
     return new TodoList(this.items.filter(itemInList => itemInList !== item));
   }
   
-  toggleTodo(item: TodoItem): Todos {
+  toggleTodo(item: TodoItem): TodoList {
     const newTodos = this.items.map(itemInList => (itemInList === item) ? item.toggleCompleted() : itemInList);
     return new TodoList(newTodos);
   }   
@@ -114,9 +114,9 @@ export class TodoList {
     }
   }
 
-  toString() { return `Todos{${this.items.join(',')}}`; }
+  toString() { return `TodoList{${this.items.join(',')}}`; }
   
-  static empty: Todos = new TodoList();
+  static empty: TodoList = new TodoList();
 }
 ```
 
@@ -139,13 +139,17 @@ and just add the `TodoList` to it:
 
 ```tsx title="State.ts"
 export class State {
-  constructor({todoList}: { todoList: TodoList }) {}      
-  
-  withTodoList(todoList: TodoList): State {
-    return new State({todoList: todoList || this.todoList});
+  todoList: TodoList;
+
+  constructor({ todoList }: { todoList: TodoList }) {
+    this.todoList = todoList;
   }
-  
-  static initialState: State = new State({todoList: TodoList.empty});
+
+  withTodoList(todoList: TodoList): State {
+    return new State({ todoList: todoList || this.todoList });
+  }
+
+  static initialState: State = new State({ todoList: TodoList.empty });
 }
 ```
 

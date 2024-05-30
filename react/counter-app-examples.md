@@ -45,7 +45,7 @@ Please read the code below and see if you understand everything.
 
 <iframe
 src="https://codesandbox.io/embed/vprx7v?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser"
-style={{ width:'100%', height: '500px', border:'5px solid #58B87A', borderRadius: '4px' }}
+style={{ width:'100%', height: '650px', border:'5px solid #58B87A', borderRadius: '4px' }}
 title="counter-async-redux-example"
 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
 />
@@ -121,7 +121,7 @@ and compare it with the previous example.
 
 <iframe
 src="https://codesandbox.io/embed/j57yz5?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser"
-style={{ width:'100%', height: '500px', border:'5px solid #58B87A', borderRadius: '4px' }}
+style={{ width:'100%', height: '650px', border:'5px solid #58B87A', borderRadius: '4px' }}
 title="counter-async-redux-example"
 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
 />
@@ -176,7 +176,7 @@ and compare it with the previous examples.
 
 <iframe
 src="https://codesandbox.io/embed/ysfgmk?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser"
-style={{ width:'100%', height: '500px', border:'5px solid #58B87A', borderRadius: '4px' }}
+style={{ width:'100%', height: '650px', border:'5px solid #58B87A', borderRadius: '4px' }}
 title="counter-async-redux-example"
 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
 />
@@ -250,7 +250,7 @@ actions, and respective buttons to dispatch them.
 
 <iframe
 src="https://codesandbox.io/embed/65vkrq?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser"
-style={{ width:'100%', height: '500px', border:'5px solid #58B87A', borderRadius: '4px' }}
+style={{ width:'100%', height: '650px', border:'5px solid #58B87A', borderRadius: '4px' }}
 title="counter-async-redux-example"
 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
 />
@@ -319,7 +319,7 @@ Since all of them must extend `ReduxAction<State>`, let's create a base class fo
 called `Action`:
 
 ```tsx
-class Action extends ReduxAction<State> {}
+abstract class Action extends ReduxAction<State> {}
 ```
 
 Now, all actions can extend `Action` instead of `ReduxAction<State>`. For example:
@@ -336,7 +336,7 @@ class Add extends Action {
 
 <iframe
 src="https://codesandbox.io/embed/vszmfw?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser"
-style={{ width:'100%', height: '500px', border:'5px solid #58B87A', borderRadius: '4px' }}
+style={{ width:'100%', height: '650px', border:'5px solid #58B87A', borderRadius: '4px' }}
 title="counter-async-redux-example"
 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
 />
@@ -478,7 +478,7 @@ counter:
 
 <iframe
 src="https://codesandbox.io/embed/gjh3dj?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser"
-style={{ width:'100%', height: '500px', border:'5px solid #58B87A', borderRadius: '4px' }}
+style={{ width:'100%', height: '650px', border:'5px solid #58B87A', borderRadius: '4px' }}
 title="counter-async-redux-example"
 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
 />

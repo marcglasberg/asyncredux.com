@@ -21,9 +21,9 @@ The app UI contains:
 export const AppContent: React.FC = () => {
   return (
     <div>
-      <h1>Todos</h1>
+      <h1>Todo List</h1>
       <TodoInput />
-      <TodoList />        
+      <ListOfTodos />        
       <RemoveAllButton />
     </div>
   );
@@ -37,9 +37,9 @@ export const AppContent: React.FC = () => {
 export const AppContent: React.FC = () => {
   return (
     <View>
-      <Text>Todos</Text>
+      <Text>Todo List</Text>
       <TodoInput />
-      <TodoList />
+      <ListOfTodos />
       <RemoveAllButton />
     </View>
   );
@@ -49,8 +49,17 @@ export const AppContent: React.FC = () => {
 </TabItem>
 </Tabs>
 
-I'll not be including the CSS in this tutorial, but you can find the full code with CSS in the
-GitHub repository.
+<iframe
+src="https://codesandbox.io/embed/cgq5rs?view=preview&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=55&previewwindow=browser&hidedevtools=1&hidenavigation=1"
+style={{ width:'100%', height: '360px', borderRight:'1px solid black' }}
+title="counter-async-redux-example"
+sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+/>
+
+<br></br>
+<br></br>
+
+Let's detail below the components: `TodoInput`, `ListOfTodos` and `RemoveAllButton`.
 
 ## TodoInput
 
@@ -140,7 +149,7 @@ It returns a `Promise` that completes when the action is completed.
 If we await it we get a status of type `ActionStatus`
 that tells us if the action was successful or not.
 
-In other words, we get the `status`, 
+In other words, we get the `status`,
 and if `status.isCompletedOk` is true we can clear the input field:
 
 ```tsx
@@ -149,4 +158,21 @@ async function sendInputToStore(text: string) {
   if (status.isCompletedOk) setInputText(''); 
 }
 ```
-            
+
+# Try it yourself
+
+Type "Buy food" in the input, and press the `Add` button or the `Enter` key.
+Try adding other todo items.
+Then remove all of them by clicking the `Remove All` button.
+
+To see all files in this project, 
+click the "hamburger icon" in the top left corner of the code editor. 
+The state classes are in file `State.ts`, 
+while the store, actions and components are in the `App.tsx` file.
+
+<iframe
+src="https://codesandbox.io/embed/cgq5rs?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=55&previewwindow=browser"
+style={{ width:'100%', height: '650px', border:'5px solid #58B87A', borderRadius: '4px' }}
+title="counter-async-redux-example"
+sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+/>

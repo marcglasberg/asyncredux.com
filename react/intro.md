@@ -76,23 +76,22 @@ while loading, showing error messages, saving the state to the local storage, an
 TanStack Query is a data-fetching and caching library for React,
 that was later rebranded as an asynchronous state management.
 
-Just like Redux leaves out dealing with async processes, TanStack Query goes to the other extreme,
-and sees state management as queries: async data fetching and caching.
-
+While Redux leaves out dealing with async processes, TanStack Query goes to the other extreme
+and sees state management as just dealing with async data fetching and caching.
 In my opinion, thinking of state management in terms of data fetching is the wrong abstraction.
-Async Redux's abstraction is actions, which can be async or sync.
 
-Actions can do anything, change the state in any way, not just fetch data.
-They can fail and they can succeed. You can wait for them to finish, whether they fetch data or not.
-You can retry, debounce, throttle, and do optimistic updates, all using actions.
+Async Redux manages state through actions, which can be sync or async and change the state 
+in any way, not just fetch data.
+Action can fail and they can succeed. You can wait for them to finish, retry them, debounce, 
+throttle them and do optimistic updates.
 
 ### ES6 classes
 
 One difference between Async Redux and the state management solutions mentioned above
 is that Async Redux plays well with ES6 classes.
 
-In special, "actions" are implemented as ES6 classes,
-while "reducers" are methods of those classes:
+In special, **actions** are implemented as ES6 classes,
+while **reducers** are class functions:
 
 ```tsx
 class Increment extends Action {
@@ -103,12 +102,12 @@ class Increment extends Action {
 }
 ```
 
-I know some JavaScript developers don't like classes,
-and that JavaScript classes are not real classes anyway,
+Some developers don't like JavaScript classes,
+stating they are not "real classes"
 but simply syntactic sugar over prototypes.
 
-However, it's really only that syntactic sugar that Async Redux makes use of,
-with the goal of making your code more organized and easier to navigate.
+However, it's precisely that syntactic sugar that Async Redux makes use of,
+with the sole goal of making your code more organized and easier to navigate.
 
 It's not important you learn or understand class features like inheritance or polymorphism.
 You can use them as simple namespaces, in the way prescribed in this documentation,
@@ -117,8 +116,8 @@ and you'll be fine.
 You'll see they allow reduced boilerplate, and allow you to navigate between actions and reducers
 with a simple click, in IDEs like VS Code and IntelliJ.
 
-Regarding your state classes, in Async Redux they can be both plain JavaScript objects or ES6
-classes. I personally also like to use ES6 classes as state,
+Regarding your application **state**, it can be composed of both plain JavaScript objects or 
+ES6 classes. I personally also like to use ES6 classes as state,
 because they make it trivial to create and change immutable state,
 without the need for libraries
 like [Immer](https://www.npmjs.com/package/immer).
@@ -136,5 +135,5 @@ supported.
 <hr></hr>
 
 Next, let's follow a short tutorial to see how easy it is to use Async Redux.
-We'll create a simple Todo app, with a list of todos and a button to add a new todo.
+We'll create a simple _Todo List_ app.
 
