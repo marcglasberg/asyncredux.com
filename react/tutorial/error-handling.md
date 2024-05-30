@@ -45,7 +45,7 @@ again in the input field.
 The `TodoInput` component now looks like this:
 
 <Tabs>
-<TabItem value="rw" label="React Web">
+<TabItem value="rw" label="React">
 
 ```tsx title="AppContent.tsx"
 const TodoInput: React.FC = () => {
@@ -57,7 +57,7 @@ const TodoInput: React.FC = () => {
   let errorText = useExceptionFor(AddTodoAction)?.errorText ?? '';
   let clearExceptionFor = useClearExceptionFor();
 
-  async function sendInputToStore(text: string) {
+  async function processInput(text: string) {
     let status = await store.dispatchAndWait(new AddTodoAction(text))
     if (status.isCompletedOk) setInputText('');
   }
@@ -73,11 +73,11 @@ const TodoInput: React.FC = () => {
           clearExceptionFor(AddTodoAction);
         }}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') sendInputToStore(inputText);
+          if (e.key === 'Enter') processInput(inputText);
         }}
       />
       
-      <Button onClick={() => sendInputToStore(inputText)}>Add</Button>
+      <Button onClick={() => processInput(inputText)}>Add</Button>
     </div>
   );
 };
@@ -96,7 +96,7 @@ const TodoInput: React.FC = () => {
   let errorText = useExceptionFor(AddTodoAction)?.errorText ?? '';
   let clearExceptionFor = useClearExceptionFor();
 
-  async function sendInputToStore(text: string) {
+  async function processInput(text: string) {
     let status = await store.dispatchAndWait(new AddTodoAction(text));
     if (status.isCompletedOk) setInputText('');
   }
@@ -110,10 +110,10 @@ const TodoInput: React.FC = () => {
           setInputText(text);
           clearExceptionFor(AddTodoAction);
         }}
-        onSubmitEditing={() => sendInputToStore(inputText)}
+        onSubmitEditing={() => processInput(inputText)}
       />
 
-      <TouchableOpacity onPress={() => sendInputToStore(inputText)}>
+      <TouchableOpacity onPress={() => processInput(inputText)}>
         <Text>Add</Text>
       </TouchableOpacity>
       

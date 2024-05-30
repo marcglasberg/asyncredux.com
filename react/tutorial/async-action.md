@@ -57,7 +57,7 @@ To that end, we'll use the `useIsWaiting` hook,
 that returns `true` when the action is running:
 
 <Tabs>
-<TabItem value="rw" label="React Web">
+<TabItem value="rw" label="React">
 
 ```tsx
 const AddRandomTodoButton: React.FC = () => {
@@ -109,7 +109,7 @@ to show both a spinner if the information is loading,
 and an error message if the loading fails:
 
 <Tabs>
-<TabItem value="rw" label="React Web">
+<TabItem value="rw" label="React">
 
 ```tsx
 const AddRandomTodoButton: React.FC = () => {

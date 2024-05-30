@@ -15,9 +15,9 @@ The app UI contains:
 * A **button** to remove all todo items
 
 <Tabs>
-<TabItem value="rw" label="React Web">
+<TabItem value="rw" label="React">
 
-```tsx title="AppContent.tsx"
+```tsx 
 export const AppContent: React.FC = () => {
   return (
     <div>
@@ -33,7 +33,7 @@ export const AppContent: React.FC = () => {
 </TabItem>
 <TabItem value="rn" label="React Native">
 
-```tsx title="AppContent.tsx"
+```tsx 
 export const AppContent: React.FC = () => {
   return (
     <View>
@@ -48,6 +48,8 @@ export const AppContent: React.FC = () => {
 
 </TabItem>
 </Tabs>
+
+<br></br>
 
 <iframe
 src="https://codesandbox.io/embed/cgq5rs?view=preview&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=55&previewwindow=browser&hidedevtools=1&hidenavigation=1"
@@ -67,27 +69,33 @@ The `TodoInput` component is a simple input field that allows the user to type a
 and then press `Enter` or click a button to add it to the list.
 
 <Tabs>
-<TabItem value="rw" label="React Web">
+<TabItem value="rw" label="React">
 
-```tsx title="AppContent.tsx"
+```tsx 
 const TodoInput: React.FC = () => {
 
   const [inputText, setInputText] = useState<string>('');
   
   const store = useStore(); 
-  async function sendInputToStore(text: string) {
-    const status = await store.dispatchAndWait(new AddTodoAction(text))
+  
+  async function processInput(text: string) {
+    let status = await store.dispatchAndWait(new AddTodoAction(text))
     if (status.isCompletedOk) setInputText(''); 
   }
   
   return (
-    <div>      
-      <TextField value={inputText}
-        onChange={(e) => { setInputText(e.target.value); }}
-        onKeyDown={(e) => { if (e.key === 'Enter') sendInputToStore(inputText); }}
+    <div>           
+      <input 
+         placeholder="Type here..."        
+         value={inputText} maxLength={50} 
+         onChange={(e) => { setInputText(e.target.value); }}
+         onKeyDown={(e) => { if (e.key === "Enter") processInput(inputText); }}
       />
       
-      <Button onClick={() => sendInputToStore(inputText)}>Add</Button>
+      <button onClick={() => processInput(inputText)}>
+        Add
+      </button>
+      
     </div>
   );
 };
@@ -96,13 +104,14 @@ const TodoInput: React.FC = () => {
 </TabItem>
 <TabItem value="rn" label="React Native">
 
-```tsx title="AppContent.tsx"
+```tsx
 const TodoInput: React.FC = () => {
 
   const [inputText, setInputText] = useState<string>('');
     
   const store = useStore();
-  async function sendInputToStore(text: string) {
+  
+  async function processInput(text: string) {
     let status = await store.dispatchAndWait(new AddTodoAction(text));
     if (status.isCompletedOk) setInputText(''); 
   }
@@ -110,15 +119,16 @@ const TodoInput: React.FC = () => {
   return (
     <View>          
       <TextInput
-        placeholder={'Type here...'}
-        value={inputText}          
-        onChangeText={(text) => { setInputText(text); }}
-        onSubmitEditing={() => sendInputToStore(inputText)}
+         placeholder={'Type here...'}
+         value={inputText}          
+         onChangeText={(text) => { setInputText(text); }}
+         onSubmitEditing={() => processInput(inputText)}
       />
 
-      <TouchableOpacity onPress={() => sendInputToStore(inputText)}>
+      <TouchableOpacity onPress={() => processInput(inputText)}>
         <Text>Add</Text>
       </TouchableOpacity>
+      
     </View>          
   );
 };
@@ -127,15 +137,15 @@ const TodoInput: React.FC = () => {
 </TabItem>
 </Tabs>
 
-As you can see above, the `sendInputToStore` function is called whenever the user presses `Enter`
+As you can see above, the `processInput` function is called whenever the user presses `Enter`
 or clicks the "Add" button. This function uses the `useStore` hook to get a reference to the store,
 and then dispatches an `AddTodoAction` with the input text.
 
-A simplified version of the `sendInputToStore` could simply use the store's `dispatch`
+A simplified version of the `processInput` could simply use the store's `dispatch`
 method:
 
 ```tsx
-async function sendInputToStore(text: string) {
+async function processInput(text: string) {
   store.dispatch(new AddTodoAction(text));     
 }
 ```
@@ -153,13 +163,48 @@ In other words, we get the `status`,
 and if `status.isCompletedOk` is true we can clear the input field:
 
 ```tsx
-async function sendInputToStore(text: string) {
+async function processInput(text: string) {
   let status = await store.dispatchAndWait(new AddTodoAction(text));
   if (status.isCompletedOk) setInputText(''); 
 }
 ```
+         
+## ListOfTodos
 
-# Try it yourself
+The list of todos uses the `useSelect` hook to get the list of todos from `state.todoList.items`, 
+and then maps over them to render each todo item.
+
+```tsx
+function ListOfTodos() {
+  const todoList = useSelect((state: State) => state.todoList.items);
+
+  return (
+    <div className="listOfTodos">
+      {todoList.map((todo, index) => (
+        <div key={index}>{todo.text}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+## RemoveAllButton
+
+Finally, we add a button that uses the `useStore` hook to get a reference to the store,
+and then uses it to dispatch a `RemoveAllTodosAction` when clicked. 
+
+```tsx
+function RemoveAllButton() {
+  const store = useStore();
+  return (
+    <button onClick={() => store.dispatch(new RemoveAllTodosAction())}>
+      Remove All
+    </button>
+  );
+}
+```
+
+## Try it yourself
 
 Type "Buy food" in the input, and press the `Add` button or the `Enter` key.
 Try adding other todo items.
