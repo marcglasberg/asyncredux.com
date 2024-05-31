@@ -5,33 +5,41 @@ sidebar_position: 4
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Synchronous action
+# Synchronous actions
+
+A **synchronous** action is a type of action that doesn't involve any asynchronous operations.
+
+It cannot involve any network requests, file system operations, or any other kind of asynchronous
+operation.
+
+## AddToAction
 
 As we've seen, when the user types a new todo item in the `TodoInput` component and
 presses `Enter`, the app dispatches the `AddToAction` action:
 
 ```tsx
-store.dispatchAndWait(new AddTodoAction(text));
+store.dispatch(new AddTodoAction(text));
 ```
 
-The action's payload is the `text` of the new todo item:
+The action payload is the `text` of the new todo item:
 
-```tsx title="AddTodoAction.ts"
-export class AddTodoAction extends Action {
+```tsx
+class AddTodoAction extends Action {
   constructor(readonly text: string) { super(); }
 }
 ```
 
 All actions must also contain a `reduce()` function,
 which has access to the current state of the app and returns a new state.
-In this case, it must return a new todo list, equal to the current list plus the new todo item.
 
-The current state of the app is readily available in the `reduce()` function
-through the `this.state` property of the action.
-From there, we get the current todo list with `this.state.todoList`:
+In our example, this new state will have **current the todo list** with the **new todo item** added
+to it.
 
-```tsx title="AddTodoAction.ts"
-export class AddTodoAction extends Action {
+The current todo list is readily available in the `reduce()` function
+through `this.state.todoList`:
+
+```tsx
+class AddTodoAction extends Action {
   constructor(readonly text: string) { super(); }
 
   reduce() {  
@@ -60,8 +68,8 @@ Exactly what we want.
 
 This is the resulting action code:
 
-```tsx title="AddTodoAction.ts"
-export class AddTodoAction extends Action {
+```tsx
+class AddTodoAction extends Action {
   constructor(readonly text: string) { super(); }
 
   reduce() {
@@ -73,20 +81,20 @@ export class AddTodoAction extends Action {
 }
 ```
 
-Note we also used function `state.withTodoList()` to create a new state with the new todo list,
-and then returned this new state from the reducer.
+Note above we also used function `state.withTodoList()` to create a new state with the new todo
+list, and then returned this new state from the reducer.
 
 ## What if the item already exists?
 
 Let's now modify `AddTodoAction` to check if the new todo item being added
 already exists in the list. If it does, we want to abort adding the new todo item,
-and then show an error message to the user.
+and then show an **error message** to the user.
 
-This can be accomplished by simply throwing an `UserException` with an error message.
+This can be accomplished by simply throwing an `UserException` with the error message.
 See below:
 
-```tsx title="AddTodoAction.ts"
-export class AddTodoAction extends Action {
+```tsx
+class AddTodoAction extends Action {
   constructor(readonly text: string) { super(); }
 
   reduce() {
@@ -107,7 +115,7 @@ export class AddTodoAction extends Action {
 }
 ```
 
-In the code above, we use the `ifExists()` function defined in the `TodoList` class to check if the
+In the code above, we use the `ifExists` function defined in the `TodoList` class to check if the
 new todo item already exists in the list. When it does, we throw a `UserException` with an error
 message.
 
@@ -120,7 +128,47 @@ Async Redux will catch the exception and handle it properly:
 * Components can later check an error occurred by writing `useIsFailed(AddTodoAction)`
 * Components can later get a reference to the error itself by doing `useExceptionFor(AddTodoAction)`
 
-In the next page, we will see how to handle this error in the `TodoInput` component.
+In the next page, we will see how the `TodoInput` component handles this error.
+
+:::tip
+
+All actions, sync or async, can be dispatched with the following functions:
+
+* `dispatch` - Dispatches the action and returns immediately.
+* `dispatchAndWait` - Dispatches the action and returns a `Promise` that resolves
+  with a "status" that tells us if the action was successful or not.
+
+Here's why the [TodoInput](the-basic-ui#todoinput) component actually uses `dispatchAndWait`
+instead of `dispatch`:
+
+```tsx
+// Add the item if it's unique. Fails if its text is a duplicate
+let status = await store.dispatchAndWait(new AddTodoAction(text));
+
+// Only if the item was added, clear the input
+if (status.isCompletedOk) setInputText('');
+```
+
+:::
+
+## RemoveAllTodosAction
+
+In the [previous page](the-basic-ui.md#removeallbutton)
+we discussed the `RemoveAllButton` component, which dispatches a `RemoveAllTodosAction`
+when clicked. This action needs to return the state with an empty todo list.
+
+The [State](creating-the-state#state) class has a `withTodoList()` function that returns the
+state with a given todo list, and the [TodoList](creating-the-state#todolist) class
+has a static `TodoList.empty` todo list. We'll use both:
+
+```tsx
+class RemoveAllTodosAction extends Action {
+
+  reduce() {
+    return this.state.withTodoList(TodoList.empty);
+  }
+}
+```
 
 ## Note
 
@@ -134,7 +182,7 @@ extend this `Action` class instead.
 
 This is how you would define the `Action` class:
 
-```tsx title="Action.ts"
+```tsx 
 import { ReduxAction } from 'async-redux-react';
 import { State } from 'State';
 

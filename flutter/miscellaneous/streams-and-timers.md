@@ -65,7 +65,7 @@ all stream related objects, timers and futures in the props, and then also remov
 ## How do streams pass their information down to the store and ultimately to the widgets?
 
 When you create the stream, define its callback so that it dispatches an appropriate action. Each
-time the stream gets some data it will pass it to this action's constructor. The action's reducer
+time the stream gets some data it will pass it to the action constructor. The action reducer
 will put the data into the store state, from where it will be automatically sent down to the widgets
 that observe them.
 

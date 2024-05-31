@@ -96,7 +96,7 @@ class Increment extends Action {
 The store state is **immutable**.
 
 The only way to change the store **state** is by dispatching an **action**.
-The action's reducer returns a new state, that replaces the old one. 
+The action reducer returns a new state, that replaces the old one.
 
 ```tsx
 // Dispatch an action
@@ -163,7 +163,7 @@ class LoadText extends Action {
   async reduce() {
 
     // Download some information from the internet
-    let response = await fetch('http://numbersapi.com/random/42');
+    let response = await fetch('https://dummyjson.com/todos/1');
     let text = await response.text(); 
 
     // Change the state with the downloaded information
@@ -192,10 +192,12 @@ a dialog (or other UI) will open automatically, showing the error message to the
 ```tsx
 class LoadText extends Action {
   
-  async reduce() {    
-    let response = await fetch('http://numbersapi.com/random/42');
-    if (!response.ok) throw UserException('Failed to load');
+  async reduce() {
+    let response = await fetch("https://dummyjson.com/todos/random/1");
+    if (!response.ok) throw new UserException("Failed to load.");
     
+    let jsonResponse = await response.json();
+    let text = jsonResponse[0].todo;          
     let text = await response.text();     
     return (state) => text;
   }

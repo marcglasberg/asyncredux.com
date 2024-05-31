@@ -15,7 +15,7 @@ otherwise an **error dialog** prompts users to check their connection:
 class LoadText extends Action with CheckInternet {
       
    Future<String> reduce() async {
-      var response = await http.get('http://numbersapi.com/42');
+      var response = await http.get('https://dummyjson.com/todos/1');
       ...      
    }
 }   

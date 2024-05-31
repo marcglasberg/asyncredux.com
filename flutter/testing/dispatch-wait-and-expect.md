@@ -219,7 +219,7 @@ Most methods above allow you to provide a `completeImmediately` parameter:
 Please check each method's documentation for more details, and in special if the parameter's
 default for each of them is true or false. Also check their return values: When the methods do not
 complete immediately, they may return more information, like for example, a reference to the
-dispatched action that triggered the condition, just in case you need to check the action's type or
+dispatched action that triggered the condition, just in case you need to check the action type or
 status.
 
 # Timeout

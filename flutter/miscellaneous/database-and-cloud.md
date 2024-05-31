@@ -7,13 +7,13 @@ sidebar_position: 16
 How to interact with the database or the cloud?
 
 Pretend the user presses a button in the widget, which ends up dispatching an action.
-This action's reducer will connect to the cloud and/or database to get the desired information.
+This action reducer will connect to the cloud and/or database to get the desired information.
 
 You could directly connect to the cloud and database from the async reducer,
 but it's better to have a **DAO** (data access object) to abstract those implementation
 details.
 
-This could be your action's reducer:
+This could be your action reducer:
 
 ```dart
 Future<AppState> reduce() async {

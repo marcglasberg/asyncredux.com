@@ -33,7 +33,7 @@ Then, there are two errors we can read:
   If the action didn't change the error, `status.originalError` and `status.wrappedError` will be
   the same.
 
-Note the `action.status` field is immutable, and it will be changed during the action's lifecycle.
+Note the `action.status` field is immutable, and it will be changed during the action lifecycle.
 For this reason, your test needs to wait until the action is finished before getting a copy of
 its status.
 

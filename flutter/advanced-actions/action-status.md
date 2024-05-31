@@ -5,7 +5,7 @@ sidebar_position: 5
 # Action status
 
 All actions have an `status` object of type `ActionStatus`,
-that provides information about the action's execution.
+that provides information about the action execution.
 
 You can read the action status at any point in time.
 The status object is immutable, so it will
@@ -29,7 +29,7 @@ You can use `action.status.isCompleted` to check if a dispatched action finished
 It will be `false` if the action is still running, or if it hasn't been dispatched yet.
 
 You can use `action.status.isCompletedOk` to check if a dispatched action finished without
-errors (in more detail, if the action's methods `before` and `reduce` finished without throwing
+errors (in more detail, if the action methods `before` and `reduce` finished without throwing
 any errors).
 
 You can use `action.status.isCompletedFailed` to check if the action finished with errors.
@@ -49,7 +49,7 @@ var status = await store.dispatchAndWait(MyAction());
 print(status.isCompletedOk);
 ```
 
-## Getting the action's error
+## Getting the action error
 
 If the action finished with an error, you can get the original error:
 
@@ -84,7 +84,7 @@ print(action.status.status.hasFinishedMethodAfter);
 
 The action status is useful in mainly in testing and debugging scenarios.
 In production code, you are usually more interested in the state change that the action caused,
-rather than the action's status.
+rather than the action status.
 
 However, one possible use case in production is taking some action only if the action completed.
 

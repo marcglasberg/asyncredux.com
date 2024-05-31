@@ -46,7 +46,7 @@ export class TodoItem {
 }
 ```
 
-This class is **immutable**, as it doesn't have any setters, and its single 
+This class is **immutable**, as it doesn't have any setters, and its single
 function `toggleCompleted` returns a new `TodoItem` object, instead of modifying the current one.
 
 ## TodoList
@@ -92,7 +92,7 @@ export class TodoList {
   }
   
   ifExists(text: string): boolean {
-    return this.items.some(todo => todo.text === text);
+    return this.items.some((todo) => todo.text.toLowerCase() === text.toLowerCase());
   }
   
   removeTodo(item: TodoItem): TodoList {

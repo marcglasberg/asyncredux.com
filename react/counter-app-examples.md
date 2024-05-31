@@ -107,7 +107,7 @@ If we use the `useSelect` hook to "select" just the counter, the component will 
 when the counter changes, even when later we add more information to the state.
 
 ```tsx
-const counter = useSelect((state: State) => state.counter);
+const counter = useSelect((state) => state.counter);
 ```
 
 In other words, this is an optimization which will prevent unnecessary re-renders when the parts
@@ -162,7 +162,7 @@ We'll use the `useSelect` hook to "select" just the counter, so that the compone
 re-render when the counter changes, even when later we add more information to the state.
 
 ```tsx
-const counter = useSelect((state: State) => state.counter);
+const counter = useSelect((state) => state.counter);
 ```
 
 In other words, this is an optimization which will prevent unnecessary re-renders when the parts
@@ -493,7 +493,7 @@ we need to apply a small change to them. This doesn't work anymore:
 it('should increment the counter by one', () => {
   let store = new Store<State>({ initialState: new State(3) });
   
-  store.dispatch(new Increment()); // Here. 
+  store.dispatch(new Increment()); // Here! 
   expect(store.state.counter).toBe(4);
 });
 ```
@@ -510,7 +510,7 @@ This means we can use `await` to wait for the action to finish, and then check t
 it('should increment the counter by one', async () => {
   let store = new Store<State>({ initialState: new State(3) });
   
-  await store.dispatchAndWait(new Increment()); // Here.
+  await store.dispatchAndWait(new Increment()); // Here!
   expect(store.state.counter).toBe(4);
 });
 ```

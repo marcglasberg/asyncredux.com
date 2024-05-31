@@ -29,7 +29,7 @@ const store = new Store<State>({
   persistor: persistor,
 });
 
-export const App: React.FC = () => {
+function App() {
   return (
     <StoreProvider store={store}>
       <AppContent />

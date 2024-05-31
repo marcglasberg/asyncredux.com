@@ -18,7 +18,7 @@ The app UI contains:
 <TabItem value="rw" label="React">
 
 ```tsx 
-export const AppContent: React.FC = () => {
+function AppContent() {
   return (
     <div>
       <h1>Todo List</h1>
@@ -34,7 +34,7 @@ export const AppContent: React.FC = () => {
 <TabItem value="rn" label="React Native">
 
 ```tsx 
-export const AppContent: React.FC = () => {
+function AppContent() {
   return (
     <View>
       <Text>Todo List</Text>
@@ -72,7 +72,7 @@ and then press `Enter` or click a button to add it to the list.
 <TabItem value="rw" label="React">
 
 ```tsx 
-const TodoInput: React.FC = () => {
+function TodoInput() {
 
   const [inputText, setInputText] = useState<string>('');
   
@@ -105,7 +105,7 @@ const TodoInput: React.FC = () => {
 <TabItem value="rn" label="React Native">
 
 ```tsx
-const TodoInput: React.FC = () => {
+function TodoInput() {
 
   const [inputText, setInputText] = useState<string>('');
     
@@ -176,12 +176,12 @@ and then maps over them to render each todo item.
 
 ```tsx
 function ListOfTodos() {
-  const todoList = useSelect((state: State) => state.todoList.items);
+  const todoItems = useSelect((state) => state.todoList.items);
 
   return (
     <div className="listOfTodos">
-      {todoList.map((todo, index) => (
-        <div key={index}>{todo.text}</div>
+      {todoItems.map((todoItem, index) => (
+        <div key={index}>{todoItem.text}</div>
       ))}
     </div>
   );
@@ -206,7 +206,7 @@ function RemoveAllButton() {
 
 ## Try it yourself
 
-Type "Buy food" in the input, and press the `Add` button or the `Enter` key.
+Type "Buy milk" in the input, and press the `Add` button or the `Enter` key.
 Try adding other todo items.
 Then remove all of them by clicking the `Remove All` button.
 

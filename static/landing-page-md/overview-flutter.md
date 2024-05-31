@@ -65,7 +65,7 @@ class Increment extends Action {
 The store state is **immutable**.
 
 The only way to change the store **state** is by dispatching an **action**.
-The action's reducer returns a new state, that replaces the old one.
+The action reducer returns a new state, that replaces the old one.
 
 ```tsx
 // Dispatch an action
@@ -114,7 +114,7 @@ class LoadText extends Action {
   Future<String> reduce() async {
   
     // Download some information from the internet
-    var response = await http.get('http://numbersapi.com/42');
+    var response = await http.get('https://dummyjson.com/todos/1');
     
     // Change the state with the downloaded information
     return response.body;      
@@ -144,7 +144,7 @@ a dialog (or other UI) will open automatically, showing the error message to the
 class LoadText extends Action {
     
   Future<String> reduce() async {  
-    var response = await http.get('http://numbersapi.com/42');
+    var response = await http.get('https://dummyjson.com/todos/1');
 
     if (response.statusCode == 200) return response.body;
     else throw UserException('Failed to load');         
@@ -250,7 +250,7 @@ otherwise an **error dialog** prompts users to check their connection:
 class LoadText extends Action with CheckInternet {
       
    Future<String> reduce() async {
-      var response = await http.get('http://numbersapi.com/42');
+      var response = await http.get('https://dummyjson.com/todos/1');
       ...      
    }
 }   
