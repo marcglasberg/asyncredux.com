@@ -146,7 +146,7 @@ export class State {
   }
 
   withTodoList(todoList: TodoList): State {
-    return new State({ todoList: todoList || this.todoList });
+    return new State({ todoList: todoList });
   }
 
   static initialState: State = new State({ todoList: TodoList.empty });

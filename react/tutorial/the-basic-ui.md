@@ -168,11 +168,11 @@ async function processInput(text: string) {
   if (status.isCompletedOk) setInputText(''); 
 }
 ```
-         
+
 ## ListOfTodos
 
-The list of todos uses the `useSelect` hook to get the list of todos from `state.todoList.items`, 
-and then maps over them to render each todo item.
+The list of todos uses the `useSelect` hook to get the list of todos from `state.todoList.items`,
+and then maps over them to render each todo item component.
 
 ```tsx
 function ListOfTodos() {
@@ -180,18 +180,28 @@ function ListOfTodos() {
 
   return (
     <div className="listOfTodos">
-      {todoItems.map((todoItem, index) => (
-        <div key={index}>{todoItem.text}</div>
+      {todoItems.map((item, index) => (
+        <TodoItemComponent key={index} item={item} />
       ))}
     </div>
   );
 }
 ```
 
+## TodoItemComponent
+
+For the moment, the todo item component is just the text of the item.
+
+```tsx
+function TodoItemComponent({item}: {item: TodoItem}) {
+  return <div>{item.text}</div>;
+}
+```
+
 ## RemoveAllButton
 
 Finally, we add a button that uses the `useStore` hook to get a reference to the store,
-and then uses it to dispatch a `RemoveAllTodosAction` when clicked. 
+and then uses it to dispatch a `RemoveAllTodosAction` when clicked.
 
 ```tsx
 function RemoveAllButton() {
@@ -210,9 +220,9 @@ Type "Buy milk" in the input, and press the `Add` button or the `Enter` key.
 Try adding other todo items.
 Then remove all of them by clicking the `Remove All` button.
 
-To see all files in this project, 
-click the "hamburger icon" in the top left corner of the code editor. 
-The state classes are in file `State.ts`, 
+To see all files in this project,
+click the "hamburger icon" in the top left corner of the code editor.
+The state classes are in file `State.ts`,
 while the store, actions and components are in the `App.tsx` file.
 
 <iframe

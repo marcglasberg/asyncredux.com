@@ -19,7 +19,7 @@ const store = createStore<State>({initialState: new State('Mary', 25)});
 To use the store, add it in a `StoreProvider` at the top of your component tree.
 
 ```tsx
-const App = () => {
+function App() {
   return (
     <StoreProvider store={store}>
       <AppContent />
@@ -36,7 +36,7 @@ The `useAllState` hook lets you access the state from any component.
 It will rebuild when the state changes.
 
 ```tsx
-const MyComponent = () => { 
+function MyComponent() { 
   const state = useAllState();   
   
   return <div>{state.name} has {state.age} years old</div>;    
@@ -49,7 +49,7 @@ The `useSelect` hook selects only the part of the state that your component need
 It will rebuild only when that part changes.
 
 ```tsx
-const MyComponent = () => { 
+function MyComponent() { 
   const name = useSelect((state) => state.name);   
   const age = useSelect((state) => state.age);
      
@@ -62,7 +62,7 @@ const MyComponent = () => {
 The `useObject` hook is another alternative that only rebuilds when needed:
 
 ```tsx
-const MyComponent = () => {
+function MyComponent() {
  
   const state = useObject((state) => {
     name: state.name, 
@@ -119,7 +119,7 @@ await store.dispatchAndWaitAll([new Increment(), new LoadText()]);
 The hooks to dispatch actions are `useDispatch` , `useDispatchAll` etc.
 
 ```tsx
-const MyComponent = () => { 
+function MyComponent() { 
   const dispatch = useDispatch();  
 
   return (
@@ -135,7 +135,7 @@ const MyComponent = () => {
 Or getting the store with `useStore` also allows you to dispatch actions:
 
 ```tsx
-const MyComponent = () => { 
+function MyComponent() { 
   const store = useStore();  
 
   return (
@@ -212,7 +212,7 @@ To show a spinner while an asynchronous action is running, use `isWaiting(action
 To show an error message inside the component, use `isFailed(action)`.
 
 ```tsx
-const MyComponent = () => {
+function MyComponent() {
 
   const isWaiting = useIsWaiting(LoadText); 
   const isFailed = useIsFailed(LoadText);  
@@ -493,10 +493,10 @@ automatically show a message to the user in an error dialog:
 
 ```tsx
 globalWrapError: (error: any) => {
-        return (error instanceof FirestoreError)
-          ? UserException('Error connecting to Firebase')
-          : error;
-      }  
+   return (error instanceof FirestoreError)
+      ? UserException('Error connecting to Firebase')
+      : error;
+   }  
 ```
 
 &nbsp;
