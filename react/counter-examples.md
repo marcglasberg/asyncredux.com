@@ -1,10 +1,10 @@
 ---
-sidebar_position: 3
+sidebar_position: 100
 ---
 
-# Counter App examples
+# Counter examples
 
-Let's create simple "counter app" examples using **Async Redux**.
+Let's create a few simple "counter app" examples using **Async Redux**.
 
 The examples below are editable and runnable.
 You can change the code and see the results in real-time.
@@ -37,7 +37,7 @@ To create a component that shows the counter in the screen,
 we use the `useAllState` hook. This hooks returns the whole state,
 which here is the counter value itself: `const counter = useAllState()`.
 
-We also need a second hook called `useStore`, which gives us a reference to store
+We also need a second hook called `useStore`, which gives us a reference to the store
 with `const store = useStore()`. This is necessary because when the user clicks
 a button we want to dispatch the `Increment` action with `store.dispatch(...)`.
 
@@ -78,7 +78,7 @@ const store = new Store<State>({
 ```
 
 The `Increment` action increments the state by 1.
-The state is an object of type `State`, which means the counter is `state.counter`.
+The state is now an object of type `State`, which means the counter is `state.counter`.
 The action reducer returns a new object, incrementing the counter by one:
 `{ counter: this.state.counter + 1 }`.
 
@@ -146,7 +146,7 @@ const store = new Store<State>({
 ```
 
 The `Increment` action increments the state by 1.
-The state is an instance of `State`, which means the counter is `state.counter`.
+The state is now an instance of `State`, which means the counter is `state.counter`.
 The action reducer returns a new instance of the class, incrementing the counter by one:
 `new State(this.state.counter + 1)`.
 
@@ -197,8 +197,8 @@ class Increment extends ReduxAction<State> {
 While this works, it's breaking the **encapsulation** of the `State` class.
 In other words, the knowledge of how to modify the state is outside the state itself.
 
-We can fix this by adding a class function (or more precisely, a _method_) to
-the `State` class that increments the counter.
+We can fix this by adding a class function (or more precisely, a _method_) to the `State` class.
+This function is called `increment`, and it returns a new state with an incremented counter.
 
 ```tsx
 class State {
@@ -223,7 +223,7 @@ class Increment extends ReduxAction<State> {
 This is a better design, because:
 
 * The `State` class now encapsulates all the knowledge of how to modify itself.
-  You may think this is a small improvement, and it is, but it will make a big difference
+  You may think this is only a small improvement, and it is, but it will make a big difference
   in a real app, when the state becomes complex.
 
 * Adding such functions make it trivial to modify the state and keep it immutable,
@@ -498,7 +498,7 @@ it('should increment the counter by one', () => {
 });
 ```
 
-If we dispatch an asynchronous action with function `dispatch`, as shown above, 
+If we dispatch an asynchronous action with function `dispatch`, as shown above,
 this function it will return immediately,
 and the test will check the state before the action finishes.
 

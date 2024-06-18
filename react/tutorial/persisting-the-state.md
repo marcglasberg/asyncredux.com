@@ -30,12 +30,12 @@ Async Redux comes out of the box with the `ClassPersistor` that implements the `
 interface. It supports serializing both JavaScript objects and ES6 classes out of the box,
 and it will persist the whole state of your application.
 
-To use it, you must provide four things in its constructor:
+To use it, you must provide:
 
 * `loadSerialized`: a function that returns the serialized state.
 * `saveSerialized`: a function that saves the serialized state.
 * `deleteSerialized`: a function that deletes the serialized state.
-* `classesToSerialize`: an array of all the custom classes that are part of your state.
+* `classesToSerialize`: an array of all the _custom_ classes that are part of your state.
 
 In more detail, here's the `ClassPersistor` constructor signature:
 

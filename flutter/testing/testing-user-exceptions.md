@@ -10,7 +10,7 @@ For example, you want to test that users are warned if they typed letters in som
 accepts numbers. To that end, your test would dispatch the appropriate action, wait for it
 to finish, and then check the `action.status` field.
 
-For more information the action status, see [this page](../advanced-actions/action-status.md).
+For more information the action status, see [this page](../advanced-actions/action-status).
 
 First of all, the status can tell us if the action finished with or without errors:
 

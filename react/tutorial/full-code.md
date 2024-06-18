@@ -8,19 +8,22 @@ If you're interested in seeing the full code of _Todo List_ applications that ar
 more complete than the one we've built in this tutorial, you can check out these examples
 in [Async Redux's GitHub repository](https://github.com/marcglasberg/async-redux-react):
 
-* [Todo List app for **React Web**](https://github.com/marcglasberg/async-redux-react/tree/main/examples/todo-app-example)
-* [Todo List app for **React Native**](https://github.com/marcglasberg/async-redux-react/tree/main/examples/TodoAppReactNative)
-        
+* [Todo List app for **React Web
+  **](https://github.com/marcglasberg/async-redux-react/tree/main/examples/todo-app-example)
+* [Todo List app for **React Native
+  **](https://github.com/marcglasberg/async-redux-react/tree/main/examples/TodoAppReactNative)
+
 ## Tutorial code
 
-As a reference, the following is the full code of the web app we built in this tutorial, 
-fully commented, in files `Index.tsx`, `App.tsx`, and `Styles.css`. 
+As a reference, the following is the full code of the web app we built in this tutorial,
+fully commented, in files `index.tsx`, `App.tsx`, `styles.css` and `State.ts`.
 
-Note all components and actions are in the `App.tsx` file below, 
-just to make it easier for you to read the code, 
-but in a real app they would be split it into multiple files.
+Note all components and actions are in `App.tsx`,
+and all state types are in `State.ts`,
+just to make it easier for you to read the code.
+In a real app they would be split it into multiple files.
 
-```tsx title="Index.tsx"
+```tsx title="index.tsx"
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
@@ -34,7 +37,6 @@ root.render(
   </React.StrictMode>
 );
 ```
-
 
 ```tsx title="App.tsx"
 import "./styles.css";
@@ -195,7 +197,7 @@ function TodoItemComponent({ item }: { item: TodoItem }) {
   );
 }
 
-// Button removes all items, by dispatching `RemoveAllTodosAction`.
+// Button removes all items, using `RemoveAllTodosAction`.
 function RemoveAllButton() {
   
   // Hook to access the store.
@@ -214,7 +216,7 @@ function RemoveAllButton() {
   );
 }
 
-// Button removes all completed items, by dispatching `RemoveCompletedTodosAction`.
+// Button removes all completed items, using `RemoveCompletedTodosAction`.
 function RemoveCompletedButton() {
 
   // Hook to access the store.
@@ -235,7 +237,7 @@ function RemoveCompletedButton() {
   );
 }
 
-// Button to change the filter, by dispatching `NextFilterAction`.
+// Button to change the filter, using `NextFilterAction`.
 // Filter can be: showAll, showActive, or showCompleted.
 function FilterButton() {
 
@@ -286,8 +288,8 @@ export class RemoveAllTodosAction extends Action {
 
 export class RemoveCompletedTodosAction extends Action {
   reduce() {
-    // Return the new state with the todo list, but without the completed items.
-    // The filter is also reset to show all items.
+    // Return the new state with the todo list, but without the 
+    // completed items. The filter is also reset to show all items.
     return this.state      
       .withTodoList(this.state.todoList.removeCompleted())
       .withFilter(Filter.showAll);
@@ -314,7 +316,7 @@ class AddRandomTodoAction extends Action {
   }
 }
 
-// Button to add a random todo item, by dispatching `AddRandomTodoAction`.
+// Button to add a random todo item, using `AddRandomTodoAction`.
 function AddRandomTodoButton() {
   
   // Hook to access the store.
@@ -375,7 +377,7 @@ export class NextFilterAction extends Action {
 }
 ```
 
-```css title="Styles.css"
+```css title="styles.css"
 .app {
   font-family: sans-serif;
   text-align: center;
@@ -454,5 +456,122 @@ label {
   font-size: 12px;
   margin-bottom: 14px;
   height: 12px;
+}
+```
+
+```tsx title="State.ts"
+// A single todo item.
+export class TodoItem {
+  constructor(public text: string, public completed: boolean = false) {}
+
+  toggleCompleted() {
+    return new TodoItem(this.text, !this.completed);
+  }
+
+  ifShows(filter: Filter) {
+    return (
+      filter === Filter.showAll ||
+      (filter === Filter.showCompleted && this.completed) ||
+      (filter === Filter.showActive && !this.completed)
+    );
+  }
+}
+
+// The list of all todo items.
+export class TodoList {
+  constructor(public readonly items: TodoItem[] = []) {}
+
+  addTodoFromText(text: string): TodoList {
+    const trimmedText = text.trim();
+    const capitalizedText =
+      trimmedText.charAt(0).toUpperCase() + trimmedText.slice(1);
+    return this.addTodo(new TodoItem(capitalizedText));
+  }
+
+  addTodo(newItem: TodoItem): TodoList {
+    if (newItem.text === "" || this.ifExists(newItem.text)) return this;
+    else return new TodoList([newItem, ...this.items]);
+  }
+
+  ifExists(text: string): boolean {
+    return this.items.some(
+      (todo) => todo.text.toLowerCase() === text.toLowerCase()
+    );
+  }
+
+  removeTodo(item: TodoItem): TodoList {
+    return new TodoList(
+      this.items.filter((itemInList) => itemInList !== item)
+    );
+  }
+
+  removeCompleted(): TodoList {
+    return new TodoList(
+      this.items.filter((itemInList) => !itemInList.completed)
+    );
+  }
+
+  toggleTodo(item: TodoItem): TodoList {
+    const newTodos = this.items.map((itemInList) =>
+      itemInList === item ? item.toggleCompleted() : itemInList
+    );
+    return new TodoList(newTodos);
+  }
+
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  countCompleted(): number {
+    return this.items.filter((item) => item.completed).length;
+  }
+
+  *[Symbol.iterator]() {
+    for (let i = 0; i < this.items.length; i++) {
+      yield this.items[i];
+    }
+  }
+
+  toString() {
+    return `TodoList{${this.items.join(",")}}`;
+  }
+
+  static empty: TodoList = new TodoList();
+}
+
+export enum Filter {
+  showAll = "Showing ALL",
+  showCompleted = "Showing COMPLETED",
+  showActive = "Showing ACTIVE",
+}
+
+// The app state
+export class State {
+  todoList: TodoList;
+  readonly filter: Filter;
+
+  constructor({
+    todoList,
+    filter,
+  }: {
+    todoList: TodoList;
+    filter: Filter;
+  }) {
+    this.todoList = todoList;
+    this.filter = filter;
+  }
+
+  withTodoList(todoList: TodoList): State {
+    return new State({ todoList: todoList, filter: this.filter });
+  }
+
+  withFilter(filter: Filter): State {
+    return new State({ todoList: this.todoList, filter: filter });
+  }
+
+  static initialState: State = new State({
+    todoList: TodoList.empty,
+    filter: Filter.showAll,
+  });
 }
 ```

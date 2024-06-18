@@ -4,9 +4,9 @@ sidebar_position: 12
 
 # Wait, fail, succeed
 
-A very common pattern is having some process that can succeed or fail, and you want to show a
-spinner while the process is running, show the result when it's done, and show an error message if
-the process fails.
+A common pattern involves having a process that can either succeed or fail.
+You want to display a spinner during the process, show the result when it completes,
+and present an error message if it fails.
 
 These are called "process states":
 

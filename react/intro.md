@@ -7,10 +7,10 @@ sidebar_position: 1
 Async Redux is an optimized Redux version, which is very easy to learn and use,
 yet powerful and tailored for React.
 It has none of the boilerplate of the original vanilla Redux.
-See below the comparison with Redux Toolkit, MobX and Zustand.
+See below the comparison with Redux Toolkit, MobX, Zustand and TanStack Query.
 
-While Async Redux is new for React, it has been available
-for [Flutter](https://pub.dev/packages/async_redux) for a few years,
+While Async Redux is new for React, I consider it mature. 
+It has been available for [Flutter](https://pub.dev/packages/async_redux) for a few years,
 where it ranks among the top 8% of most-used packages, meaning its features have
 been battle-tested in hundreds of real-world applications.
 
@@ -19,7 +19,7 @@ been battle-tested in hundreds of real-world applications.
 Async Redux's whole focus is on being easy for developers to use.
 I'm consistently incredulous at things front end developers have to deal with,
 and the large overhead knowledge that is needed just to navigate the pitfalls
-of the tools they use. I want to make Async Redux the opposite of that:
+of the tools we use. I want to make Async Redux the opposite of that:
 You don't need to be super clever about approaching things just to make it work.
 
 Despite being easy to use, Async Redux is powerful enough
@@ -57,7 +57,7 @@ problem, or don't say where the problem is.
 
 Async Redux aims to be very easy at first, but also to continue being easy when
 the inevitable complexity of web and mobile development arises.
-It works perfectly with TypeScript and allows for easy IDE navigation.
+It plays well with TypeScript, and preserves IDE navigation.
 
 ### Comparing with Zustand
 
@@ -67,8 +67,7 @@ setup or complexity. For advanced features you need to install separate packages
 
 Async Redux also doesn't need any extensive setup, and is not more complex than Zustand.
 However, Async Redux is not barebones: The advanced features are there when you need them.
-
-For example, it deals natively with serializing, running async processes, displaying spinners
+It deals natively with serializing, running async processes, displaying spinners
 while loading, showing error messages, saving the state to the local storage, and testing.
 
 ### Comparing with TanStack Query

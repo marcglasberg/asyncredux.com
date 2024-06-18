@@ -5,7 +5,7 @@ sidebar_position: 20
 # StoreTester (deprecated)
 
 For **almost all tests** it's now recommended to use the `Store` directly, 
-as shown [here](./dispatch-wait-and-expect.md).
+as shown [here](./dispatch-wait-and-expect).
 
 Keep on reading only if you have to maintain older/deprecated code that still uses 
 the old `StoreTester`.

@@ -55,4 +55,4 @@ state **directly**.
 
 Meanwhile, the `StateObserver` is an abstract class which you can implement to be notified of
 **state changes**. This observer can also be used for logging, but its main goal is to implement
-collecting metrics, which is why I'll [discuss it here](./metrics.md).
+collecting metrics, which is why I'll [discuss it here](./metrics).
