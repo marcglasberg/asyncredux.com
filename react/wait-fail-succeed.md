@@ -11,7 +11,7 @@ and present an error message if it fails.
 These are called "process states":
 
 * **Waiting**: The process is currently running.
-* **Failed**: The process failed.
+* **Failed**: The process failed with an error.
 * **Succeeded**: The process succeeded.
 
 In Async Redux, these processes start when actions are dispatched, which means we need a way to
@@ -31,18 +31,18 @@ hooks `useIsWaiting`, `useIsFailed`, `useExceptionFor` and `useClearExceptionFor
 
 We have already previously seen how to read the state and dispatch actions from components:
 
-```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-      Text('Counter: ${context.state.counter}'),
-      ElevatedButton(
-        onPressed: () => context.dispatch(IncrementAction()),
-        child: Text('Increment'),
-      ],
-    );
-}
+```dart    
+function MyComponent() {
+
+  const state = useAllState(); 
+  
+  return (
+    <div>
+      <p>Counter: {state.counter}</p>
+      <button onClick={() => store.dispatch(IncrementAction())}>Increment</button>
+    </div>
+  );
+};
 ```
 
 Now, let's see how to show a spinner while an action is being processed, and show an error message.
@@ -53,12 +53,21 @@ Hook `useIsWaiting(actionType)` returns true if the given action type is current
 processed. By using this hook, you can show a spinner while an action is being processed:
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    return context.isWaiting(IncrementAction) 
-      ? CircularProgressIndicator(),
-      : Text('Counter: ${context.state.counter}');
-  }          
+function MyComponent() {
+
+  const isWaiting = useIsWaiting(IncrementAction);
+  const state = useAllState(); 
+    
+  return (
+    <div>
+      {
+      isWaiting 
+        ? <CircularProgress /> 
+        : <p>Counter: {state.counter}</p>
+      }
+    </div>
+  );
+};
 ```
 
 ## Show an error message
@@ -67,11 +76,21 @@ Hook `useIsFailed(actionType)` returns true if the given action type just failed
 By using this hook, you can show an error message when an action fails:
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    if (context.isFailed(IncrementAction)) return Text('Loading failed');
-    else return Text('Counter: ${context.state.counter}');
-  }          
+function MyComponent() {
+
+  const isFailed = useIsFailed(IncrementAction);
+  const state = useAllState(); 
+    
+  return (
+    <div>
+      {
+      isFailed 
+        ? <p>Loading failed...</p> 
+        : <p>Counter: {state.counter}</p>
+      }
+    </div>
+  );
+};
 ```
 
 If the action failed with an `UserException`, you can get this error by doing
@@ -79,17 +98,25 @@ If the action failed with an `UserException`, you can get this error by doing
 to eventually show it in the UI.
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    if (context.isFailed(IncrementAction)) {
-      var exception = context.exceptionFor(IncrementAction);
-      return Text('Loading failed: ${exception.message}');
-    }
-    else return Text('Counter: ${context.state.counter}');
-  }
+function MyComponent() {
+
+  const isFailed = useIsFailed(IncrementAction);
+  const exception = useExceptionFor(IncrementAction);
+  const state = useAllState(); 
+    
+  return (
+    <div>
+      {
+      isFailed 
+        ? <p>Loading failed: {exception.message}</p>
+        : <p>Counter: {state.counter}</p>
+      }
+    </div>
+  );
+};
 ```
 
-## Combining `isWaiting` and `isFailed`
+## Combining isWaiting and isFailed
 
 Let's suppose we've got an async action that loads some text from a server.
 You can show a spinner while the action is being processed,
@@ -104,11 +131,11 @@ function MyComponent() {
   
   if (isWaiting) return <CircularProgress />
   if (isFailed) return <p>Loading failed...</p>;
-  return <p>{state}</p>;
+  return <p>{state.someText}</p>;
 }
 ```
 
-Now let's repeat the previous code, but add a button (in a Column) that retries the action:
+Now let's repeat the previous code, but add a button that retries the action:
 
 ```tsx
 function MyComponent() {
@@ -127,7 +154,7 @@ function MyComponent() {
     </div>
   );
   
-  return <p>{state}</p>;
+  return <p>{state.someText}</p>;
 }
 ```
 
@@ -138,4 +165,3 @@ when the action is dispatched again.
 You could always clear the error message explicitly by defining
 `let clearExceptionFor = useClearExceptionFor();` and then calling `clearExceptionFor(LoadText)`,
 but it's not necessary to do so before dispatching the action again.
-

@@ -89,9 +89,9 @@ class SearchText extends Action with Debounce {
 ## Throttle (soon)
 
 To prevent an action from running too frequently, you can add the `Throttle` mixin to your
-action class. This means that once the action happens it's considered _fresh_, and it won't happen
-again for a set period of time, even if you try to trigger it.
-After this period ends, the action is considered _stale_ and is ready to be triggered again.
+action class. This means that once the action runs it's considered _fresh_, and it won't run
+again for a set period of time, even if you try to dispatch it.
+After this period ends, the action is considered _stale_ and is ready to run again.
 
 ```tsx
 class LoadPrices extends Action with Throttle {  

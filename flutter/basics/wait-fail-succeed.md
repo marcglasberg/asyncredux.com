@@ -11,7 +11,7 @@ and present an error message if it fails.
 These are called "process states":
 
 * **Waiting**: The process is currently running.
-* **Failed**: The process failed.
+* **Failed**: The process failed with an error.
 * **Succeeded**: The process succeeded.
 
 In Async Redux, these processes start when actions are dispatched, which means we need a way to

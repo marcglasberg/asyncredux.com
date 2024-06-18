@@ -123,3 +123,24 @@ action is **sync**, which means the state gets changed right after the dispatch 
 
 Making sure some action you're dispatching is synchronous is usually not a very useful feature,
 but it's there if you need it, especially for testing.
+             
+## Actions can dispatch other actions
+
+You can use dispatch actions from inside other actions. The dispatch functions are available
+in the action object, so you can call them directly, by using `this.dispatch()` etc.
+
+For example:
+
+```dart
+class LoadTextAndIncrement extends Action {
+
+  async reduce() {
+  
+    // Dispatch and wait for the action to finish   
+    await this.dispatchAndWait(new LoadText());
+    
+    // Only then, increment the state
+    return (state) => state.copy({ count: state.count + 1 });  
+  }
+}
+```
