@@ -8,7 +8,7 @@ A common pattern in app development involves having a process that can either su
 You want to display a spinner during the process, show the result when it completes,
 and present an error message if it fails.
 
-These are called "process states":
+These are called "process phases":
 
 * **Waiting**: The process is currently running.
 * **Failed**: The process failed with an error.
@@ -19,14 +19,46 @@ know if an action is currently being processed, if it just failed, and eventuall
 
 Thankfully, this is very easy to do with Async Redux, by using the following functions:
 
-* `isWaiting(actionType)`: Returns true if the given action type is currently being processed.
-* `isFailed(actionType)`: Returns true if the given action type just failed.
+* `isWaiting(actionType)`: Is true if the given action type is currently being processed.
+* `isFailed(actionType)`: Is true if the given action type just failed.
 * `exceptionFor(actionType)`: Returns the exception that caused the action to fail.
 * `clearExceptionFor(actionType)`: Clears the exception that caused the action to fail.
 
+## In actions
+
+In actions, we have direct access to the process phase functions above by
+using `this.isWaiting`, `this.isFailed`, `this.exceptionFor` and `this.cearExceptionFor`.
+
+For example, suppose we want to create a `SellAction` action that sells a stock.
+However, if there is already a `SellAction` or `BuyAction` action currently running,
+we want to show an error message instead. This is how you can do it:
+
+```dart    
+class SellAction extends Action {
+  constructor(public stock: string) { super(); }
+
+  async reduce() {
+  
+    // Make sure we're not in the middle of another sell or buy process 
+    if (this.isWaiting(SellAction) 
+        || this.isWaiting(BuyAction)) {
+      throw UserException('Please wait for the current order to complete.');
+    }
+    
+    // Only then, post the sell order to the backend
+    let amount = await postSellOrder(this.stock);    
+    
+    return (state) => 
+      state.copy(
+        stocks: state.stocks.setAmount(this.stock, amount),
+      );
+  }
+}
+```
+
 ## In components
 
-In components, we have access to those functions by using the
+In components, we have access to the process phase functions by using the
 hooks `useIsWaiting`, `useIsFailed`, `useExceptionFor` and `useClearExceptionFor`.
 
 We have already previously seen how to read the state and dispatch actions from components:

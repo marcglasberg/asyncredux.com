@@ -113,7 +113,7 @@ class LoadText extends Action {
   // This reducer returns a Future  
   Future<String> reduce() async {
   
-    // Download some information from the internet
+    // Download something from the internet
     var response = await http.get('https://dummyjson.com/todos/1');
     
     // Change the state with the downloaded information
@@ -227,11 +227,12 @@ class SellStockForPrice extends Action {
       (state) => state.stocks[stock].price >= limitPrice
     );
       
-    // Only then, sell the stock
-    dispatch(SellStock(stock));
+    // Only then, post the sell order to the backend
+    var amount = await postSellOrder(stock);    
     
-    // No further state change    
-    return null; 
+    return state.copy(
+      stocks: state.stocks.setAmount(stock, amount),
+    ); 
 }
 ```
 

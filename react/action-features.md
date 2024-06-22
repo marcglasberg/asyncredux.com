@@ -1,5 +1,5 @@
 ---
-sidebar_position: 10
+sidebar_position: 11
 ---
 
 # Action features
@@ -115,7 +115,7 @@ every keystroke triggers a server request. Instead, it waits until the user paus
 acting.
 
 ```tsx
-lass SearchText extends Action {
+class SearchText extends Action {
   constructor(public searchTerm: string) { super(); }
   
   debounce = 300 // Milliseconds

@@ -162,7 +162,7 @@ class LoadText extends Action {
   // This reducer returns a Promise
   async reduce() {
 
-    // Download some information from the internet
+    // Download something from the internet
     let response = await fetch('https://dummyjson.com/todos/1');
     let text = await response.text(); 
 
@@ -278,14 +278,16 @@ class SellStockForPrice extends Action {
   
     // Wait until the stock price is higher than the limit price
     await this.waitCondition(
-      (state) => state.stocks[this.stock].price >= this.price
+      (state) => state.stocks.getPrice(this.stock) >= this.price
     );
     
-    // Only then, sell the stock
-    this.dispatch(new SellStock(this.stock));
+    // Only then, post the sell order to the backend
+    let amount = await postSellOrder(this.stock);    
     
-    // No further state change
-    return null;
+    return (state) => 
+      state.copy(
+        stocks: state.stocks.setAmount(this.stock, amount),
+      );
   }
 }
 ```

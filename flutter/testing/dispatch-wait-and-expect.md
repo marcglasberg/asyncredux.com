@@ -125,8 +125,8 @@ expect(
 
 ```dart
 // Wait until no actions are in progress anymore.
-dispatch(BuyStock('IBM'));
-dispatch(BuyStock('TSLA')); 
+dispatch(BuyAction('IBM'));
+dispatch(BuyAction('TSLA')); 
  
 await waitAllActions([]);
                  
