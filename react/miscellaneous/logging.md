@@ -8,7 +8,7 @@ When you instantiate your store, you can optionally pass it a list of `actionObs
 a list of `stateObservers`, which may be used for logging:
 
 ```dart
-var store = Store<AppState>(
+var store = Store<State>(
   initialState: state,
   actionObservers: [Log.printer(formatter: Log.verySimpleFormatter)],
   stateObservers: [StateLogger()],

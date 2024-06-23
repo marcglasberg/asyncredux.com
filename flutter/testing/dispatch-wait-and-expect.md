@@ -7,12 +7,22 @@ sidebar_position: 1
 Testing an Async Redux app generally involves these steps, in order:
 
 1. Set up the store and some initial state.
-2. Dispatch an action.
-3. Wait for the action to complete its dispatch process, or for the store state to meet
-   a certain condition.
+2. Dispatch actions.
+3. Wait for the actions to complete their dispatch,
+   or for the store state to meet a certain condition.
 4. Verify the current state, or the action status.
 
-Item 3 above can be done using one the following methods:
+Item 3 above (waiting for actions to complete) can be done using 
+any combination of the following methods:
+
+* [store.dispatchAndWait](#storedispatchandwait)
+* [store.dispatchAndWaitAll](#storedispatchandwaitall)
+* [store.waitCondition](#storewaitcondition)
+* [store.waitActionCondition](#storewaitactioncondition)
+* [store.waitAllActions](#storewaitallactions)
+* [store.waitActionType](#storewaitactiontype)
+* [store.waitAllActionTypes](#storewaitallactiontypes)
+* [store.waitAnyActionTypeFinishes](#storewaitanyactiontypefinishes)
 
 ## `store.dispatchAndWait`
 

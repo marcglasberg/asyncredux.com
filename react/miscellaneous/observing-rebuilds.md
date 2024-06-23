@@ -13,7 +13,7 @@ You can create your own `ModelObserver`, but the provided `DefaultModelObserver`
 the box to print to the console and do basic testing:
 
 ```dart
-var store = Store<AppState>(
+var store = Store<State>(
   initialState: state,
   modelObserver: DefaultModelObserver(),  
 );

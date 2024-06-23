@@ -22,7 +22,7 @@ class SaveName extends AppAction {
   final String name;
   SaveName(this.name);      
  
-  Future<AppState> reduce() async {
+  Future<State> reduce() async {
     await saveName(); 
     return state.copy(name: name);
   }
@@ -45,7 +45,7 @@ class SaveName extends AppAction {
   final String name;
   SaveName(this.name);      
  
-  Future<AppState> reduce() async {    
+  Future<State> reduce() async {    
     var previousName = state.name; 
     await saveName(); 
     var currentName = state.name;    
@@ -66,11 +66,11 @@ class SaveName extends AppAction {
 
   Reducer<St> wrapReduce(Reducer<St> reduce) => () async {
     var previousState = state.name; 
-    AppState? newState = await reduce();  
+    State? newState = await reduce();  
     return identical(previousState, state.name) ? newState : null;
   }
 
-  Future<AppState> reduce() async {       
+  Future<State> reduce() async {       
     await saveName();            
     return state.copy(name: name);
   }
@@ -84,11 +84,11 @@ You may also create a mixin to make it easier to add this behavior to multiple a
 ```dart
 mixin AbortIfStateChanged on AppAction {
   
-  abstract AppState getObservedState();
+  abstract State getObservedState();
   
   Reducer<St> wrapReduce(Reducer<St> reduce) => () async {
     var previousState = getObservedState(); 
-    AppState? newState = await reduce();  
+    State? newState = await reduce();  
     return identical(previousState, getObservedState()) ? newState : null;
   }
 }
@@ -101,9 +101,9 @@ class SaveName extends AppAction with AbortIfStateChanged {
   final String name;
   SaveName(this.name);      
   
-  AppState getObservedState() => state.name;
+  State getObservedState() => state.name;
 
-  Future<AppState> reduce() async {       
+  Future<State> reduce() async {       
     await saveName();            
     return state.copy(name: name);
   }

@@ -68,7 +68,7 @@ Suppose we define a `BarrierAction`:
 class BarrierAction extends AppAction {
   final bool hasBarrier;
   BarrierAction(this.hasBarrier);
-  AppState reduce() => state.copy(hasBarrier: hasBarrier);
+  State reduce() => state.copy(hasBarrier: hasBarrier);
 }
 ```
 
@@ -86,7 +86,7 @@ After this is set up, you may use `before()` and `after()` to dispatch the `Barr
 ```dart
 class MyAction extends AppAction {
   
-  Future<AppState> reduce() async {	
+  Future<State> reduce() async {	
 	String description = await read(Uri.http("numbersapi.com","${state.counter}");
 	return state.copy(description: description);
   }
@@ -116,7 +116,7 @@ Which allows you to write `with Barrier`:
 ```dart
 class MyAction extends AppAction with Barrier {
 
-  Future<AppState> reduce() async {	
+  Future<State> reduce() async {	
     String description = await read(Uri.http("numbersapi.com","${state.counter}");
     return state.copy(description: description);
   }

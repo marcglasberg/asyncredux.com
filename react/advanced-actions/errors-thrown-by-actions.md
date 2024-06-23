@@ -51,11 +51,11 @@ and navigates to the login screen:
 ```dart
 class LogoutAction extends AppAction {
 
-  Future<AppState> reduce() async {
+  Future<State> reduce() async {
 	await checkInternetConnection();
 	await deleteDatabase();
 	dispatch(NavigateToLoginScreenAction());
-	return AppState.initialState();
+	return State.initialState();
   }
 }
 ```
@@ -103,7 +103,7 @@ This is how you could do it in the `LogoutAction`:
 ```dart
 class LogoutAction extends AppAction {
   
-  Future<AppState> reduce() async { ... }
+  Future<State> reduce() async { ... }
   
   Object wrapError(error, stacktrace)
 	  => LogoutError("Logout failed", cause: error);
@@ -131,7 +131,7 @@ class ConvertAction extends AppAction {
   final String text;
   ConvertAction(this.text);
   
-  AppState reduce() async {
+  State reduce() async {
     try {
       var value = int.parse(text);
       return state(counter: value); 
@@ -149,7 +149,7 @@ class ConvertAction extends AppAction {
   final String text;
   ConvertAction(this.text);
   
-  Future<AppState> reduce() async {
+  Future<State> reduce() async {
     return int.parse(text);
   }
   
@@ -179,7 +179,7 @@ class ConvertAction extends AppAction with ShowUserException {
   final String text;
   ConvertAction(this.text);
   
-  Future<AppState> reduce() async {
+  Future<State> reduce() async {
     return int.parse(text);
   }
   
@@ -219,8 +219,8 @@ However, then you'd have to add this code to all actions that use Firebase.
 A better way is doing this globally by using a `GlobalWrapError` object when you create the store:
 
 ```dart              
-var store = Store<AppState>(
-  initialState: AppState.initialState(),
+var store = Store<State>(
+  initialState: State.initialState(),
   globalWrapError: MyGlobalWrapError(),
 );
 
@@ -275,9 +275,9 @@ and a reference to the action that threw the error, and the store itself.
 For example:
 
 ```dart
-var store = Store<AppState>(
-  initialState: AppState.initialState(),
-  errorObserver: MyErrorObserver<AppState>(),
+var store = Store<State>(
+  initialState: State.initialState(),
+  errorObserver: MyErrorObserver<State>(),
 );
 
 class MyErrorObserver<St> implements ErrorObserver<St> {
@@ -325,7 +325,7 @@ class ConvertAction extends AppAction {
   final String text;
   ConvertAction(this.text);
   
-  Future<AppState> reduce() async {
+  Future<State> reduce() async {
     var value = int.tryParse(text);
     
     if (value == null) { 

@@ -7,7 +7,7 @@ sidebar_position: 7
 Suppose we have the following app state:
 
 ```dart
-class AppState {  
+class State {  
   List<Item> items;    
   int selectedItem;
 }
@@ -20,7 +20,7 @@ class SelectItem extends AppAction {
   final int id;
   SelectItem(this.id);
     
-  AppState reduce() {
+  State reduce() {
     Item? item = state.items.firstWhereOrNull((item) => item.id == id);
     if (item == null) throw UserException('Item not found');
     return state.copy(selected: item);
@@ -35,7 +35,7 @@ var item = Item('A');
 dispatch(SelectItem(newItem));
 ```
 
-Since all actions extend `ReduxAction<AppState>`, you may use object-oriented principles to
+Since all actions extend `ReduxAction<State>`, you may use object-oriented principles to
 reduce boilerplate. Start by creating an **abstract** base action class to allow easier access
 to the sub-states of your store.
 
@@ -43,7 +43,7 @@ You could name is `BaseAction`, `Action` or any other name.
 Here, we'll call it `AppAction`:
 
 ```dart
-abstract class AppAction extends ReduxAction<AppState> {
+abstract class AppAction extends ReduxAction<State> {
 
   // Getter shortcuts   
   List<Item> get items => state.items;
@@ -63,7 +63,7 @@ class SelectItem extends AppAction {
   final int id;
   SelectItem(this.id);
     
-  AppState reduce() {
+  State reduce() {
     Item? item = findById(id);
     if (item == null) throw UserException('Item not found');
     return state.copy(selected: item);
@@ -89,7 +89,7 @@ In practice, your base action class may end up containing a lot of elaborate "se
 which then can be used by all your actions.
 
 The only requirement is that your actions now
-extend `AppAction` instead of `ReduxAction<AppState>`.
+extend `AppAction` instead of `ReduxAction<State>`.
 
 <hr></hr>
 

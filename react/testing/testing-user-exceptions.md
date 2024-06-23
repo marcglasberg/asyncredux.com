@@ -39,13 +39,13 @@ its status.
 
 Here's an example:
 
-```dart
-var status = await store.dispatchAndWait(MyAction());
-expect(status.isCompletedFailed, isTrue);
+```ts
+let status = await store.dispatchAndWait(MyAction());
+expect(status.isCompletedFailed).toBe(true);
 
-var error = status.wrappedError; 
-expect(error, isA<UserException>());
-expect(error.msg, "You can't do this.");
+let error = status.wrappedError; 
+expect(error).toBeInstanceOf(UserException);
+expect(error.msg).toBe("You can't do this.");
 ```
 
 ## Checking the error queue
@@ -57,13 +57,19 @@ by actions, and it will be consumed by the UI (usually a modal error dialog) to 
 If you test includes actions that emit a lot of `UserException` errors,
 you may wait until they all enter the error queue, and then check the queue itself:
 
-```dart
-var status = await store.dispatchAndWaitAll([MyAction()1, MyAction2(), MyAction3()]);
-var errors = store.errors; 
-expect(errors.length, 3);
-expect(errors[0].msg, "You can't do this.");
-expect(errors[1].msg, "You can't do that.");
-expect(errors[2].msg, "You can't do the other thing.");
+```ts
+let status = await store.dispatchAndWaitAll([
+  new MyAction1(), 
+  new MyAction2(), 
+  new MyAction3()
+]);
+
+let errors = store.errors;
+
+expect(errors.length).toBe(3);
+expect(errors[0].msg).toBe("You can't do this.");
+expect(errors[1].msg).toBe("You can't do that.");
+expect(errors[2].msg).toBe("You can't do the other thing.");
 ```
 
  

@@ -75,7 +75,7 @@ class SearchText extends Action with Debounce {
   
   final int debounce = 350; // Milliseconds
 
-  Future<AppState> reduce() async {
+  Future<State> reduce() async {
       
     var response = await http.get(
       Uri.parse('https://example.com/?q=' + encoded(searchTerm))
@@ -98,7 +98,7 @@ class LoadPrices extends Action with Throttle {
   
   final int throttle = 5000; // Milliseconds
 
-  Future<AppState> reduce() async {      
+  Future<State> reduce() async {      
     var result = await loadJson('https://example.com/prices');              
     return state.copy(prices: result);
   }

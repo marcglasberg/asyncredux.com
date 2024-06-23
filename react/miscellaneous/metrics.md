@@ -8,7 +8,7 @@ When you instantiate your store, you can optionally pass it a list of `stateObse
 which may be used for collecting metrics for your app:
 
 ```dart
-var store = Store<AppState>(
+var store = Store<State>(
   initialState: state,  
   stateObservers: [MetricsObserver()],
 );
@@ -58,16 +58,16 @@ The parameters are:
 This is an implementation example:
 
 ```dart
- abstract class AppAction extends ReduxAction<AppState> {
-   void trackEvent(AppState stateIni, AppState stateEnd) { // Don't to anything }
+ abstract class AppAction extends ReduxAction<State> {
+   void trackEvent(State stateIni, State stateEnd) { // Don't to anything }
  }
 
- class AppStateObserver implements StateObserver<AppState> {
+ class AppStateObserver implements StateObserver<State> {
    
    void observe(
-     ReduxAction<AppState> action,
-     AppState prevState,
-     AppState newState,
+     ReduxAction<State> action,
+     State prevState,
+     State newState,
      Object? error,
      int dispatchCount,
    ) {
@@ -77,9 +77,9 @@ This is an implementation example:
 
  class MyAction extends AppAction {
    
-    AppState? reduce() { // Do something }
+    State? reduce() { // Do something }
    
-    void trackEvent(AppState prevState, AppState newState, Object? error) =>
+    void trackEvent(State prevState, State newState, Object? error) =>
        MyMetrics().track(this, newState, error);
  }
 ```
@@ -96,7 +96,7 @@ I/flutter (15304): | Action MyAction
 This helps with development, so you probably don't want to use it in release mode:
 
 ```dart
-var store = Store<AppState>(
+var store = Store<State>(
    actionObservers: kReleaseMode ? null : [ConsoleActionObserver()],
 );
 ```

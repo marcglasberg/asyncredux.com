@@ -6,8 +6,10 @@ sidebar_position: 7
 
 As [previously discussed](./store-and-state#immutable-state), the store state is **immutable**.
 
-The only way to change the store **state** is by dispatching an **action**.
+The only way to change the store **state** is by dispatching **actions**.
 The action reducer returns a new state, that replaces the old one.
+
+## Dispatch (one action)
 
 ```tsx
 // Dispatch an action
@@ -22,7 +24,7 @@ In more detail, this is what Async Redux does when you dispatch an action:
 4. The new state replaces the old one.
 5. All components that use the state are rebuilt.
 
-## Dispatch more than one action
+## Dispatch all (multiple actions)
 
 If you want to dispatch more than one action in **parallel** at a time, you can use `dispatchAll`.
 Using `dispatchAll` is the same as calling `dispatch` multiple times:

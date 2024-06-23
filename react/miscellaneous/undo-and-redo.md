@@ -8,7 +8,7 @@ It's easy to create undo/redo features in Async Redux. When you create the store
 state-observer called `UndoRedoObserver`:
 
 ```dart
-var store = Store<AppState>(
+var store = Store<State>(
   initialState: state,  
   stateObservers: [UndoRedoObserver()],
 );
@@ -18,13 +18,13 @@ That observer should add all the states it gets to a list. When you want to reco
 states, simple call an action called `RecoverStateAction`, like so:
 
 ```dart
-class RecoverStateAction extends ReduxAction<AppState> {
-   final AppState recoveredState;
+class RecoverStateAction extends ReduxAction<State> {
+   final State recoveredState;
 
    RecoverStateAction(this.recoveredState);
 
    @override
-   AppState reduce() => recoveredState;
+   State reduce() => recoveredState;
 }
 ```
 

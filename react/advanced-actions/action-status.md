@@ -95,7 +95,7 @@ You could have the following save action:
 
 ```dart
 class SaveAction extends AppAction {     
-  Future<AppState> reduce() async {
+  Future<State> reduce() async {
     bool isSaved = await saveMyInfo(); 
     if (!isSaved) throw UserException('Save failed');	 
     return null;
