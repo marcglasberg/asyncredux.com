@@ -4,8 +4,9 @@ sidebar_position: 6
 
 # Testing UserExceptions
 
-As previously discussed, when an action encounters an error which is not a bug, 
-but rather a user mistake, it can throw the built-in `UserException` error. 
+As [previously discussed](../user-exceptions), 
+when an action encounters an error which is not a bug, but rather a user mistake, 
+it can throw the built-in `UserException` error. 
 
 This page discusses how to test when `UserException`s are thrown.
 

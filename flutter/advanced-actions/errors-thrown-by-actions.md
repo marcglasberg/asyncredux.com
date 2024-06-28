@@ -192,7 +192,7 @@ class ConvertAction extends AppAction with ShowUserException {
 Third-party code may also throw errors which should not be considered bugs,
 but simply messages to be displayed in a dialog to the user.
 
-For example, Firebase my throw some `PlatformException`s
+For example, Firebase may throw some `PlatformException`s
 in response to a bad connection to the server.
 
 In this case, it may be a good idea to convert this error into a `UserException`,
@@ -237,7 +237,7 @@ class MyGlobalWrapError extends GlobalWrapError {
 ```
 
 The `GlobalWrapError` object will be given all errors. It may then return a `UserException` which
-will be used instead of the original exception. Otherwise, it just returns the original `eerror`,
+will be used instead of the original exception. Otherwise, it just returns the original `error`,
 so that it will not be modified. It may also return `null` to disable (swallow) the error.
 
 > Note: The global error wrapper is called **after** the action's `wrapError()` method,

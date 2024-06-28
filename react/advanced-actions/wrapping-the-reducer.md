@@ -104,7 +104,7 @@ class SendMsg extends Action {
 }
 ```
 
-### Creating a base acton
+## Creating a base action
 
 While wrapping the reducer may seem more work,
 you may now modify your [base action](./base-action) to make it easier

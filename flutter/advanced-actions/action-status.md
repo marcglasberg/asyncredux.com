@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Action status
 
-All actions have an `status` object of type `ActionStatus`,
+All actions have a `status` property of type `ActionStatus`,
 that provides information about the action execution.
 
 You can read the action status at any point in time.
@@ -23,7 +23,7 @@ var status = action.status;
 print(status);
 ```
 
-## Is the action completed?
+## Has the action completed?
 
 You can use `action.status.isCompleted` to check if a dispatched action finished.
 It will be `false` if the action is still running, or if it hasn't been dispatched yet.
@@ -75,14 +75,14 @@ the `before`, `reduce`, and `after` methods:
 
 ```dart
 var status = await dispatch(MyAction(info));
-print(action.status.status.hasFinishedMethodBefore);
-print(action.status.status.hasFinishedMethodReduce);
-print(action.status.status.hasFinishedMethodAfter);
+print(action.status.hasFinishedMethodBefore);
+print(action.status.hasFinishedMethodReduce);
+print(action.status.hasFinishedMethodAfter);
 ```
 
 ## Use cases
 
-The action status is useful in mainly in testing and debugging scenarios.
+The action status is useful mainly in testing and debugging scenarios.
 In production code, you are usually more interested in the state change that the action caused,
 rather than the action status.
 

@@ -36,7 +36,7 @@ We want to accomplish two things:
 * Open a dialog (or a toast) to show the `message` to the user.
 * Show the `errorText` below the input, until the user starts typing again.
 
-## Showing error messages in a dialog
+## Show error messages in a dialog
 
 Async Redux automatically opens a dialog to show the `message` of all the user exception errors
 thrown by actions. For this to work, however, you must set up the desired dialog,

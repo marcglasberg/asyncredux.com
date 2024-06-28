@@ -9,7 +9,13 @@ Suppose we have the following app state:
 ```dart
 class AppState {  
   List<Item> items;    
-  int selectedItem;
+  Item? selectedItem;
+  // ...
+}
+
+class Item {
+  String id;
+  // ...
 }
 ```
 
@@ -23,7 +29,7 @@ class SelectItem extends AppAction {
   AppState reduce() {
     Item? item = state.items.firstWhereOrNull((item) => item.id == id);
     if (item == null) throw UserException('Item not found');
-    return state.copy(selected: item);
+    return state.copy(selectedItem: item);
   }    
 }
 ```
@@ -32,7 +38,7 @@ You would use it like this:
 
 ```dart
 var item = Item('A'); 
-dispatch(SelectItem(newItem));
+dispatch(SelectItem(item));
 ```
 
 Since all actions extend `ReduxAction<AppState>`, you may use object-oriented principles to
@@ -64,7 +70,7 @@ class SelectItem extends AppAction {
   SelectItem(this.id);
     
   AppState reduce() {
-    Item? item = findById(id);
+    Item? item = findById(id); // Here!
     if (item == null) throw UserException('Item not found');
     return state.copy(selected: item);
   }    

@@ -2,7 +2,7 @@
 sidebar_position: 100
 ---
 
-# Counter examples
+# Counter app examples
 
 Let's create a few simple "counter app" examples using **Async Redux**.
 

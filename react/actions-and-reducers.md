@@ -4,31 +4,94 @@ sidebar_position: 6
 
 # Actions and reducers
 
-An **action** is a class that contain its own **reducer**.
+In Async Redux, an **action** is any class you create that extends `ReduxAction<State>`.
+
+The `ReduxAction` is a built-in class provided by Async Redux,
+and `State` is the type you defined for your application [state](./store-and-state).
+
+For example, this is how you can declare an `Increment` action,
+that could be used in a [counter application](./counter-app-examples):
 
 ```tsx
-class Increment extends Action {
+import { ReduxAction } from "async-redux-react";
+import { State } from 'State';
+
+class Increment extends ReduxAction<State> { }
+```
+
+## The reducer
+
+All your actions must implement a function called `reduce()`.
+Your IDE will show a compile-time error if you forget to implement it.
+
+```tsx
+class Increment extends ReduxAction<State> {
 
   reduce() { 
-    // The reducer has access to the current state
-    return this.state + 1; // It returns a new state 
-  };
+    // ... 
+  }
 }
 ```
 
-As you can see above, the reducer is simply a function named `reduce()`.
-The reducer has access to the current state through `this.state`,
-and then it must return a new state.
+The `reduce()` function is called a **reducer**.
+
+We'll soon see that when actions are "[dispatched](./dispatching-actions)",
+its reducer will be called to calculate state changes in your app.
+
+To achieve this, the reducer has direct access to the current application state
+through `this.state`, and then it must return a new state. For example:
+
+```tsx
+class Increment extends ReduxAction<State> {
+
+  reduce() { 
+    // The reducer has access to the current state
+    return new State(this.state.counter + 1); // Returns a new state 
+  }
+}
+```
 
 :::tip
 
-From the point in your code that "dispatches" an action,
-use your IDE to navigate to the action declaration.
-There, you'll find its corresponding reducer,
-which will explain what the action does when dispatched.
-The action and its reducer are part of the same structure, keeping your code organized.
+In the code that dispatches an action, you can use your IDE to click the action name and go to where
+the action is defined. There, you'll find the reducer for that action, which explains what happens 
+when the action is dispatched.
+
+In other words, the action and its reducer are part of the same data structure, 
+keeping your code organized.
 
 :::
+
+## Base action 
+
+Having to write `extends ReduxAction<State>` in every action definition can be cumbersome.
+
+In all the code I show in this documentation, you'll see I usually write `extend Action`
+instead of `extend ReduxAction<State>`.
+
+This is because I'm assuming you have previously defined your own abstract base action class
+called simply `Action`, that itself extends `ReduxAction<State>`. Then, you may have all your
+actions extend this `Action` class instead.
+
+This is how you can define the `Action` class in your own code:
+
+```tsx 
+import { ReduxAction } from 'async-redux-react';
+import { State } from 'State';
+
+export abstract class Action extends ReduxAction<State> { }
+```
+
+And then:
+
+```tsx
+import { Action } from './Action';
+
+class Increment extends Action { 
+  // ... 
+}
+```
+
 
 ## Actions can have parameters
 
@@ -38,7 +101,7 @@ But actions can take any number of parameters, just like functions.
 Consider the following `Add` action:
 
 ```tsx
-class Add extends ReduxAction<State> {
+class Add extends Action {
   constructor(readonly value: number) { super(); }
     
   reduce() {
@@ -51,7 +114,7 @@ In the above example, the `Add` action takes a `value` parameter in its construc
 When you dispatch the `Add` action, you pass the value as a parameter:
 
 ```tsx
-store.dispatch(new Add(5));
+dispatch(new Add(5));
 ```
 
 Note the reducer has direct access to the `value` parameter through `this.value`.
@@ -88,7 +151,7 @@ class AddRandomText extends Action {
 If you want to understand the above code in terms of traditional Redux patterns,
 the beginning of the `reduce` method is the equivalent of a middleware,
 and the return function `(state) => state.copy(text: text))` is the equivalent of
-a traditional reducer.
+a traditional pure reducer.
 
 It's still Redux, just written in a way that is easy and boilerplate-free.
 No need for Thunks or Sagas.
@@ -103,6 +166,8 @@ In this case, the state will not change.
 Let's modify the previous `AddRandomText` action to throw an error if the fetch fails:
 
 ```tsx
+import { UserException } from "async-redux-react";
+
 class AddRandomText extends Action {
 
   async reduce() {
@@ -122,9 +187,8 @@ Notes:
 * Any errors thrown by actions are caught globally and can be handled in a central place.
   More on that, later.
 
-* Actions can throw any type of errors. However, if they throw a `UserException`,
-  which is a special type provided by Async Redux, 
-  then a dialog (or other UI) will open automatically,
-  showing the error message to the user. More on that, later.
+* Actions can throw any type of errors. However, if they throw a `UserException`
+  (provided by Async Redux), a dialog or other UI will open automatically, 
+  showing the error message to the user.
 
 

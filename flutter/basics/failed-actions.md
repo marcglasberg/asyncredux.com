@@ -49,7 +49,7 @@ class SaveUserAction extends ReduxAction<AppState> {
 
    @override
    Future<AppState> reduce() async {
-	 if (name.length < 4) dispatch(ShowDialogAction('Name must have at least 4 letters.'));
+	 if (name.length < 4) throw UserException('Name must have at least 4 letters.'));
 	 else await saveUser(name);
 	 return null;
    }

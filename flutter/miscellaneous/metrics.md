@@ -20,12 +20,12 @@ This is the `StateObserver` definition:
 abstract class StateObserver<St> {
 
    void observe(
-      ReduxAction<St> action, 
-      St stateIni, 
-      St stateEnd, 
-      Object? error,
-      int dispatchCount,
-      );
+     ReduxAction<St> action, 
+     St stateIni, 
+     St stateEnd, 
+     Object? error,
+     int dispatchCount,
+   );
 }
 ```
 
