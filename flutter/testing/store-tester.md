@@ -237,11 +237,11 @@ In tests there are two possibilities:
 1. You are testing that some `UserException` is thrown. For example, you want to test that users are
    warned if they typed letters in some field that only accepts numbers. To that end, your test
    would dispatch the appropriate action, and then check if the `errors` queue now contains
-   an `UserException` with some specific error message.
+   a `UserException` with some specific error message.
 
 2. You are testing some code that should **not** throw any exceptions. If the test has thrown an
    exception it means the test has failed, and the exception should show up in the console, for
-   debugging. However, this won't work if when test throws an `UserException` it simply go to
+   debugging. However, this won't work if when test throws a `UserException` it simply go to
    the `errors` queue. If this happens, the test will continue running, and may even pass. The only
    way to make sure no errors were thrown would be asserting that the `errors` queue is still empty
    at the end of the test. This is even more problematic if the unexpected `UserException` is thrown

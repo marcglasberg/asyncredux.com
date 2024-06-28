@@ -289,7 +289,7 @@ await store.waitAnyActionTypeFinishes([MyFinalAction]);
 
 This function also returns the action that completed the promise,
 which you can use to check its `status`.
-For example, if you want to assert that `MyFinalAction` failed by throwing an `UserException`:
+For example, if you want to assert that `MyFinalAction` failed by throwing a `UserException`:
 
 ```dart
 dispatch(StartAction());

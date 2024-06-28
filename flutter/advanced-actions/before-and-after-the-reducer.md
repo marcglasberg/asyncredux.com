@@ -7,12 +7,12 @@ sidebar_position: 1
 Suppose you want to prevent the user from touching the screen, while `MyAction` is running.
 This means adding a modal barrier before the action starts, and removing it after the action ends.
 
-It is indeed common to have some side effects before and after the reducer runs.
-To help you with these use cases, you may override you action methods `before()`
+It's indeed common to have some side effects before and after the reducer runs.
+To help you with these use cases, you may override your action methods `before()`
 and `after()`, which run respectively before and after the reducer.
 
 > Note: implementing the `reduce()` method is mandatory, but `before()` and `after()` are optional.
-> Their default implementation is to do nothing.
+> Their default implementation simply does nothing.
 
 ## Before
 

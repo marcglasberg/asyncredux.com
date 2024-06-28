@@ -137,7 +137,7 @@ class LoadText extends Action {
 If something bad happens, you can simply **throw an error**. In this case, the state will not
 change. Errors are caught globally and can be handled in a central place, later.
 
-In special, if you throw an `UserException`, which is a type provided by Async Redux,
+In special, if you throw a `UserException`, which is a type provided by Async Redux,
 a dialog (or other UI) will open automatically, showing the error message to the user.
 
 ```dart

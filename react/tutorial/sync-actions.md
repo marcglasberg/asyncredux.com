@@ -90,7 +90,7 @@ Let's now modify `AddTodoAction` to check if the new todo item being added
 already exists in the list. If it does, we want to abort adding the new todo item,
 and then show an **error message** to the user.
 
-This can be accomplished by simply throwing an `UserException` with the error message.
+This can be accomplished by simply throwing a `UserException` with the error message.
 See below:
 
 ```tsx
@@ -119,7 +119,7 @@ In the code above, we use the `ifExists` function defined in the `TodoList` clas
 new todo item already exists in the list. When it does, we throw a `UserException` with an error
 message.
 
-Throwing an `UserException` from inside actions is ok. The app will not crash!
+Throwing a `UserException` from inside actions is ok. The app will not crash!
 Async Redux will catch the exception and handle it properly:
 
 * The action will abort. The reducer will not return a new state, and the store state will not

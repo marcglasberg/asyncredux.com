@@ -4,15 +4,17 @@ sidebar_position: 6
 
 # Testing UserExceptions
 
-Suppose you want to test that some `UserException` is thrown.
+As previously discussed, when an action encounters an error which is not a bug, 
+but rather a user mistake, it can throw the built-in `UserException` error. 
 
-For example, you want to test that users are warned if they typed letters in some field that only
-accepts numbers. To that end, your test would dispatch the appropriate action, wait for it
-to finish, and then check the `action.status` field.
+This page discusses how to test when `UserException`s are thrown.
 
-For more information the action status, see [this page](../advanced-actions/action-status).
+For example, suppose you want to test that users are warned 
+if they typed letters in some field that only accepts numbers. 
+To that end, your test would dispatch the appropriate action, wait for it
+to finish, and then check the [action.status](../advanced-actions/action-status) field.
 
-First of all, the status can tell us if the action finished with or without errors:
+The status can tell us if the action finished with or without errors:
 
 * `status.isCompleted` is `true` if the action finished, and `false` if the action is still running,
   or if it hasn't been dispatched yet.
@@ -22,7 +24,7 @@ First of all, the status can tell us if the action finished with or without erro
 
 * `status.isCompletedFailed` is equal to `!status.isCompletedOk`.
 
-Then, there are two errors we can read:
+And then, there are two errors we can read:
 
 * `status.originalError` is the error that was originally thrown by the action's `before`
   or `reduce` methods. However, this error might have been changed by the action itself, by the
@@ -33,9 +35,9 @@ Then, there are two errors we can read:
   If the action didn't change the error, `status.originalError` and `status.wrappedError` will be
   the same.
 
-Note the `action.status` field is immutable, and it will be changed during the action lifecycle.
-For this reason, your test needs to wait until the action is finished before getting a copy of
-its status.
+Since the `action.status` field is immutable, the whole field will be replaced during the action 
+lifecycle. This means your test needs to wait until the action is finished before getting 
+a copy of its status.
 
 Here's an example:
 

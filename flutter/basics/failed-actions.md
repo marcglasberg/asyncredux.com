@@ -58,7 +58,7 @@ class SaveUserAction extends ReduxAction<AppState> {
 
 ## Error queue
 
-When an action throws an `UserException`, it is put automatically into a special error queue
+When an action throws a `UserException`, it is put automatically into a special error queue
 in the store, from where it may be shown to the user by an "error widget" that consumes the errors,
 one by one.
 
@@ -75,7 +75,7 @@ by Async Redux.
 
 ## Showing error messages in a dialog
 
-To show error messages to the user, make your actions throw an `UserException`, and then wrap your
+To show error messages to the user, make your actions throw a `UserException`, and then wrap your
 home-page with `UserExceptionDialog`, below `StoreProvider` and `MaterialApp`:
 
 ```dart

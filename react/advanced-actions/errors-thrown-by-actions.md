@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # Errors thrown by actions
@@ -49,7 +49,7 @@ If there is, it deletes the app database, sets the store to its initial state,
 and navigates to the login screen:
 
 ```dart
-class LogoutAction extends AppAction {
+class LogoutAction extends Action {
 
   Future<State> reduce() async {
 	await checkInternetConnection();
@@ -101,7 +101,7 @@ or contains more information.
 This is how you could do it in the `LogoutAction`:
 
 ```dart
-class LogoutAction extends AppAction {
+class LogoutAction extends Action {
   
   Future<State> reduce() async { ... }
   
@@ -121,13 +121,13 @@ enter a valid number.
 The `parse` method throws a `FormatException` in case of failure,
 but we actually needed a `UserException`.
 
-As previously discussed, throwing an `UserException` will automatically show a dialog to the
+As previously discussed, throwing a `UserException` will automatically show a dialog to the
 user, where the dialog's message is the exception's message.
 
 This is a possible solution, using `try/catch`:
 
 ```dart
-class ConvertAction extends AppAction {  
+class ConvertAction extends Action {  
   final String text;
   ConvertAction(this.text);
   
@@ -145,7 +145,7 @@ class ConvertAction extends AppAction {
 However, you can achieve the same by overriding the `wrapError()` method:
 
 ```dart
-class ConvertAction extends AppAction {
+class ConvertAction extends Action {
   final String text;
   ConvertAction(this.text);
   
@@ -163,7 +163,7 @@ class ConvertAction extends AppAction {
 You may also create a mixin to make it easier to add this behavior to multiple actions:
 
 ```dart
-mixin ShowUserException on AppAction {
+mixin ShowUserException on Action {
 
   abstract String getErrorMessage();
   
@@ -175,7 +175,7 @@ mixin ShowUserException on AppAction {
 Which allows you to write `with ShowUserException`:
 
 ```dart
-class ConvertAction extends AppAction with ShowUserException {  
+class ConvertAction extends Action with ShowUserException {  
   final String text;
   ConvertAction(this.text);
   
@@ -203,7 +203,7 @@ Just convert it in the action itself
 by implementing the optional `wrapError()` method:
 
 ```dart
-class MyAction extends AppAction {
+class MyAction extends Action {
   
   Object? wrapError(error, stacktrace) {
      if ((error is PlatformException) && (error.code == "Error performing get") &&
@@ -321,7 +321,7 @@ For example, here an invalid number will show an error dialog to the user,
 but the action will continue running and set the counter state to `0`:
 
 ```dart
-class ConvertAction extends AppAction {  
+class ConvertAction extends Action {  
   final String text;
   ConvertAction(this.text);
   

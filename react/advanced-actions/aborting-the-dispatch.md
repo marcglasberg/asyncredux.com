@@ -1,21 +1,27 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # Aborting the dispatch
 
-You may override the action's `abortDispatch()` method to completely prevent the action to run if
-some condition is true.
+You may override the action's `abortDispatch()` function to completely prevent 
+running the action if some condition is true.
 
-In more detail, if this method returns `true`, methods `before()`, `reduce()`
-and `after()` will not be called and the state won't change.
+In more detail, if function `abortDispatch()` returns `true`, 
+the action will not be dispatched: `before`, `reduce` and `after` will not be called. 
 
-This is only useful under rare circumstances, and you should only use it if you know what you are
-doing.
+This is an advanced feature only useful under rare
+circumstances, and you should only use it if you know what you are doing.
 
 # Example
 
 ```dart
-@override
-bool abortDispatch() => state.user == null;
+class UpdateUserInfo extends Action {
+
+  // If there is no user, the action will not run.
+  abortDispatch() {
+    return state.user === null;
+  }
+
+...
 ```

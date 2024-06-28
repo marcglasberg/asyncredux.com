@@ -125,7 +125,7 @@ function MyComponent() {
 };
 ```
 
-If the action failed with an `UserException`, you can get this error by doing
+If the action failed with a `UserException`, you can get this error by doing
 `let error = useExceptionFor(actionType)` and then get the error message
 to eventually show it in the UI.
 

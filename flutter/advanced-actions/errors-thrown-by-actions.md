@@ -121,7 +121,7 @@ enter a valid number.
 The `parse` method throws a `FormatException` in case of failure,
 but we actually needed a `UserException`.
 
-As previously discussed, throwing an `UserException` will automatically show a dialog to the
+As previously discussed, throwing a `UserException` will automatically show a dialog to the
 user, where the dialog's message is the exception's message.
 
 This is a possible solution, using `try/catch`:

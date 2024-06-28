@@ -1,128 +1,190 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Before and after the reducer
 
-Suppose you want to prevent the user from touching the screen, while `MyAction` is running.
+Suppose you want to prevent the user from touching the screen, while an async action is running.
 This means adding a modal barrier before the action starts, and removing it after the action ends.
 
-It is indeed common to have some side effects before and after the reducer runs.
-To help you with these use cases, you may override you action methods `before()`
+Or suppose you want to check some precondition when an action is dispatched,
+and maybe throw an error if the precondition is not met.
+
+It's indeed common to have some side effects both before and after the reducer runs.
+To help you with these use cases, you may override your action functions `before()`
 and `after()`, which run respectively before and after the reducer.
 
-> Note: implementing the `reduce()` method is mandatory, but `before()` and `after()` are optional.
-> Their default implementation is to do nothing.
+:::note
+
+Implementing your action's `reduce()` function is mandatory,
+but `before()` and `after()` are optional.
+Their default implementation simply does nothing.
+
+:::
 
 ## Before
 
-The `before()` method runs before the reducer.
+The `before()` function runs before the reducer.
 
-To run synchronously, return `void`. To run it asynchronously, return `Future<void>`:
+To run synchronously, return `void`.
+To run it asynchronously, add `async` and return `Promise<void>`:
 
-```dart
+```ts
 // Sync
-void before() { ... }
+before(): void {
+  ...
+}
 
 // Async
-Future<void> before() async { ... }
+async before(): Promise<void> {
+  ...
+}
 ```
 
-What happens if method `before()` throws an error? In this case, the `reduce()` method will NOT run.
+What happens if `before()` throws an error? In this case, `reduce()` will **not** run.
 This means you can use `before()` to check any preconditions,
 and maybe throw an error to prevent the reducer from running. For example:
 
-```dart
-// Shows a dialog if there is no internet connection, 
-// and prevents the reducer from running.
-Future<void> before() async {
-  if (!await hasInternetConnection()) 
-    throw UserException('No internet connection');
+```ts
+// If there is no internet connection, throws a UserException 
+// to show a dialog and prevent the reducer from running.
+async before(): Promise<void> {
+  if (!(await hasInternetConnection())) 
+    throw new UserException('No internet connection');
 }
 ```
 
-> Note: If method `before()` returns a future, then the action is also async
-> (will complete in a later microtask), regardless of the `reduce()` method being sync or not.
+:::note
+
+If `before()` returns a promise, then the action becomes async
+(its reducer will complete in a later microtask than the dispatch call),
+regardless of the `reduce()` function being sync or async.
+
+:::
 
 ## After
 
-The `after()` method runs after the reducer.
+Function `after()` runs after the reducer. It's always a synchronous function:
 
-It's important to note the `after()` method is akin to a _finally block_,
-since it will always run, even if an error was thrown by `before()` or `reduce()`.
-This is important so that it can undo any side effects that were done in `before()`, 
-even if there was an error later in the reducer.
-
-> Note: Make sure your `after()` method doesn't throw an error.
-> If it does, the error will be thrown _asynchronously_ (after the "asynchronous gap")
-> so that it doesn't interfere with the action, but still shows up in the console.
-
-## Example
-
-In our model barrier example described above,
-we could dispatch an action to turn on a modal barrier on and off.
-
-Suppose we define a `BarrierAction`:
-
-```dart
-class BarrierAction extends AppAction {
-  final bool hasBarrier;
-  BarrierAction(this.hasBarrier);
-  State reduce() => state.copy(hasBarrier: hasBarrier);
+```ts
+after(): void {
+  ...
 }
 ```
 
-And then your widget tree contains a modal barrier, 
-which is shown only when `hasBarrier` is true:
+Note `after()` is akin to a _finally block_,
+since it will always run, even if an error was thrown by `before()` or `reduce()`.
+This is important so that it can undo any side effects that were done in `before()`,
+even if there was an error later in the reducer.
 
-```dart
-return context.state.hasBarrier 
-  ? ModalBarrier() 
-  : Container();
+:::note
+
+Make sure your `after()` function doesn't throw an error.
+If it does, the error will be swallowed, but logged with `Store.log()`.
+Keep in mind the default logger will print the error to the console,
+but you may provide your own `logger` to the `Store` constructor.
+
+:::
+
+## Example
+
+Suppose we have a counter app. When you press the "Increment" button,
+it dispatches the `Increment` action, that takes 1 second to increment the counter.
+This action adds a dark screen barrier when it starts,
+and then removes the barrier when it finishes.
+
+First, we need to create a `BarrierAction`:
+
+```ts
+class BarrierAction extends Action {
+  constructor(public hasBarrier: boolean) { super(); }
+
+  reduce() {
+    return this.state.copy(hasBarrier: this.hasBarrier);
+  }
+}
+```
+
+And then we need a barrier component which occupies the whole screen
+and is shown only when `hasBarrier` is true:
+
+```tsx
+function Barrier() {
+  let hasBarrier = useSelect((state: State) => state.hasBarrier);
+  
+  return hasBarrier 
+    ? <div className="Barrier" /> 
+    : <></>;
+}
+```
+
+```css title="CSS"
+.Barrier {
+  position: fixed; z-index: 9999;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);  
+}
 ```
 
 After this is set up, you may use `before()` and `after()` to dispatch the `BarrierAction`:
 
-```dart
-class MyAction extends AppAction {
+```ts
+class Increment extends Action {
+
+  async reduce() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return (state: State) => this.state.increment();
+  }
+
+  before() { this.dispatch(new BarrierAction(true)); }
+  after() { this.dispatch(new BarrierAction(false)); }
+}
+```
+
+<iframe
+src="https://codesandbox.io/embed/255qf8?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser"
+style={{ width:'100%', height: '650px', border:'5px solid #58B87A', borderRadius: '4px' }}
+title="counter-async-redux-example"
+sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+/>
+
+## Creating a base action
+
+You may also modify your [base action](./base-action) to make it easier
+to add this behavior to multiple actions:
+
+```ts
+import { ReduxAction } from 'async-redux-react';
+import { State } from 'State';
+
+export abstract class Action extends ReduxAction<State> {
+  barrier = false;  
+  before() { if (this.barrier) this.dispatch(new BarrierAction(true)); }
+  after() { if (this.barrier) this.dispatch(new BarrierAction(false)); }  
+}
+```
+
+Now you can add `barrier = true;` in all your desired actions,
+to provide `before()` and `after()` by default:
+
+```ts
+class Increment extends Action {
+
+  barrier = true;
   
-  Future<State> reduce() async {	
-	String description = await read(Uri.http("numbersapi.com","${state.counter}");
-	return state.copy(description: description);
-  }
-
-  void before() => dispatch(BarrierAction(true));
-  void after() => dispatch(BarrierAction(false));
-}
-```
-
-The above `BarrierAction` is demonstrated
-in <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_event_redux.dart">
-this example</a>.
-           
-### Creating a Mixin
-
-You may also create a mixin to make it easier to add this behavior to multiple actions:
-
-```dart
-mixin Barrier on AppAction {
-  void before() => dispatch(BarrierAction(true));
-  void after() => dispatch(BarrierAction(false));
-}
-```
-
-Which allows you to write `with Barrier`:
-
-```dart
-class MyAction extends AppAction with Barrier {
-
-  Future<State> reduce() async {	
-    String description = await read(Uri.http("numbersapi.com","${state.counter}");
-    return state.copy(description: description);
+  async reduce() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return (state: State) => this.state.increment();
   }
 }
 ```
 
-Try running
-the: <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_before_and_after.dart">
-Before and After Example</a>.
+This is the code using the modified `BaseAction` and `Increment` actions:
+
+<iframe
+src="https://codesandbox.io/embed/vhy8t9?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser"
+style={{ width:'100%', height: '450px', border:'5px solid #58B87A', borderRadius: '4px' }}
+title="counter-async-redux-example"
+sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+/>
+

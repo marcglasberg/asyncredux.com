@@ -80,7 +80,7 @@ class MyWidget extends StatelessWidget {
   }          
 ```
 
-If the action failed with an `UserException`, you can get the exception by doing
+If the action failed with a `UserException`, you can get the exception by doing
 `var exception = context.exceptionFor(actionType)` and then get the error message
 to eventually show it in the UI.
 

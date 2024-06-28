@@ -58,7 +58,7 @@ The parameters are:
 This is an implementation example:
 
 ```dart
- abstract class AppAction extends ReduxAction<State> {
+ abstract class Action extends ReduxAction<State> {
    void trackEvent(State stateIni, State stateEnd) { // Don't to anything }
  }
 
@@ -71,11 +71,11 @@ This is an implementation example:
      Object? error,
      int dispatchCount,
    ) {
-     if (action is AppAction) action.trackEvent(prevState, newState, error);
+     if (action is Action) action.trackEvent(prevState, newState, error);
    }
  }
 
- class MyAction extends AppAction {
+ class MyAction extends Action {
    
     State? reduce() { // Do something }
    

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 7
+sidebar_position: 8
 ---
 
 # Action Subclassing
@@ -16,7 +16,7 @@ class State {
 And then we have an action, which selects an item by `id`:
 
 ```dart
-class SelectItem extends AppAction {
+class SelectItem extends Action {
   final int id;
   SelectItem(this.id);
     
@@ -39,11 +39,11 @@ Since all actions extend `ReduxAction<State>`, you may use object-oriented princ
 reduce boilerplate. Start by creating an **abstract** base action class to allow easier access
 to the sub-states of your store.
 
-You could name is `BaseAction`, `Action` or any other name.
-Here, we'll call it `AppAction`:
+You could name is `BaseAction`, `AppAction` or any other name.
+Here, we'll call it `Action`:
 
 ```dart
-abstract class AppAction extends ReduxAction<State> {
+abstract class Action extends ReduxAction<State> {
 
   // Getter shortcuts   
   List<Item> get items => state.items;
@@ -59,7 +59,7 @@ abstract class AppAction extends ReduxAction<State> {
 And then your actions have an easier time accessing the store state:
 
 ```dart
-class SelectItem extends AppAction {
+class SelectItem extends Action {
   final int id;
   SelectItem(this.id);
     
@@ -89,7 +89,7 @@ In practice, your base action class may end up containing a lot of elaborate "se
 which then can be used by all your actions.
 
 The only requirement is that your actions now
-extend `AppAction` instead of `ReduxAction<State>`.
+extend `Action` instead of `ReduxAction<State>`.
 
 <hr></hr>
 

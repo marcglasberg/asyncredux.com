@@ -122,7 +122,7 @@ Notes:
 * Any errors thrown by actions are caught globally and can be handled in a central place.
   More on that, later.
 
-* Actions can throw any type of errors. However, if they throw an `UserException`,
+* Actions can throw any type of errors. However, if they throw a `UserException`,
   which is a special type provided by Async Redux, 
   then a dialog (or other UI) will open automatically,
   showing the error message to the user. More on that, later.

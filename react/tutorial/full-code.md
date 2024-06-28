@@ -8,10 +8,8 @@ If you're interested in seeing the full code of _Todo List_ applications that ar
 more complete than the one we've built in this tutorial, you can check out these examples
 in [Async Redux's GitHub repository](https://github.com/marcglasberg/async-redux-react):
 
-* [Todo List app for **React Web
-  **](https://github.com/marcglasberg/async-redux-react/tree/main/examples/todo-app-example)
-* [Todo List app for **React Native
-  **](https://github.com/marcglasberg/async-redux-react/tree/main/examples/TodoAppReactNative)
+* [Todo List app for **React Web**](https://github.com/marcglasberg/async-redux-react/tree/main/examples/todo-app-example)
+* [Todo List app for **React Native**](https://github.com/marcglasberg/async-redux-react/tree/main/examples/TodoAppReactNative)
 
 ## Tutorial code
 

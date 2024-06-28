@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # Action status
@@ -94,7 +94,7 @@ and you want to leave the current screen if and only if the save process succeed
 You could have the following save action:
 
 ```dart
-class SaveAction extends AppAction {     
+class SaveAction extends Action {     
   Future<State> reduce() async {
     bool isSaved = await saveMyInfo(); 
     if (!isSaved) throw UserException('Save failed');	 
