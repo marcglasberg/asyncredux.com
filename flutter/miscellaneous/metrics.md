@@ -4,7 +4,7 @@ sidebar_position: 14
 
 # Metrics
 
-When you instantiate your store, you can optionally pass it a list of `stateObservers`, 
+When you instantiate your store, you can optionally pass it a list of `stateObservers`,
 which may be used for collecting metrics for your app:
 
 ```dart
@@ -101,7 +101,7 @@ var store = Store<AppState>(
 );
 ```
 
-If you implement the action's `toString()`, you can display more information. 
+If you implement the action's `toString()`, you can display more information.
 For example, suppose a `LoginAction` which has a `username` field:
 
 ```dart
