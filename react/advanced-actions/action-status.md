@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # Action status
@@ -23,19 +23,18 @@ let status = action.status;
 console.log(status);
 ```
 
-## Has the action completed?
+## isCompleted
 
-### action.status.isCompleted
-
-Check if an action has completed dispatching, either with or without errors.
+Use `action.status.isCompleted` to check if an action has completed dispatching, 
+either with or without errors.
 
 - **true**: the action's `after()` function already ran.
 
 - **false**: the action is still running, or hasn't been dispatched yet.
 
-### action.status.isCompletedOk
+## isCompletedOk
 
-Check if an action has completed dispatching without errors.
+Use `action.status.isCompletedOk` to check if an action has completed dispatching without errors.
 
 - **true**: none of the `before()` or `reduce()` functions have thrown an error.
   This indicates that the `reduce()` function completed and returned a result (even if
@@ -43,9 +42,9 @@ Check if an action has completed dispatching without errors.
 
 - **false**: the action is still running, hasn't been dispatched yet, or completed with errors.
 
-### action.status.isCompletedFailed
+## isCompletedFailed
 
-Check if the action has completed dispatching with errors.
+Use `action.status.isCompletedFailed` to check if the action has completed dispatching with errors.
 
 - **true**: the action has completed, and the `after()` function already ran.
   Either the `before()` or the `reduce()` functions have thrown an error. It indicates that the

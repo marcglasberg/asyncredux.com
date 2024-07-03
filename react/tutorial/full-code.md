@@ -70,7 +70,7 @@ let userExceptionDialog: ShowUserException = (exception, count, next) => {
 };
 
 // We declare the store with its initial state etc.
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: State.initialState,
   showUserException: userExceptionDialog,
   persistor: persistor,

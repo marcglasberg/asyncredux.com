@@ -162,7 +162,7 @@ It's just a default state that can be used when the store is created.
 For example, **instead** of:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: new State({todoList: TodoList.empty}),  
 });
 ```
@@ -170,7 +170,7 @@ const store = new Store<State>({
 We can now write:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: State.initialState,
 });
 ```

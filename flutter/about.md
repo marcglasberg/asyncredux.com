@@ -4,6 +4,13 @@ sidebar_position: 1000
              
 # About 
 
+_Async Redux is developed by **Marcelo Glasberg**_<br></br>
+_https://github.com/marcglasberg_<br></br>
+_https://linkedin.com/in/marcglasberg_<br></br>
+_https://twitter.com/glasbergmarcelo_<br></br>
+_https://stackoverflow.com/users/3411681/marcg_<br></br>
+_https://medium.com/@marcglasberg_<br></br>
+
 *The Async Redux code is based upon packages <a href="https://pub.dev/packages/redux">redux</a> by
 Brian Egan, and <a href="https://pub.dev/packages/flutter_redux">flutter_redux</a> by Brian Egan and
 John Ryan. Also uses code from package <a href="https://pub.dev/packages/equatable">equatable</a> by
@@ -13,9 +20,8 @@ testing everything and making suggestions. This work started after Thomas Burkha
 why he didn't like Redux. Reducers as methods of action classes were shown to me by Scott Stoll and
 Simon Lightfoot.*
 
-*The Flutter packages I've authored:*
+*Other Flutter packages I've authored:*
 
-* <a href="https://pub.dev/packages/async_redux">async_redux</a>
 * <a href="https://pub.dev/packages/fast_immutable_collections">fast_immutable_collections</a>
 * <a href="https://pub.dev/packages/provider_for_redux">provider_for_redux</a>
 * <a href="https://pub.dev/packages/i18n_extension">i18n_extension</a>
@@ -46,9 +52,3 @@ Simon Lightfoot.*
 
 * <a href="https://flutter.dev/docs/development/ui/layout/constraints">Understanding constraints</a>
 
-<br></br>_Marcelo Glasberg:_<br></br>
-_https://github.com/marcglasberg_<br></br>
-_https://linkedin.com/in/marcglasberg_<br></br>
-_https://twitter.com/glasbergmarcelo_<br></br>
-_https://stackoverflow.com/users/3411681/marcg_<br></br>
-_https://medium.com/@marcglasberg_<br></br>

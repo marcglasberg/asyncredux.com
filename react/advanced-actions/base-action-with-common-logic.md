@@ -1,8 +1,8 @@
 ---
-sidebar_position: 6
+sidebar_position: 2
 ---
 
-# Base action
+# Base action with common logic
 
 In Async Redux, all actions must extend `ReduxAction<State>`.
 For example:
@@ -68,7 +68,7 @@ class SelectItem extends Action {
   reduce() {
     let item = state.items.find(item => item.id === this.id);
     if (item === undefined) throw new UserException('Item not found');
-    return state.copy(selectedItem: item);
+    return state.copy({selectedItem: item});
   }
 }
 ```
@@ -106,7 +106,7 @@ class SelectItem extends Action {
   reduce() {
     let item = this.findbyId(this.id); // Here!
     if (item === undefined) throw new UserException('Item not found');
-    return state.copy(selectedItem: item);
+    return state.copy({selectedItem: item});
   }
 }
 ```

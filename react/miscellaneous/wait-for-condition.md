@@ -56,9 +56,9 @@ class SellStockForPrice extends Action {
     let amount = await postSellOrder(this.stock);    
     
     return (state) => 
-      state.copy(
-        stocks: state.stocks.setAmount(this.stock, amount),
-      );
+      state.copy({
+        stocks: state.stocks.setAmount(this.stock, amount)
+      });
   }
 }
 ```

@@ -47,7 +47,7 @@ We then create the Async Redux **store**, and make it available:
 import React from "react";
 import { Store, StoreProvider } from 'async-redux-react';
 
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: State.initialState,
 });
 

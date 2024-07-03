@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
 ---
 
 # Store and state
@@ -35,7 +35,7 @@ In this first example, the state is just a number of type `number`,
 and the initial state is `0`:
 
 ```tsx
-const store = new Store<number>({
+const store = createStore<number>({
   initialState: 0,
 });
 ```
@@ -54,14 +54,32 @@ type State = {
 The initial state is an object with counter zero:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: {
     counter: 0,
   },
 });
 ```
 
-### State as a class
+### State as an ES6 class
+
+One difference between Async Redux and most other JavaScript state management solutions
+is that Async Redux plays well with ES6 classes.
+
+Some developers don't like JavaScript classes, stating they are not "real classes"
+but simply syntactic sugar over prototypes.
+
+However, it's precisely that syntactic sugar that Async Redux makes use of,
+with the sole goal of making your code more organized and easier to navigate.
+
+It's not important you learn or understand class features like inheritance or polymorphism.
+You can use them as simple namespaces, in the way prescribed in this documentation,
+and you'll be fine.
+
+You'll see they allow reduced boilerplate, and allow you to navigate between actions and reducers
+with a simple click, in IDEs like VS Code and IntelliJ.
+
+Also note, Async Redux can serialize ES6 classes just fine.
 
 In this third example, the state is of type `State`, which is a **class** we'll create.
 It could contain all sorts of information, but in this case, it's just a number counter:
@@ -75,7 +93,7 @@ class State {
 The initial state is an instance of this class: `new State(0)`:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: new State(0),
 });
 ```
@@ -85,13 +103,13 @@ const store = new Store<State>({
 As shown above, your state can be composed of both plain JavaScript (or TypeScript) objects,
 or ES6 classes. Feel free to use the one you prefer.
 
+All examples in this documentation use ES6 classes as state,
+but keep in mind that Async Redux works just as well with plain JavaScript objects.
+
 I personally prefer using ES6 classes as state,
 because I find them very readable, easy to use,
 and they make it trivial to create and change **immutable state**,
-which is a requirement for Async Redux.
-
-All examples in this documentation use ES6 classes as state,
-but keep in mind that Async Redux works just as well with plain JavaScript objects.
+without the need for libraries like [Immer](https://www.npmjs.com/package/immer).
 
 ## Immutable state
 
@@ -131,3 +149,8 @@ If you decide to use plain JavaScript objects, you may want to use a library
 like [Immer](https://www.npmjs.com/package/immer) to help you with immutability.
 
 :::
+
+<hr></hr>
+
+Now that we know how to create the state and the state,
+let's see next how to make them available to your component tree.

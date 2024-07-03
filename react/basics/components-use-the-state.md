@@ -1,11 +1,11 @@
 ---
-sidebar_position: 5
+sidebar_position: 3
 ---
 
 # Components use the state
 
-Once you [wrapped your app with a `StoreProvider`](./store-provider),
-you can access the store's state in any component, by using one of three special hooks 
+Once you [wrapped your app with a `StoreProvider`](./provide-the-store),
+you can access the store's state from any component, by using one of three special hooks 
 provided by Async Redux.
 
 ## useAllState
@@ -61,3 +61,8 @@ function MyComponent() {
 
 The component will now rebuild only when the internal properties of the selected object change.
 In other words, when at least one of `name` or `age` changes.
+
+<hr></hr>
+
+Next, let's see how to define actions and reducers,
+that allows us to change the store state.

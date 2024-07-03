@@ -11,10 +11,12 @@ the state, simply return `null`. This is the same as returning the state unchang
 class GetAmountAction extends ReduxAction<AppState> {
   
   Future<AppState?> reduce() async {    
-    int value = await getAmount();
+    int amount = await getAmount();
     
-    if (value == 0) return null;
-    else return state.copy(counter: state.counter + amount));
+    if (amount == 0) 
+      return null;
+    else 
+      return state.copy(counter: state.counter + amount));
   }
 }
 ```

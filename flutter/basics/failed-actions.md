@@ -30,8 +30,7 @@ saying "You can't transfer zero money":
 class TransferMoneyAction extends AppAction {
   final double amount;
   TransferMoneyAction(this.amount);
-
-  @override
+  
   Future<AppState> reduce() async {
     if (amount == 0) throw UserException('You can't transfer zero money.');
     else return state.copy(cashBalance: state.cashBalance - amount);
@@ -44,15 +43,14 @@ least 4 characters:
 
 ```dart
 class SaveUserAction extends ReduxAction<AppState> {
-   final String name;
-   SaveUserAction(this.name);
+  final String name;
+  SaveUserAction(this.name);
 
-   @override
-   Future<AppState> reduce() async {
-	 if (name.length < 4) throw UserException('Name must have at least 4 letters.'));
-	 else await saveUser(name);
-	 return null;
-   }
+  Future<AppState> reduce() async {
+    if (name.length < 4) throw UserException('Name must have at least 4 letters.'));
+    else await saveUser(name);
+    return null;
+  }
 }
 ```
 
@@ -80,15 +78,17 @@ home-page with `UserExceptionDialog`, below `StoreProvider` and `MaterialApp`:
 
 ```dart
 class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context)
-	  => StoreProvider<AppState>(
-		  store: store,
-		  child: MaterialApp(
-		    navigatorKey: navigatorKey,
-			home: UserExceptionDialog<AppState>(
-			  child: MyHomePage(),
-			)));
+
+  Widget build(BuildContext context) {
+  
+    return StoreProvider<AppState>(
+      store: store,
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        home: UserExceptionDialog<AppState>(
+          child: MyHomePage(),
+        )));
+  }  
 }
 ```
 
@@ -106,10 +106,10 @@ your home-page with `UserExceptionDialog`. There, you may pass the `onShowUserEx
 parameter to change the default dialog, show a toast, or some other suitable widget:
 
 ```dart
-UserExceptionDialog<AppState>(
-	  child: MyHomePage(),
-	  onShowUserExceptionDialog:
-		  (BuildContext context, UserException userException) => showDialog(...),
+UserExceptionDialog<AppState>(  
+  onShowUserExceptionDialog:
+    (BuildContext context, UserException userException) => showDialog(...),
+  child: MyHomePage(),  
 );
 ``` 
 

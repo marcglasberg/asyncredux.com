@@ -1,5 +1,5 @@
 ---
-sidebar_position: 7
+sidebar_position: 6
 ---
 
 # Dispatching actions
@@ -142,7 +142,9 @@ class LoadTextAndIncrement extends Action {
     await this.dispatchAndWait(new LoadText());
     
     // Only then, increment the state
-    return (state) => state.copy({ count: state.count + 1 });  
+    return (state) => state.copy({count: state.count + 1});  
   }
 }
 ```
+
+<hr></hr>

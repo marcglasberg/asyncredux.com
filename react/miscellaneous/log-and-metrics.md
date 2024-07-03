@@ -8,7 +8,7 @@ When you create your store, you can optionally pass it an `actionObservers` and
 a `stateObserver`, which may be used for logging and collecting metrics for your app:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: State.initialState,
   actionObserver: actionObserver, // Here!
   stateObserver: stateObserver, // Here!
@@ -88,7 +88,7 @@ class LoadUser extends Action {
     let user = await loadUser();
     this.log('User', user.id); // Here!
     
-    return (state) => state.copy(user: user);   
+    return (state) => state.copy({user: user});   
   }    
 }
 ```        

@@ -155,5 +155,5 @@ safely ignore this parameter.
 
 <hr></hr>
 
-Next, let's see how to access the dispatch methods (and more) from inside your widgets, using the
-widget's `BuildContext`.
+Next, let's see how to deal with actions that fail and throw errors, and let's learn about
+a special kind of error called a `UserException`.

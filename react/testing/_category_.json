@@ -1,6 +1,6 @@
 {
   "label": "Testing",
-  "position": 100,
+  "position": 6,
   "link": {
     "type": "generated-index",
     "description": "How to test Async Redux apps."

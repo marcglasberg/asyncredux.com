@@ -1,5 +1,5 @@
 ---
-sidebar_position: 10
+sidebar_position: 9
 ---
 
 # Wait, fail, succeed
@@ -49,9 +49,9 @@ class SellAction extends Action {
     let amount = await postSellOrder(this.stock);    
     
     return (state) => 
-      state.copy(
-        stocks: state.stocks.setAmount(this.stock, amount),
-      );
+      state.copy({
+        stocks: state.stocks.setAmount(this.stock, amount)
+      });
   }
 }
 ```
@@ -197,3 +197,13 @@ when the action is dispatched again.
 You could always clear the error message explicitly by defining
 `let clearExceptionFor = useClearExceptionFor();` and then calling `clearExceptionFor(LoadText)`,
 but it's not necessary to do so before dispatching the action again.
+
+<hr></hr>
+
+You now know the basics of Async Redux: 
+How to create and read the state, dispatch actions to change the state,
+run asynchronous actions, show spinners when actions are running, and error messages when they fail.
+That is enough for you to be productive with Async Redux, and create your own apps with it.
+
+But before we enter the advanced features, let's review the basics by implementing a few simple
+counter apps.

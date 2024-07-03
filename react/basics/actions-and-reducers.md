@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 4
 ---
 
 # Actions and reducers
@@ -54,15 +54,15 @@ class Increment extends ReduxAction<State> {
 :::tip
 
 In the code that dispatches an action, you can use your IDE to click the action name and go to where
-the action is defined. There, you'll find the reducer for that action, which explains what happens 
+the action is defined. There, you'll find the reducer for that action, which explains what happens
 when the action is dispatched.
 
-In other words, the action and its reducer are part of the same data structure, 
+In other words, the action and its reducer are part of the same data structure,
 keeping your code organized.
 
 :::
 
-## Base action 
+## Base action
 
 Having to write `extends ReduxAction<State>` in every action definition can be cumbersome.
 
@@ -92,6 +92,8 @@ class Increment extends Action {
 }
 ```
 
+Later, we'll see that the base action is also a good place to
+put [common logic](../advanced-actions/base-action-with-common-logic).
 
 ## Actions can have parameters
 
@@ -141,7 +143,7 @@ class AddRandomText extends Action {
     let jsonResponse = await response.json();
     let text = jsonResponse[0].todo;
      
-    return (state) => state.copy(text: text));
+    return (state) => state.copy({text: text}));
   }
 } 
 ``` 
@@ -150,7 +152,7 @@ class AddRandomText extends Action {
 
 If you want to understand the above code in terms of traditional Redux patterns,
 the beginning of the `reduce` method is the equivalent of a middleware,
-and the return function `(state) => state.copy(text: text))` is the equivalent of
+and the return function `(state) => state.copy({text: text}))` is the equivalent of
 a traditional pure reducer.
 
 It's still Redux, just written in a way that is easy and boilerplate-free.
@@ -177,7 +179,7 @@ class AddRandomText extends Action {
     let jsonResponse = await response.json();
     let text = jsonResponse[0].todo;
      
-    return (state) => state.copy(text: text));
+    return (state) => state.copy({text: text}));
   }
 } 
 ```
@@ -188,7 +190,9 @@ Notes:
   More on that, later.
 
 * Actions can throw any type of errors. However, if they throw a `UserException`
-  (provided by Async Redux), a dialog or other UI will open automatically, 
+  (provided by Async Redux), a dialog or other UI will open automatically,
   showing the error message to the user.
 
+<hr></hr>
 
+Next, let's see how and why you can have actions that don't modify the state.

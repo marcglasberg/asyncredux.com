@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 7
 ---
 
 # Wrapping the reducer
@@ -107,13 +107,10 @@ class SendMsg extends Action {
 ## Creating a base action
 
 While wrapping the reducer may seem more work,
-you may now modify your [base action](./base-action) to make it easier
+you may now modify your [base action](./base-action-with-common-logic) to make it easier
 to add this behavior to multiple actions:
 
 ```ts
-import { ReduxAction } from 'async-redux-react';
-import { State } from 'State';
-
 export abstract class Action extends ReduxAction<State> {
   observedState = undefined;  
   

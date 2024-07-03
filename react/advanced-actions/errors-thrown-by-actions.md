@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 import Tabs from '@theme/Tabs';
@@ -151,7 +151,7 @@ Note the `LogoutError` above includes the original error as a cause, so no infor
 Now suppose we want to show a dialog to the user, saying the logout failed, no matter
 what the error was.
 
-As [previously discussed](../user-exceptions), 
+As [previously discussed](../basics/user-exceptions), 
 throwing a `UserException` will automatically show a dialog to the user, 
 where the dialog's message is the exception's message.
 
@@ -194,7 +194,7 @@ class LogoutAction extends Action {
 
 ## Creating a base action
 
-You may also modify your [base action](./base-action) to make it easier
+You may also modify your [base action](./base-action-with-common-logic) to make it easier
 to add this behavior to multiple actions:
 
 ```ts
@@ -263,7 +263,7 @@ However, then you'd have to add this code to all actions that use Firebase.
 A better way is providing it globally as the `globalWrapError` parameter, when you create the store:
 
 ```ts              
-const store = new Store<State>(
+const store = createStore<State>(
   initialState: new State(),
   globalWrapError: globalWrapError,
 );
@@ -322,7 +322,7 @@ wrapError(error :any) {
 If you want this to happen globally, use the `globalWrapError` instead:
 
 ```ts
-const store = new Store<State>(
+const store = createStore<State>(
   initialState: new State(),
   globalWrapError: globalWrapError,
 );
@@ -352,7 +352,7 @@ For example, if you want to disable all errors in _production_, but log them;
 and you want to throw all errors during _development_ and _tests_, this is how you can do it:
 
 ```ts
-const store = new Store<State>(
+const store = createStore<State>(
   initialState: new State(),
   errorObserver: errorObserver,
 );

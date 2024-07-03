@@ -1,83 +1,111 @@
 ---
-sidebar_position: 2
+sidebar_position: 7
 ---
 
 # Wrapping the reducer
 
-You may wrap the reducer to allow for some pre- or post-processing.
+You may wrap an action reducer to allow for some pre- or post-processing.
 
-The `wrapReduce()` method gets a reference to the `reducer` method as a parameter.
-If you override `wrapReduce()` it's up to you to call the `reducer` and return its result.
+:::warning
 
-It allows you to run some code before and after the reducer runs,
-but also to prevent the reducer from running, or to change its result.
+This is a complex power feature that you may not need to learn.
+If you do, use it with caution.
+:::
+
+Actions allow you to define a `wrapReduce()` function,
+that gets a reference to the action reducer as a parameter.
+If you override `wrapReduce()` it's up to you to call `reduce()` and
+return a result.
+
+In `wrapReduce()` you may run some code before and after the reducer runs,
+and then change its result, or even prevent the reducer from running.
 
 ## Example
 
-Suppose the app state contains a `name`,
-and some action saves a new name to the cloud and then updates the state with it:
+Imagine you have a chat application, where you can use the `SendMsg` action
+to send messages of type `Msg`.
+
+Each message has an `id`, as well as a `status` field that can be:
+
+* `queued`: message was created in the client
+* `sent`: message was sent to the server
+* `received`: message was received by the recipient user
+
+The action uses the service `service.sendMessage()` to send the queued message,
+and then updates the message status to `sent`:
 
 ```dart
-class SaveName extends AppAction {
-  final String name;
-  SaveName(this.name);      
+class SendMsg extends AppAction {
+  final Msg msg;
+  SendMsg(this.msg);      
  
   Future<AppState> reduce() async {
-    await saveName(); 
-    return state.copy(name: name);
+    await service.sendMessage(msg);
+    return state.setMsg(msg.id, msg.copy(status: 'sent'));
   }
 }
 ```
 
-Saving the name may take some time,
-and meanwhile the user may change the name manually.
-If that happens, you don't want to overwrite the user's name with the old one.
+This mostly works, but there is a race condition.
+The application is separately using websockets to listen to message updates from the server.
+When the sent message is received by the recipient user, the websocket will let the
+application know the message is now `received`.
 
-How can you implement this?
+If the message status is updated to `received` by the websocket before `service.sendMessage(msg)`
+returns, the message status will be overwritten back to `sent` when the action completes.
 
-This can be achieved by checking if the `name` changed before and after `saveName()` is
-executed. If it changed, you abort the reducer.
+One way to fix this, is checking if the message status is already `received` before updating
+it to `sent`. In this case, you abort the reducer.
 
-One option is implementing this in the reducer itself:
+This can be done in the reducer itself, by returning `null` to abort and avoid modifying the state:
 
 ```dart
-class SaveName extends AppAction {
-  final String name;
-  SaveName(this.name);      
- 
-  Future<AppState> reduce() async {    
-    var previousName = state.name; 
-    await saveName(); 
-    var currentName = state.name;    
+class SendMsg extends AppAction {
+  final Msg msg;
+  SendMsg(this.msg);      
+
+  Future<AppState> reduce() async {
+    await service.sendMessage(msg);
     
-    return (previousName == currentName)
-        ? state.copy(name: name)
-        : null;
-  }
-}
+    var currentMsg = state.getMsgById(msg.id);
+    
+    return (currentMsg.status === 'received')
+      ? null;       
+      : state.setMsg(msg.id, msg.copy(status: 'sent'));          
+  }     
 ```
 
-Another option is wrapping the reducer like this:
+Another option is using `wrapReduce()` to wrap the reducer:
 
 ```dart
-class SaveName extends AppAction {
-  final String name;
-  SaveName(this.name);      
+class SendMsg extends AppAction {
+  final Msg msg;
+  SendMsg(this.msg);      
 
   Reducer<St> wrapReduce(Reducer<St> reduce) => () async {
-    var previousState = state.name; 
-    AppState? newState = await reduce();  
-    return identical(previousState, state.name) ? newState : null;
+  
+    // Get the message object before the reducer runs.  
+    var previousMsg = state.getMsgById(msg.id);
+    
+    AppState? newState = await reduce();
+    
+    // Get the current message object, after the reducer runs.
+    var currentMsg = state.getMsgById(msg.id);
+      
+    // Only update the state if the message object hasn't changed.  
+    return identical(previousMsg, currentMsg) 
+      ? newState 
+      : null;          
   }
 
-  Future<AppState> reduce() async {       
-    await saveName();            
-    return state.copy(name: name);
-  }
+  Future<AppState> reduce() async {
+    await service.sendMessage(msg);
+    return state.setMsg(msg.id, msg.copy(status: 'sent'));          
+  }  
 }
 ```
 
-### Creating a Mixin
+## Creating a Mixin
 
 You may also create a mixin to make it easier to add this behavior to multiple actions:
 
@@ -87,9 +115,14 @@ mixin AbortIfStateChanged on AppAction {
   abstract AppState getObservedState();
   
   Reducer<St> wrapReduce(Reducer<St> reduce) => () async {
-    var previousState = getObservedState(); 
-    AppState? newState = await reduce();  
-    return identical(previousState, getObservedState()) ? newState : null;
+  
+    var previousObservedState = getObservedState();
+    AppState? newState = await reduce();
+    var currentObservedState = getObservedState();
+    
+    return identical(previousObservedState, currentObservedState) 
+      ? newState 
+      : null;
   }
 }
 ```
@@ -97,15 +130,13 @@ mixin AbortIfStateChanged on AppAction {
 Which allows you to write `with AbortIfStateChanged`:
 
 ```dart
-class SaveName extends AppAction with AbortIfStateChanged {
-  final String name;
-  SaveName(this.name);      
+class SendMsg extends AppAction with AbortIfStateChanged {
+  final Msg msg;
+  SendMsg(this.msg);     
   
-  AppState getObservedState() => state.name;
-
-  Future<AppState> reduce() async {       
-    await saveName();            
-    return state.copy(name: name);
-  }
+  Future<AppState> reduce() async {
+    await service.sendMessage(msg);
+    return state.setMsg(msg.id, msg.copy(status: 'sent'));          
+  }  
 }
 ```

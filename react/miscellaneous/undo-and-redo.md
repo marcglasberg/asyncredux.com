@@ -7,7 +7,7 @@ sidebar_position: 2
 It's easy to create undo/redo features in Async Redux. 
 
 For example, here we create the store with 
-a [state-observer](./log_and_metrics#stateobserver) that saves the most recent 100 states:
+a [state-observer](./log-and-metrics#stateobserver) that saves the most recent 100 states:
 
 ```dart
 var store = Store<State>(

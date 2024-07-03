@@ -45,7 +45,7 @@ toast, or other suitable UI element.
 This is done by providing the `showUserException` parameter, when you create the store:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: State.initialState,
   showUserException: userExceptionDialog, // Here!
 });

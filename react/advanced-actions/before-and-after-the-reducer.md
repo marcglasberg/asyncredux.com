@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 3
 ---
 
 # Before and after the reducer
@@ -100,7 +100,7 @@ class BarrierAction extends Action {
   constructor(public hasBarrier: boolean) { super(); }
 
   reduce() {
-    return this.state.copy(hasBarrier: this.hasBarrier);
+    return this.state.copy({hasBarrier: this.hasBarrier});
   }
 }
 ```
@@ -150,7 +150,7 @@ sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-ori
 
 ## Creating a base action
 
-You may also modify your [base action](./base-action) to make it easier
+You may also modify your [base action](./base-action-with-common-logic) to make it easier
 to add this behavior to multiple actions:
 
 ```ts

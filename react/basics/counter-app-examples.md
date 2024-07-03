@@ -16,7 +16,7 @@ In this first example, the state is just a number of type `number`,
 and the initial state is `0`:
 
 ```tsx
-const store = new Store<number>({
+const store = createStore<number>({
   initialState: 0,
 });
 ```
@@ -70,7 +70,7 @@ type State = {
 The initial state is an object with counter zero:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: {
     counter: 0,
   },
@@ -140,7 +140,7 @@ class State {
 The initial state is an instance of this class: `new State(0)`:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: new State(0),
 });
 ```
@@ -394,7 +394,7 @@ describe('Add action', () => {
   let store;
 
   beforeEach(() => {
-    store = new Store<State>({ initialState: new State(3) });
+    store = createStore<State>({ initialState: new State(3) });
   });
 
   it('should increment the counter by the given value', () => {
@@ -491,7 +491,7 @@ we need to apply a small change to them. This doesn't work anymore:
 
 ```tsx
 it('should increment the counter by one', () => {
-  let store = new Store<State>({ initialState: new State(3) });
+  let store = createStore<State>({ initialState: new State(3) });
   
   store.dispatch(new Increment()); // Here! 
   expect(store.state.counter).toBe(4);
@@ -508,7 +508,7 @@ This means we can use `await` to wait for the action to finish, and then check t
 
 ```tsx
 it('should increment the counter by one', async () => {
-  let store = new Store<State>({ initialState: new State(3) });
+  let store = createStore<State>({ initialState: new State(3) });
   
   await store.dispatchAndWait(new Increment()); // Here!
   expect(store.state.counter).toBe(4);
@@ -517,3 +517,9 @@ it('should increment the counter by one', async () => {
 
 Note: If you prefer not to worry about whether actions under test are synchronous or asynchronous,
 you can always use `dispatchAndWait` instead of `dispatch`. It works in both cases.
+
+<hr></hr>
+
+This concludes the basics of Async Redux. 
+However, if you want to become an advanced Async Redux user, continue reading the next sections.
+The next one will cover advanced topics related to actions.

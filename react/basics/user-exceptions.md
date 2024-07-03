@@ -7,12 +7,12 @@ import TabItem from '@theme/TabItem';
 
 # User exceptions
 
-Actions that fail can simply [throw errors](./advanced-actions/errors-thrown-by-actions).
+Actions that fail can simply [throw errors](../advanced-actions/errors-thrown-by-actions).
 
 Those errors can be of any type, but in this page we'll discuss a special type of
-error called **`UserException`**.
-This is provided natively by Async Redux, and it represents errors that are **not bugs** in the
-code, but rather something that the user can fix.
+error called **`UserException`**, which is provided natively by Async Redux.
+It represents errors that are **not bugs** in the code, 
+but rather something that the user can fix.
 
 In other words, if something wrong happens in an action,
 you can `throw new UserException('Some suitable error message')` to automatically
@@ -56,7 +56,7 @@ class SaveUser extends Action {
       throw new UserException('Name must have at least 4 letters.');
     
     await this.saveUser(this.name);
-    return (state) => state.copy(user: state.user.copy(name: this.name);
+    return (state) => state.copy({user: state.user.copy({name: this.name}});
   }
   
   async saveUser(name: string) {
@@ -91,7 +91,7 @@ toast, or other suitable UI element.
 This is done by providing the `showUserException` parameter, when you create the store:
 
 ```tsx
-const store = new Store<State>({
+const store = createStore<State>({
   initialState: new State(),
   showUserException: userExceptionDialog, // Here!
 });

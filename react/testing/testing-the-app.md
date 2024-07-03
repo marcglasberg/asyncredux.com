@@ -4,9 +4,9 @@ sidebar_position: 1
 
 # Dispatch, wait and expect
 
-Async Redux test features are one of the strongest points of the package,
-making it very easy to test your app, including both synchronous and asynchronous
-processes.
+Async Redux's test capabilities are one of its strongest points, 
+making it very easy to test your app, 
+including both testing synchronous and asynchronous processes.
 
 ## Testing steps
 
