@@ -178,7 +178,7 @@ When you enter the page, it will dispatch an action to fetch the information onc
 and put it into the store. The 3 components will get their information from the store.
 
 In any case, if you still need to prevent multiple dispatches of some specific action,
-you can add [nonReentrant](../advanced-actions/action-features#nonReentrant) to it:
+you can add [nonReentrant](../advanced-actions/action-features#nonreentrant) to it:
 
 ```tsx
 class LoadText extends Action { 

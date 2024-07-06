@@ -23,7 +23,7 @@ It was created by [Marcelo Glasberg](https://github.com/marcglasberg),
 and launched in July 2024.
 
 While new for React, Async Redux is a mature solution,
-having been available for [Flutter](https://pub.dev/packages/async_redux) for a few years.
+having been [available for Flutter](https://pub.dev/packages/async_redux) for a few years.
 There, it ranks among the top 8% of most used packages,
 and its features have been battle-tested in hundreds of real-world applications.
 

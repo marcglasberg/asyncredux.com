@@ -25,10 +25,10 @@ including observing errors, showing errors to users, and wrapping errors into mo
 descriptions.
 
 ## What happens
-
+                
 As previously discussed, your actions can implement the
 functions [`before()`](before-and-after-the-reducer#before),
-[`reduce()`](../actions-and-reducers#the-reducer),
+[`reduce()`](../basics/actions-and-reducers#the-reducer),
 and [`after()`](before-and-after-the-reducer#after).
 This is what happens if an action throws an error:
 
@@ -382,7 +382,7 @@ As you can see, the error observer returns a boolean:
 
 ## UserExceptionAction
 
-As [previously discussed](../user-exceptions), the `UserException` is a special type of error
+As [previously discussed](../basics/user-exceptions), the `UserException` is a special type of error
 that Async Redux automatically catches and shows to the user in a dialog, or other UI of your
 choice.
 

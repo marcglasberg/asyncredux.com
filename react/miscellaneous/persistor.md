@@ -216,7 +216,7 @@ However, if you have classes in the state, you will need to list them all in
 the `classesToSerialize` parameter above.
 
 For example, consider the _Todo List_ app shown below,
-which was created in our [tutorial](./category/tutorial).
+which was created in our [tutorial](../category/tutorial).
 It uses classes called `State`, `TodoList`, `TodoItem`, and `Filter` in its state.
 This means that you must list them all in the `classesToSerialize` parameter of
 the `ClassPersistor`:

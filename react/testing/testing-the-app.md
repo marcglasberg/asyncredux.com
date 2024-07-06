@@ -20,8 +20,8 @@ Testing an Async Redux app generally involves these steps, in order:
 
 Item 3 above (waiting for actions to complete) can be done using the following functions:
 
-* [dispatchAndWait](../dispatching-actions#dispatch-and-wait)
-* [dispatchAndWaitAll](../dispatching-actions#dispatch-and-wait-all)
+* [dispatchAndWait](../basics/dispatching-actions#dispatch-and-wait)
+* [dispatchAndWaitAll](../basics/dispatching-actions#dispatch-and-wait-all)
 
 Click on the links above to see their documentation.
 
@@ -40,8 +40,8 @@ expect(store.state.portfolio).toEqual(['IBM', 'TSLA']);
 
 ## How about dispatch and dispatchAll?
 
-Functions [**dispatch**](../dispatching-actions#dispatch-one-action)
-and [**dispatchAll**](../dispatching-actions#dispatch-all-multiple-actions)
+Functions [**dispatch**](../basics/dispatching-actions#dispatch-one-action)
+and [**dispatchAll**](../basics/dispatching-actions#dispatch-all-multiple-actions)
 can also be used to dispatch actions in tests,
 but they do **not** return a `Promise` that resolves when the action finishes.
 

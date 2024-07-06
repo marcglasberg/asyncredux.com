@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Testing UserExceptions
 
-As [previously discussed](../user-exceptions), 
+As [previously discussed](../basics/user-exceptions), 
 when an action encounters an error which is not a bug, but rather a user mistake, 
 it can throw the built-in `UserException` error. 
 
