@@ -96,29 +96,35 @@ export abstract class Persistor<St> {
 
 Async Redux will call these functions at the right time, so you don't need to worry about it:
 
-* When the app opens, Async Redux will call `readState` to get the last state that was persisted.
+* When the app opens, Async Redux will call `readState()` to get the last state that was persisted.
 
-* In case there is no persisted, state yet (first time the app is opened), the `saveInitialState`
+* In case there is no persisted, state yet (first time the app is opened), the `saveInitialState()`
   function will be called to persist the initial state.
 
 * In case there is a persisted state, but it's corrupted (reading the state fails with an error),
-  then `deleteState` will be called first to delete the corrupted state,
-  and then `saveInitialState` will be called to persist the initial state.
+  then `deleteState()` will be called first to delete the corrupted state,
+  and then `saveInitialState()` will be called to persist the initial state.
 
-* In case the persisted state read with `readState` is valid, this will become the current store
+* In case the persisted state read with `readState()` is valid, this will become the current store
   state.
 
 * From this moment on, every time the state changes, Async Redux will schedule a call to
-  the `persistDifference` function. This function will not be called more than once each 2 seconds,
-  which is the default throttle interval. You can change it by overriding the `throttle` property.
+  the `persistDifference()` function. This function will not be called more than once each 2
+  seconds, which is the default throttle interval. You can change it by overriding the `throttle`
+  property (make it zero if you want no throttle, and the state will save as soon as it changes).
 
-* In the unlikely case the `persistDifference` function itself takes more than 2 seconds to execute,
-  the next call will be scheduled only after the current one finishes.
+* In the unlikely case the `persistDifference()` function itself takes more than 2 seconds to
+  execute, the next call will be scheduled only after the current one finishes.
 
-* The `persistDifference` function receives the last persisted state and the current new state.
+* The `persistDifference()` function receives the last persisted state and the current new state.
   The simplest way to implement this function is to ignore the `lastPersistedState` parameter,
-  and persist the whole `newState` every time. This is fine for small states, but for larger states
-  you can compare the two states and persist only the difference between them.
+  and persist the whole `newState` every time. This is fine for small states, but for larger
+  states you can compare the two states and persist only the difference between them.
+
+* Even if you have a non-zero throttle period, sometimes you may want to save the state immediately,
+  for some reason. You can do that by dispatching the built-in `PersistAction`
+  with `dispatch(new PersistAction());`. This will ignore the throttle period and
+  call `persistDifference()` right away to save the current state.
 
 ## ClassPersistor
 
