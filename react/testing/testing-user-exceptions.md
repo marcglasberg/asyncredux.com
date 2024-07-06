@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 2
 ---
 
 # Testing UserExceptions
@@ -53,9 +53,10 @@ expect(error.msg).toBe("You can't do this.");
 
 ## Checking the error queue
 
-Since `UserException`s don't represent bugs in the code, Async Redux puts them into the
-store's `errors` queue. In other words, this queue is a list of `UserException`s that were thrown
-by actions, and it will be consumed by the UI (usually a modal error dialog) to show the user.
+Since `UserException`s don't represent bugs in the code, 
+Async Redux puts them into the store's `userExceptionsQueue` queue. 
+In other words, this queue is a list of `UserException`s that were thrown by actions, 
+and it will be consumed by the UI (usually a modal error dialog) to show the user.
 
 If you test includes actions that emit a lot of `UserException` errors,
 you may wait until they all enter the error queue, and then check the queue itself:
@@ -67,7 +68,7 @@ let status = await store.dispatchAndWaitAll([
   new MyAction3()
 ]);
 
-let errors = store.errors;
+let errors = store.userExceptionsQueue;
 
 expect(errors.length).toBe(3);
 expect(errors[0].msg).toBe("You can't do this.");

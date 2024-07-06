@@ -9,7 +9,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Async Redux',
-  tagline: 'A Non-Official Reimagining of Redux',
+  tagline: 'An Unofficial Reimagining of Redux',
   favicon: 'img/favicon.ico',
 
   url: 'https://asyncredux.com',

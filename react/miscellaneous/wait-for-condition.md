@@ -73,17 +73,38 @@ the promise resolves immediately.
 
 :::
 
+### dispatchWhen
+
+The special dispatch function `dispatchWhen` allows you to
+wait until the store state meets a certain condition, and then dispatch an action.
+For example, this will dispatch a `BuyStock` action when the price of IBM is 100 or more:
+
+```ts
+dispatchWhen(
+  new BuyStock('IBM'),
+  (state) => state.stocks.getPrice('IBM') >= 100,
+);
+```
+
+Note this dispatch function is just a shorthand for:
+
+```ts
+waitCondition(condition).then(() => this.dispatch(action));
+```
+
 ### In tests
 
 The `waitCondition` function is also very useful in tests.
 You can dispatch actions that perform some complex stuff,
 and then simply wait until the state reaches the exact condition you want to test for.
 
-In the following example,
-we dispatch a `LogInUser` action and then wait until the user is logged in:
+In the following example, we dispatch a `LogInUser` action 
+and then wait until the user is logged in:
 
 ```ts
+const store = new Store<State>({ initialState: new State() });
 expect(store.state.user.isLoggedIn).toBe(false);
+
 dispatch(new LogInUser("Mary"));
 await store.waitCondition((state) => state.user.isLoggedIn);
 expect(store.state.user.name, "Mary");

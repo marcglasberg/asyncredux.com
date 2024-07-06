@@ -13,9 +13,9 @@ const FeatureList = [
     Svg: require('@site/static/img/react.svg').default,
     description: (
       <>
-        Async Redux aims to be easier to use than Redux, Zustand, MobX, and TanStack Query.
+        Async Redux aims to be easier to use than Redux Toolkit, Zustand, MobX, and TanStack Query.
         It will be available&nbsp;on <a
-        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;in&nbsp;June&nbsp;2024.
+        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;in&nbsp;July&nbsp;2024.
       </>
     ),
     page: 'react',

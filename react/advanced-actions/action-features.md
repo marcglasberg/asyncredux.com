@@ -109,10 +109,12 @@ Notes:
 
 ## debounce
 
-To limit how often an action occurs in response to rapid inputs, you can add the `Debounce` mixin
-to your action class. For example, when a user types in a search bar, debouncing ensures that not
-every keystroke triggers a server request. Instead, it waits until the user pauses typing before
-acting.
+To limit how often an action occurs in response to rapid inputs, 
+add something like `debounce = 300` to your action class, 
+where `300` is the number of milliseconds. 
+
+For example, when a user types in a search bar, debouncing ensures that not every keystroke 
+triggers a server request. Instead, it waits until the user pauses typing before acting.
 
 ```tsx
 class SearchText extends Action {
@@ -131,9 +133,12 @@ class SearchText extends Action {
 
 ## throttle
 
-To prevent an action from running too frequently, you can add the `Throttle` mixin to your
-action class. This means that once the action runs it's considered _fresh_, and it won't run
-again for a set period of time, even if you try to dispatch it.
+To prevent an action from running too frequently, 
+add something like `throttle = 5000` to your action class,
+where `5000` means 5 seconds. 
+
+After the action runs it's considered _fresh_, and it won't run
+again for a set period of time, even if you dispatch it.
 After this period ends, the action is considered _stale_ and is ready to run again.
 
 ```tsx

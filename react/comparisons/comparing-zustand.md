@@ -10,5 +10,6 @@ setup or complexity. For advanced features you need to install separate packages
 
 Async Redux also doesn't need any extensive setup, and is not more complex than Zustand.
 However, Async Redux is not barebones: The advanced features are there when you need them.
-It deals natively with serializing, running async processes, displaying spinners
-while loading, showing error messages, saving the state to the local storage, and testing.
+It deals natively with serializing, running async processes, dealing with stale data,
+displaying spinners while loading, showing error messages, saving the state to the local storage,
+testing, and more.

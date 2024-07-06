@@ -7,25 +7,24 @@ import TabItem from '@theme/TabItem';
 
 # Getting Started
 
-Async Redux is, at the same time:
+Async Redux is:
 
-* Very powerful
-* Simple and easy to use
+* Simple and easy to learn and use.
+* Powerful enough to handle complex applications with millions of users.
 
-This means you'll be able to create your websites and apps much faster,
-and other people in your team will be able to easily understand your code and modify it.
+This means you'll be able to create websites and apps much faster,
+and other people on your team will easily understand and modify your code.
 
 ## What is it?
 
-Async Redux is an optimized Redux version, tailored for React.
-
+Async Redux is an optimized, unofficial version of Redux.
 It was created by [Marcelo Glasberg](https://github.com/marcglasberg),
 and launched in July 2024.
 
-While Async Redux is new for React, It's considered mature.
-It's been available for [Flutter](https://pub.dev/packages/async_redux) for a few years,
-where it ranks among the top 8% of most-used packages,
-meaning its features have been battle-tested in hundreds of real-world applications.
+While new for React, Async Redux is a mature solution,
+having been available for [Flutter](https://pub.dev/packages/async_redux) for a few years.
+There, it ranks among the top 8% of most used packages,
+and its features have been battle-tested in hundreds of real-world applications.
 
 ## Installation
 
@@ -48,35 +47,31 @@ yarn add async-redux-react
 
 ## How does it compare?
 
-Async Redux was written from the ground up, and has no code in common with
-the original Redux and Redux Toolkit.
-
-Follow these links if you want to compare Async Redux with other state management solutions:
+Async Redux was written from the ground up and shares no code with the original Redux.
+However, it does draw inspiration and borrows good ideas from it and from these solutions:
 
 * [Comparing with Redux Toolkit](./comparisons/comparing-redux.md)
 * [Comparing with TanStack Query](./comparisons/comparing-tanstack.md)
 * [Comparing with Zustand](./comparisons/comparing-zustand.md)
 * [Comparing with MobX](./comparisons/comparing-mobx.md)
 
-## Easy to use
+## Ease of use
 
-Async Redux's whole focus is on being easy for developers to use.
-I'm consistently incredulous at things front end developers have to deal with,
-and the large overhead knowledge that is needed just to navigate the pitfalls
-of the tools we use. I want to make Async Redux the opposite of that:
-You don't need to be super clever about approaching things just to make it work.
+Front-end developers learning some of the solutions mentioned above are
+often overwhelmed by the complexity of concepts they have to grasp,
+and the large knowledge overhead needed just to navigate the pitfalls.
 
-Despite being easy to use, Async Redux is powerful enough
-to handle complex applications with millions of users.
+Async Redux aims to be the opposite of that:
+You don't need to be super clever about approaching things just to make them work.
 
 ## Framework support
 
-Currently, Async Redux has deep integration with React.
-This deep integration is important to make it easy to use.
+Currently, Async Redux is deeply integrated with React,
+which in practice was necessary to make it really easy to use.
 
-It's entirely possible to make Async Redux work with any other frameworks, like Solid, Vue, Svelte
-or Angular, but a separate package would be needed for each. For the moment, only React is
-supported.
+Although integrating Async Redux with other frameworks like Solid, Vue, Svelte,
+or Angular is not difficult, a separate package would be required for each.
+Currently, only React is supported.
 
 <hr></hr>
 
