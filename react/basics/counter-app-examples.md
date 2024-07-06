@@ -4,7 +4,10 @@ sidebar_position: 100
 
 # Counter app examples
 
-Let's create a few simple "counter app" examples using **Async Redux**.
+This concludes the [basics](../category/basics/) of **Async Redux**.
+
+But, before we move on to more [advanced](../category/advanced-actions/) concepts,
+let's review the basics by creating a few simple "counter application" examples.
 
 The examples below are editable and runnable.
 You can change the code and see the results in real-time.
@@ -520,6 +523,6 @@ you can always use `dispatchAndWait` instead of `dispatch`. It works in both cas
 
 <hr></hr>
 
-This concludes the basics of Async Redux. 
+This concludes our review of the basics of Async Redux.
 However, if you want to become an advanced Async Redux user, continue reading the next sections.
 The next one will cover advanced topics related to actions.

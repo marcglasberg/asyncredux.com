@@ -177,6 +177,8 @@ function ListOfTodos() {
 // A checkbox allows the user to mark the item as completed.
 function TodoItemComponent({ item }: { item: TodoItem }) {
 
+  const store = useStore();
+  
   // Hook to read the current filter from the state.
   const filter = useSelect((state: State) => state.filter);
 

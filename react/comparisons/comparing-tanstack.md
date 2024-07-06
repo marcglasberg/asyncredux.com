@@ -19,7 +19,7 @@ querying, fetching, and caching.
 
 In my opinion, viewing state management in terms of queries is the **wrong abstraction**.
 
-Async Redux manages state through synchronous global state and actions that can be sync or async.
+Async Redux manages state through synchronous global state, and actions that can be sync or async.
 Actions can query and fetch data, but they also change the state in other ways. Actions can fail or
 succeed. You can wait for them to finish, retry them, debounce, throttle them, and do optimistic
 updates.
@@ -28,26 +28,118 @@ updates.
 |---------------------------|----------------|------------------|---------------------|
 | Sync Processes            | No             | Actions/Reducers | Actions/Reducers    |
 | Async Processes           | Queries        | Thunks           | Actions/Reducers    |
-| Global Sync State         | No             | Yes              | Yes                 |
+| Global local state        | No             | Yes              | Yes                 |
 | Local Persistence         | No             | Objects          | Objects and Classes |
 | Loading and failed states | Yes            | No               | Yes                 |
 | Deduplication             | Yes            | No               | Yes                 |
 | Smart refetches           | Yes            | No               | Yes (soon)          |
 | Retry                     | Yes            | No               | Yes                 |
 
+## Global local state
+
+TanStack Query has a shared cache for all queries. While the cache is technically global sync state,
+it's an implementation detail for handling fresh/stale data and is generally not meant for direct
+access. That's why the table above says TanStack Query doesn't have "Global local state".
+
+If we want to abuse the cache as local state, we can do something like this:
+
+```tsx
+import React from "react";
+import { useQuery, queryCache } from "react-query";
+
+function App() {
+  return (
+    <div>      
+      <Component1 />
+      <Component2 />
+    </div>
+  );
+}
+
+function useGlobalLocalState(key, initialValue) {
+  const { data: state } = useQuery(key, () => queryCache.getQueryData(key), {
+    initialData: initialValue
+  });
+
+  const setState = value => queryCache.setQueryData(key, value);
+
+  return [state, setState];
+}
+
+function Component1() {
+  const [count, setCount] = useGlobalLocalState("count", 1);  
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>add</button>
+    </div>
+  );
+}
+
+function Component2() {
+  const [count, setCount] = useGlobalLocalState("count", 2);  
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>add</button>
+    </div>
+  );
+}
+```
+
+You have to manually manage globally unique keys (like "count" above) to make sure they don't
+repeat, and use `initialData`. And you have no type safety when calling `queryClient.setQueryData`.
+
+Async Redux has a global local state that is **meant** for direct access:
+
+```tsx
+function App() {
+  return (
+    <div>      
+      <Component1 />
+      <Component2 />
+    </div>
+  );
+}
+
+function Component1() {
+  const count = useSelect((state) => state.count);  
+  const dispatch = useDispatch();  
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => dispatch(new IncrementCount(count))}>add</button>
+    </div>
+  );
+}
+
+function Component2() {
+  const count = useSelect((state) => state.count);  
+  const dispatch = useDispatch();  
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => dispatch(new IncrementCount(count))}>add</button>
+    </div>
+  );
+}
+```
+
 ## Caching
 
-TanStack Query has a shared cache for all queries. While technically global sync state, it's an
-implementation detail for handling fresh/stale data and is generally not meant for direct access.
-That's why the table above says TanStack Query doesn't have global sync state.
+TanStack Query assumes the server, not the frontend, owns the data.
+When your view needs data, you must query it from the cache if it's fresh,
+and from the server if it's stale.
 
-TanStack Query assumes the server, not the frontend, owns the data. When your view needs data, you
-must query it, from the cache if it's fresh, and from the server if it's stale.
-
-In contrast, Async Redux needs no cache, as the **app state** contains all information.
-It assumes both the frontend and the server own some data and helps synchronize them. When your view
-needs data, you get it synchronously from the state in memory.
-When data is stale, it helps you refetch it, put it in memory, and then use it from there.
+In contrast, Async Redux needs no cache, as the local app state contains all information.
+It assumes both the frontend and the server own some of the data and helps synchronize them.
+When your view needs data, you get it synchronously from the state in memory.
+When data is stale, it helps you refetch it, put it in the local app state,
+and then use it from there.
 
 TanStack Query has a `staleTime` option to control when data is considered stale and should be
 refetched. By default, all cache data is considered stale after 0 seconds, meaning queries will
@@ -114,8 +206,8 @@ class LoadText extends Action {
 
 Both TanStack Query and Async Redux allow refetching stale data.
 TanStack Query has options like `refetchOnMount`, `refetchOnWindowFocus`, `refetchOnReconnect`,
-`refetchInterval`, and `refetchIntervalInBackground`, which are not yet in Async Redux but will
-be implemented [in the future](https://github.com/marcglasberg/async-redux-react/issues/1).
+`refetchInterval`, and `refetchIntervalInBackground`, which are not yet present in Async Redux but
+will be implemented [in the future](https://github.com/marcglasberg/async-redux-react/issues/1).
 This is a possible API:
 
 ```tsx
@@ -236,8 +328,7 @@ function MyComponent() {
 ```
 
 Note TanStack Query couples the component to the query (fetching the information),
-while Async Redux doesn't.
-This means TanStack
+while Async Redux doesn't. This means TanStack
 Query [doesn't allow](https://chatgpt.com/share/5cd3369e-9993-4f86-b905-0d21b85cbc2f) one
 component to know if a query started by **another** component is loading or has failed.
 
@@ -247,8 +338,8 @@ regardless of which one dispatched the action.
 ## Testing
 
 As explained above, TanStack Query couples the component to the query,
-while Async Redux **does not** couple the component to the action. 
-For this reason, testing an app that uses TanStack Query generally involves 
+while Async Redux **does not** couple the component to the action.
+For this reason, testing an app that uses TanStack Query generally involves
 testing UI components, which is a lot more complex.
 
 With Async Redux, you can test the actions and reducers directly, without the need for the UI.

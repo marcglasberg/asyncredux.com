@@ -62,6 +62,15 @@ function MyComponent() {
 The component will now rebuild only when the internal properties of the selected object change.
 In other words, when at least one of `name` or `age` changes.
 
+## Try it out
+
+<iframe
+src="https://codesandbox.io/embed/q2gjmw?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=70&previewwindow=browser&hidedevtools=1&hidenavigation=1"
+style={{ width:'100%', height: '570px', borderRight:'1px solid black' }}
+title="counter-async-redux-example"
+sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+/>
+
 <hr></hr>
 
 Next, let's see how to define actions and reducers,

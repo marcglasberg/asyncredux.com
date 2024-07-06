@@ -101,3 +101,12 @@ function stateObserver(action, prevState, newState, error, dispatchCount) {
   saveMetrics(action, actionLog, newState, error);
 }
 ```
+
+## Try it yourself
+
+<iframe
+src="https://codesandbox.io/embed/3rzvsk?view=split&module=%2Fsrc%2FApp.tsx&hidenavigation=1&fontsize=12.5&editorsize=50&previewwindow=browser&hidedevtools=1&hidenavigation=1"
+style={{ width:'100%', height: '650px', borderRight:'1px solid black' }}
+title="counter-async-redux-example"
+sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+/>
