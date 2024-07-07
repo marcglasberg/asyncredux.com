@@ -50,10 +50,10 @@ yarn add async-redux-react
 ## How does it compare?
 
 Front-end developers learning state management solutions are
-sometimes overwhelmed by the complexity of concepts they have to grasp,
-and the large knowledge overhead needed just to navigate the pitfalls.
+sometimes overwhelmed with the complexity of concepts they have to grasp,
+and the significant knowledge overhead needed just to navigate the pitfalls.
 
-Async Redux aims to be the opposite of that:
+Async Redux is the opposite of that:
 You don't need to be super clever about approaching things just to make them work.
 
 While striving to be simple, Async Redux doesn't reinvent the wheel,
