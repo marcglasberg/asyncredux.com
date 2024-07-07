@@ -9,8 +9,9 @@ import TabItem from '@theme/TabItem';
 
 Async Redux is:
 
-* Simple and easy to learn and use.
-* Powerful enough to handle complex applications with millions of users.
+* Simple to learn and easy to use
+* Powerful enough to handle complex applications with millions of users
+* Testable
 
 This means you'll be able to create web and mobile apps much faster,
 and other people on your team will easily understand and modify your code.
@@ -58,10 +59,10 @@ You don't need to be super clever about approaching things just to make them wor
 While striving to be simple, Async Redux doesn't reinvent the wheel,
 and draws inspiration and good ideas from these solutions:
 
-* [Comparing with Redux Toolkit](./comparisons/comparing-redux.md)
-* [Comparing with TanStack Query](./comparisons/comparing-tanstack.md)
-* [Comparing with Zustand](./comparisons/comparing-zustand.md)
-* [Comparing with MobX](./comparisons/comparing-mobx.md)
+* [Comparing with Redux Toolkit](./comparisons/comparing-redux)
+* [Comparing with TanStack Query](./comparisons/comparing-tanstack)
+* [Comparing with Zustand](./comparisons/comparing-zustand)
+* [Comparing with MobX](./comparisons/comparing-mobx)
 
 <hr></hr>
 

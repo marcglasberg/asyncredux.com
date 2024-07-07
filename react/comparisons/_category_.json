@@ -2,6 +2,7 @@
   "label": "Comparisons",
   "position": 7,
   "link": {
-    "type": "generated-index"
+    "type": "generated-index",
+    "description": "While striving to be simple, Async Redux doesn't reinvent the wheel,\nand draws inspiration and good ideas from these solutions.\n"
   }
 }

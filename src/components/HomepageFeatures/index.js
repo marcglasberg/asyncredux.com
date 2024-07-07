@@ -14,8 +14,8 @@ const FeatureList = [
     description: (
       <>
         Async Redux aims to be easier to use than Redux Toolkit, Zustand, MobX, and TanStack Query.
-        It will be available&nbsp;on <a
-        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;in&nbsp;July&nbsp;2024.
+        On&nbsp;<a
+        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;since&nbsp;July&nbsp;2024.
       </>
     ),
     page: 'react',
@@ -26,7 +26,7 @@ const FeatureList = [
     description: (
       <>
         Async Redux aims to be easier to use than Bloc, Redux and MobX.
-        It ranks among the top 8% most-used packages.
+        Top 8% most-used package.
         On&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a>&nbsp;since&nbsp;2020.
       </>
     ),
@@ -188,52 +188,12 @@ export function Overview(page) {
               </span>
             </Link>
           </div>
-          <hr></hr>
-          <FinalComment/>
-
+          <p>&nbsp;</p>
         </div>
       </section>
     </div>
   );
 }
-
-const FinalComment = () => {
-  const containerStyle = {
-    display: 'flex',
-    width: 660,
-    alignItems: 'stretch',
-    gap: '12px',
-    paddingBottom: 25,
-    margin: '0 auto',
-  };
-
-  const imageContainerStyle = {
-    flex: '0 1 auto',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-
-  const imageStyle = {height: 125, width: 125};
-
-  const textStyle = {fontSize: '0.9em', flex: 1, textAlign: 'justify'};
-
-  return (
-    <div style={containerStyle}>
-      <div style={imageContainerStyle}>
-        <img src="img/logo.svg" style={imageStyle}/>
-      </div>
-      <div style={textStyle}>
-        Async Redux's mascot is a platypus with a keyboard. The platypus is a mix of different
-        animals, just like Async Redux gets ideas from different state management solutions
-        to create something unique. Async Redux has no code in common with the original Redux,
-        but follows similar principles. I'm not affiliated with the Redux
-        team. <a href='https://redux.js.org/'>Go here</a> to find the original Redux from Dan
-        Abramov.
-      </div>
-    </div>
-  );
-};
 
 const prism = {
   "pre": {
