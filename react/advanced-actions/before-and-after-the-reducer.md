@@ -14,7 +14,7 @@ It's indeed common to have some side effects both before and after the reducer r
 To help you with these use cases, you may override your action functions `before()`
 and `after()`, which run respectively before and after the reducer.
 
-:::note
+:::info
 
 Implementing your action's `reduce()` function is mandatory,
 but `before()` and `after()` are optional.
@@ -54,7 +54,7 @@ async before(): Promise<void> {
 }
 ```
 
-:::note
+:::info
 
 If `before()` returns a promise, then the action becomes async
 (its reducer will complete in a later microtask than the dispatch call),
@@ -77,7 +77,7 @@ since it will always run, even if an error was thrown by `before()` or `reduce()
 This is important so that it can undo any side effects that were done in `before()`,
 even if there was an error later in the reducer.
 
-:::note
+:::info
 
 Make sure your `after()` function doesn't throw an error.
 If it does, the error will be swallowed, but logged with `Store.log()`.

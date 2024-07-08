@@ -296,7 +296,7 @@ you return the error instead of throwing it anyway.
 
 :::
 
-:::note
+:::info
 
 Don't use the `globalWrapError` to log errors, as you should prefer doing that
 in the global `errorObserver` that will be discussed below.

@@ -11,12 +11,41 @@ Bundles your website into static files for production.
 `npm run serve`
 Serves the built website locally.
 
-`npm run deploy`
-Publishes the website to GitHub pages.
-
 We recommend that you begin by typing:
 
 `cd asyncredux.com`
 `npm start`
 
-Happy building awesome websites!
+# Test on Android Simulator for Windows
+
+- Open the terminal
+- Type ipconfig and copy your `IPv4 Address`. For example, it could be `123.456.78.5`
+- In your Docusaurus project's `docusaurus.config.js`, replace the `url` field:
+
+  ```js                                                                        
+  // From:
+  url: 'https://asyncredux.com',
+  
+  // To:
+  url: 'http://123.456.78.5',
+  ```
+
+- Now, to allow connections from other devices, you need to restart your development server  
+  using this:
+
+  ```bash
+  npm run start -- --host 0.0.0.0
+  ```
+
+- After making these changes and starting your server with the new command, you should be able
+  to access your Docusaurus site from your Android emulator by navigating to:
+
+  ```url 
+  http://192.168.0.11:3000
+  ```  
+  
+- Don't forget to undo the `url` change, back to:
+
+  ```js
+  url: 'https://asyncredux.com',
+  ```

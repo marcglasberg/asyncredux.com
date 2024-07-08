@@ -148,7 +148,7 @@ class AddRandomText extends Action {
 } 
 ``` 
 
-:::note
+:::info
 
 If you want to understand the above code in terms of traditional Redux patterns,
 the beginning of the `reduce` method is the equivalent of a middleware,

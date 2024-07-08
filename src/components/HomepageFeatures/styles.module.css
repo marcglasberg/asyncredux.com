@@ -1,7 +1,7 @@
 .features {
     display: flex;
     align-items: center;
-    padding: 2rem 0 0 0 ;
+    padding: 2rem 0 0 0;
     width: 100%;
 }
 
@@ -51,7 +51,7 @@
 
 .whiteBkg {
     width: 100%;
-    background-color: #fff;
+    background-color: white;
 }
 
 [data-theme="dark"] .whiteBkg {
@@ -74,7 +74,7 @@ hr.divider {
 }
 
 [data-theme="dark"] hr.divider {
-    border-color: #fff;
+    border-color: white;
 }
 
 .tab:first-child {
@@ -86,8 +86,8 @@ hr.divider {
     border: 0;
     border-bottom: none;
     background-color: #ccc;
-    border-radius: 20px 20px 0 0;
-    color: #fff;
+    border-radius: 15px 15px 0 0;
+    color: white;
     padding: 15px 20px 10px 20px;
     text-align: center;
     text-decoration: none;
@@ -131,7 +131,7 @@ hr.divider {
 .tabSelected {
     border: 1px solid #666;
     border-bottom: none;
-    background-color: #fff;
+    background-color: white;
     color: #444;
     pointer-events: none;
     user-select: none;
@@ -139,7 +139,7 @@ hr.divider {
 }
 
 [data-theme="dark"] .tabSelected {
-    border-color: #fff;
+    border-color: white;
     background-color: #1b1b1d;
     color: #ddd;
 }
@@ -150,7 +150,18 @@ hr.divider {
 
 .tabSelected:active {
     background-color: #444;
+}
 
+.tabSelected:focus {
+    background-color: white;
+    border: 1px solid #666;
+    border-bottom: none;
+}
+
+[data-theme="dark"] .tabSelected:focus {
+    border-color: white;
+    background-color: #1b1b1d;
+    color: #ddd;
 }
 
 .getStartedTextAndLogo {

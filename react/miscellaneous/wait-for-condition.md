@@ -66,7 +66,7 @@ class SellStockForPrice extends Action {
 Keep in mind you should probably avoid waiting for conditions that may take a very long time to
 complete, as checking the condition is an overhead to every state change.
 
-:::note
+:::info
 
 If the condition is already true when the `waitCondition` function is called,
 the promise resolves immediately.
@@ -163,7 +163,7 @@ await store.waitAllActions([]);
 expect(store.state.portfolio).toEqual(['TSLA']);
 ```
 
-:::note
+:::info
 
 In the code above, dispatching both actions in parallel could also have been done like this:
 
@@ -335,7 +335,7 @@ await store.waitActionCondition(
 The trigger action is the action that just entered the set (by being dispatched),
 or just left the set (by finishing dispatching).
 
-:::note
+:::info
 
 The condition is only checked when some action is dispatched or finishes dispatching.
 It's not checked every time action statuses change.
