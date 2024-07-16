@@ -103,8 +103,8 @@ const store = createStore<State>({
 As shown above, your state can be composed of both plain JavaScript (or TypeScript) objects,
 or ES6 classes. Feel free to use the one you prefer.
 
-All examples in this documentation use ES6 classes as state,
-but keep in mind that Async Redux works just as well with plain JavaScript objects.
+Most examples in this documentation use ES6 classes as state,
+but I also [show examples with objects](../tutorial/plain-javascript-obj).
 
 I personally prefer using ES6 classes as state,
 because I find them very readable, easy to use,

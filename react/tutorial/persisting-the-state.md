@@ -27,7 +27,7 @@ or close the browser and reopen it later, without losing the todo list.
 ## ClassPersistor
 
 Async Redux comes out of the box with the `ClassPersistor` that implements the `Persistor`
-interface. It supports serializing both JavaScript objects and ES6 classes out of the box,
+interface. It serializes ES6 classes out of the box,
 and it will persist the whole state of your application.
 
 To use it, you must provide:
@@ -121,4 +121,32 @@ style={{ width:'100%', height: '650px', borderRight:'1px solid black' }}
 title="counter-async-redux-example"
 sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
 />
+
+## Implementing your own serializer
+
+If instead of using the provided `ClassSerialized` you decide to implement your own 
+serializer, the following information may be useful for you.
+
+In JavaScript there are two types of objects:
+
+* Plain (literal) objects - Instances of the `Object` class.
+  Sometimes they are called literal objects, when created via the `{}` notation.
+
+* Class (constructor) objects - Instances of classes with own defined constructor,
+  properties and methods. Usually you define them via class notation.
+
+If you are loading a JSON from your backend, after you `JSON.parse()` it,
+you have a plain JavaScript object, not an instance of a class.
+
+These packages will help you transform plain JavaScript objects into ES6 classes: 
+
+* [esserializer](https://www.npmjs.com/package/esserializer) - This is the package used internally
+  by the `ClassSerialized`. ESSerializer is a JavaScript serialization and deserialization utility,
+  that helps you serialize classes to JSON, and then deserialize them back to class objects,
+  with all properties and methods, recursively. No eval is used, which means it doesn't introduce
+  any security risks.
+
+* [class-transformer](https://www.npmjs.com/package/class-transformer) - Allows you to transform
+  plain JavaScript objects into some class object and versa, and also serialize and deserialize
+  them.  
 

@@ -13,8 +13,12 @@ Our Todo app state will be composed of 3 data structures, named as follows:
 * `TodoList` represents a list of `TodoItem`s
 * `State` is the store state, which contain the `TodoList`
 
-These can be plain JavaScript objects, but also classes.
-I'll use classes in this tutorial.
+These can be plain JavaScript objects, but also ES6 classes.
+
+
+I'll use classes in this page, 
+but will also show the code with **[plain objects](./plain-javascript-obj)** at 
+the end of this tutorial.
 
 ## TodoItem
 

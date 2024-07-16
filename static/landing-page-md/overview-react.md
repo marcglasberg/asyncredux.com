@@ -6,7 +6,7 @@ The **store** holds all the application **state**. A few examples:
 // Here, the state is a number
 const store = createStore<number>({initialState: 1});
 
-// Here, the state is a plain JS object
+// Here, the state is a plain JavaScript object
 const store = createStore({initialState: {name: 'Mary', age: 25}});
 
 // Here, the state is an ES6 class object
@@ -428,7 +428,7 @@ class SaveName extends Action {
 # Persist the state
 
 You can add a `persistor` to save the state to the local device disk.
-It supports serializing JavaScript objects **and** ES6 classes out of the box.
+It supports serializing JavaScript objects **and** ES6 classes.
 
 ```tsx
 const store = createStore<State>({  

@@ -129,7 +129,7 @@ Async Redux will call these functions at the right time, so you don't need to wo
 ## ClassPersistor
 
 Async Redux comes out of the box with the `ClassPersistor` that implements the `Persistor`
-interface. It supports serializing both JavaScript objects and ES6 classes out of the box,
+interface. It supports serializing ES6 classes out of the box,
 and it will persist the whole state of your application.
 
 To use it, you must provide these function:
@@ -211,9 +211,8 @@ let persistor = new ClassPersistor<State>(
 </TabItem>
 </Tabs>
 
-As explained, the `ClassPersistor` supports serializing both JavaScript objects and ES6 classes.
-However, if you have classes in the state, you will need to list them all in
-the `classesToSerialize` parameter above.
+As explained, the `ClassPersistor` supports serializing ES6 classes.
+However, you will need to list all class types in the `classesToSerialize` parameter above.
 
 For example, consider the _Todo List_ app shown below,
 which was created in our [tutorial](../category/tutorial).

@@ -17,7 +17,7 @@ packages like Provider and Flutter Hooks, which are not. On the contrary, it can
 optionally be [used with them](./category/other-packages), although that's not necessary.
 
 However, Async Redux is an alternative to Bloc, MobX, and the original vanilla Redux. 
-It aims to be way easier to use than those, and to help you create stable apps 
+It is designed to be easier to use than those, and to help you create stable apps 
 that are easier to test, maintain and extend.
 
 ## Example projects
