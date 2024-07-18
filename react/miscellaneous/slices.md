@@ -21,6 +21,9 @@ and then I'm going to tell you why I think they are **not necessary**.
 
 Consider the state below, for a stock trading application:
 
+<Tabs>
+<TabItem value="structure" label="Data structure">
+
 ```tsx
 state
 ├── user
@@ -107,6 +110,231 @@ state
         └── changePasswordDate: string
 ```
 
+</TabItem>
+<TabItem value="classes" label="Classes">
+
+```ts
+class Stock {
+    constructor(
+        public ticker: string,
+        public name: string,
+        public currentPrice: number,
+        public dailyChange: number,
+        public dailyChangePercent: number,
+        public volume: number,
+        public marketCap: number
+    ) {}
+}
+
+class PortfolioStock {
+    constructor(
+        public ticker: string,
+        public name: string,
+        public quantity: number,
+        public averageCost: number,
+        public currentValue: number
+    ) {}
+}
+
+class WatchlistStock {
+    constructor(
+        public ticker: string,
+        public name: string,
+        public targetPrice: number
+    ) {}
+}
+
+class Portfolio {
+    constructor(
+        public totalValue: number,
+        public stocks: { [stockId: string]: PortfolioStock },
+        public cashBalance: number
+    ) {}
+}
+
+class Preferences {
+    constructor(
+        public theme: string,
+        public notifications: boolean,
+        public language: string
+    ) {}
+}
+
+class User {
+    constructor(
+        public id: string,
+        public name: string,
+        public email: string,
+        public isAuthenticated: boolean,
+        public preferences: Preferences,
+        public portfolio: Portfolio,
+        public watchlist: { [stockId: string]: WatchlistStock }
+    ) {}
+}
+
+class Transaction {
+    constructor(
+        public stockId: string,
+        public type: string,
+        public quantity: number,
+        public price: number,
+        public date: string,
+        public status: string
+    ) {}
+}
+
+class News {
+    constructor(
+        public title: string,
+        public description: string,
+        public url: string,
+        public source: string,
+        public date: string
+    ) {}
+}
+
+class Alert {
+    constructor(
+        public stockId: string,
+        public type: string,
+        public targetPrice: number,
+        public message: string,
+        public isActive: boolean,
+        public date: string
+    ) {}
+}
+
+class Security {
+    constructor(
+        public twoFactorAuth: boolean,
+        public backupEmail: string,
+        public changePasswordDate: string
+    ) {}
+}
+
+class Settings {
+    constructor(
+        public theme: string,
+        public notifications: boolean,
+        public language: string,
+        public security: Security
+    ) {}
+}
+
+class State {
+    constructor(
+        public user: User,
+        public stocks: { [stockId: string]: Stock },
+        public transactions: { [transactionId: string]: Transaction },
+        public news: { [newsId: string]: News },
+        public alerts: { [alertId: string]: Alert },
+        public settings: Settings
+    ) {}
+}
+```
+
+</TabItem>
+<TabItem value="plainobjs" label="Plain objects">
+    
+```ts
+interface Stock {
+    ticker: string;
+    name: string;
+    currentPrice: number;
+    dailyChange: number;
+    dailyChangePercent: number;
+    volume: number;
+    marketCap: number;
+}
+
+interface PortfolioStock {
+    ticker: string;
+    name: string;
+    quantity: number;
+    averageCost: number;
+    currentValue: number;
+}
+
+interface WatchlistStock {
+    ticker: string;
+    name: string;
+    targetPrice: number;
+}
+
+interface Portfolio {
+    totalValue: number;
+    stocks: { [stockId: string]: PortfolioStock };
+    cashBalance: number;
+}
+
+interface Preferences {
+    theme: string;
+    notifications: boolean;
+    language: string;
+}
+
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    isAuthenticated: boolean;
+    preferences: Preferences;
+    portfolio: Portfolio;
+    watchlist: { [stockId: string]: WatchlistStock };
+}
+
+interface Transaction {
+    stockId: string;
+    type: string;
+    quantity: number;
+    price: number;
+    date: string;
+    status: string;
+}
+
+interface News {
+    title: string;
+    description: string;
+    url: string;
+    source: string;
+    date: string;
+}
+
+interface Alert {
+    stockId: string;
+    type: string;
+    targetPrice: number;
+    message: string;
+    isActive: boolean;
+    date: string;
+}
+
+interface Security {
+    twoFactorAuth: boolean;
+    backupEmail: string;
+    changePasswordDate: string;
+}
+
+interface Settings {
+    theme: string;
+    notifications: boolean;
+    language: string;
+    security: Security;
+}
+
+interface State {
+    user: User;
+    stocks: { [stockId: string]: Stock };
+    transactions: { [transactionId: string]: Transaction };
+    news: { [newsId: string]: News };
+    alerts: { [alertId: string]: Alert };
+    settings: Settings;
+}   
+```   
+
+</TabItem>
+</Tabs>
+
 As [previously discussed](../advanced-actions/base-action-with-common-logic),
 you may create a base action class called `Action` that extends `ReduxAction`.
 By default, all actions that on their turn extend `Action` have access to the entire state,
@@ -155,7 +383,7 @@ abstract class UserAction extends Action {
 ```
 
 </TabItem>
-<TabItem value="plainobj" label="Plain Objects">
+<TabItem value="plainobj" label="Plain objects">
 
 ```tsx
 abstract class UserAction extends Action {
@@ -248,7 +476,7 @@ abstract class PortfolioAction extends Action {
 ```
 
 </TabItem>
-<TabItem value="plainobj" label="Plain Objects">
+<TabItem value="plainobj" label="Plain objects">
 
 ```tsx
 abstract class PortfolioAction extends Action {
@@ -342,7 +570,7 @@ export abstract class Action extends ReduxAction<State> {
 ```
 
 This makes it easier to access the state properties in your actions,
-which is half the reason you would want to create slices.
+which is half the reason you would want to create slices anyway.
 
 In this case, however, you still need to return complete `State` objects.
 For example:
@@ -368,7 +596,7 @@ class DuplicatePortfolio extends Action {
 ```
 
 </TabItem>
-<TabItem value="plainobj" label="Plain Objects">
+<TabItem value="plainobj" label="Plain objects">
 
 ```tsx
 class DuplicatePortfolio extends Action { 
