@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <Layout
       title={`Async Redux`}
-      description="The modern version of Redux. State management that's simple to learn and easy to use; Powerful enough to handle complex applications with millions of users; Testable.">
+      description="The modern version of Redux. State management that is simple to learn and easy to use; Powerful enough to handle complex applications with millions of users; Testable.">
       <HomepageHeader/>
       <main>
         <HomepageFeatures/>
