@@ -6,10 +6,10 @@ The **store** holds all the application **state**. A few examples:
 // Here, the state is a number
 const store = createStore<number>({initialState: 1});
 
-// Here, the state is a plain JavaScript object
+// Here, a plain JavaScript object
 const store = createStore({initialState: {name: 'Mary', age: 25}});
 
-// Here, the state is an ES6 class object
+// Here, an ES6 class object
 class State { constructor(public name: string, public age: number){} }
 const store = createStore<State>({initialState: new State('Mary', 25)});
 ```
@@ -123,9 +123,9 @@ function MyComponent() {
   const dispatch = useDispatch();  
 
   return (
-      <Button onClick={() => dispatch(new LoadText())}> 
-        Click me! 
-      </Button>
+    <Button onClick={() => dispatch(new LoadText())}> 
+      Click me! 
+    </Button>
   );
 };
 ```
@@ -139,9 +139,9 @@ function MyComponent() {
   const store = useStore();  
 
   return (
-      <Button onClick={() => store.dispatch(new LoadText())}> 
-        Click me! 
-      </Button>
+    <Button onClick={() => store.dispatch(new LoadText())}> 
+      Click me! 
+    </Button>
   );
 };
 ```

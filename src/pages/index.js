@@ -27,8 +27,8 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      title={`Async Redux`}
+      description="The modern version of Redux. State management that's simple to learn and easy to use; Powerful enough to handle complex applications with millions of users; Testable.">
       <HomepageHeader/>
       <main>
         <HomepageFeatures/>

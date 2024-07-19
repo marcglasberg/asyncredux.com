@@ -203,20 +203,20 @@ Let's compare the 3 approaches:
   Actions don't need to contain any business code. Easy to serialize with the `ClassPersistor`
   provided by Async Redux. Immutability is trivial.
 
-* [State as value objects](#value-objects) - The business code is inside the actions.
+* [State as value objects](#state-as-value-objects) - The business code is inside the actions.
   Easy to serialize with `JSON.stringify` and `JSON.parse`.
   May benefit from [Immer](https://www.npmjs.com/package/immer) to help with immutability.
 
-* [State as objects with functions](#objects-with-functions) - The business code is inside the state
-  objects.
+* [State as objects with functions](#state-as-objects-with-functions) - The business code is inside
+  the state objects.
   The actions don't need to contain any business code. Immutability is trivial.
   More difficult to serialize, since the deserialization process must preserve the functions.
 
 In table format:
 
-| Approach                                                   | Business Code Location   | Serialization                               | Immutability                                                  |
-|------------------------------------------------------------|--------------------------|---------------------------------------------|---------------------------------------------------------------|
-| [State as ES6 classes](./full-code#tutorial-code)          | Inside the state classes | Easy with `ClassPersistor` from Async Redux | Trivial                                                       |
-| [State as value objects](#value-objects)                   | Inside the actions       | Easy with `JSON.stringify` and `JSON.parse` | May benefit from [Immer](https://www.npmjs.com/package/immer) |
-| [State as objects with functions](#objects-with-functions) | Inside the state objects | More difficult, must preserve functions     | Trivial                                                       |
+| Approach                                                            | Business Code Location   | Serialization                               | Immutability                                                  |
+|---------------------------------------------------------------------|--------------------------|---------------------------------------------|---------------------------------------------------------------|
+| [State as ES6 classes](./full-code#tutorial-code)                   | Inside the state classes | Easy with `ClassPersistor` from Async Redux | Trivial                                                       |
+| [State as value objects](#state-as-value-objects)                   | Inside the actions       | Easy with `JSON.stringify` and `JSON.parse` | May benefit from [Immer](https://www.npmjs.com/package/immer) |
+| [State as objects with functions](#state-as-objects-with-functions) | Inside the state objects | More difficult, must preserve functions     | Trivial                                                       |
 
