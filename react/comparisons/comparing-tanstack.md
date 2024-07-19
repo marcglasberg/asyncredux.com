@@ -18,6 +18,8 @@ While the original Redux completely ignores async processes, leaving them to mid
 querying, fetching, and caching.
 
 In my opinion, viewing state management in terms of queries is the **wrong abstraction**.
+See here, in
+Medium: [What I learned from React-Query, and why I will not use it in my next project](https://medium.com/duda/what-i-learned-from-react-query-and-why-i-will-not-use-it-in-my-next-project-a459f3e91887)
 
 Async Redux manages state through synchronous global state, and actions that can be sync or async.
 Actions can query and fetch data, but they also change the state in other ways. Actions can fail or
