@@ -86,14 +86,14 @@ const config = {
       // Replace with your project's social card
       image: 'img/logo.svg',
       metadata: [
-        {name: 'description', content: 'The modern version of Redux. State management that\'s simple to learn and easy to use; Powerful enough to handle complex applications with millions of users; Testable.'},
+        {name: 'description', content: 'The modern version of Redux. State management that is simple to learn and easy to use; Powerful enough to handle complex applications with millions of users; Testable.'},
         {name: 'og:title', content: 'Async Redux'},
         {name: 'og:description', content: 'by Marcelo Glasberg'},
         {name: 'og:url', content: 'https://asyncredux.com'},
         {name: 'og:image', content: 'https://asyncredux.com/img/platipus_FlutterReact.jpg'},
         {name: 'twitter:card', content: 'summary_large_image'},
         {name: 'twitter:title', content: 'Async Redux'},
-        {name: 'twitter:description', content: 'The modern version of Redux. State management that\'s simple to learn and easy to use; Powerful enough to handle complex applications with millions of users; Testable.'},
+        {name: 'twitter:description', content: 'The modern version of Redux. State management that is simple to learn and easy to use; Powerful enough to handle complex applications with millions of users; Testable.'},
         {name: 'twitter:image', content: 'https://asyncredux.com/img/platipus_FlutterReact.jpg'},
       ],
       navbar: {
