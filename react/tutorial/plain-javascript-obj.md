@@ -114,48 +114,58 @@ export interface TodoList {
 
 const createTodoList = (items: TodoItem[] = []): TodoList => ({
   items,
+  
   addTodoFromText(text: string) {
     const trimmedText = text.trim();
     const capitalizedText =
       trimmedText.charAt(0).toUpperCase() + trimmedText.slice(1);
     return this.addTodo(createTodoItem(capitalizedText));
   },
+  
   addTodo(newItem: TodoItem) {
     if (newItem.text === "" || this.ifExists(newItem.text)) return this;
     else return createTodoList([newItem, ...this.items]);
   },
+  
   ifExists(text: string) {
     return this.items.some(
       (todo) => todo.text.toLowerCase() === text.toLowerCase()
     );
   },
+  
   removeTodo(item: TodoItem) {
     return createTodoList(
       this.items.filter((itemInList) => itemInList !== item)
     );
   },
+  
   removeCompleted() {
     return createTodoList(
       this.items.filter((itemInList) => !itemInList.completed)
     );
   },
+  
   toggleTodo(item: TodoItem) {
     const newTodos = this.items.map((itemInList) =>
       itemInList === item ? item.toggleCompleted() : itemInList
     );
     return createTodoList(newTodos);
   },
+  
   isEmpty() {
     return this.items.length === 0;
   },
+  
   countCompleted() {
     return this.items.filter((item) => item.completed).length;
   },
+  
   *[Symbol.iterator]() {
     for (let i = 0; i < this.items.length; i++) {
       yield this.items[i];
     }
   },
+  
   toString() {
     return `TodoList{${this.items.join(",")}}`;
   },
