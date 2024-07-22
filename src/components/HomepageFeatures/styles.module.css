@@ -99,6 +99,9 @@ hr.divider {
     transition: background-color 0.3s ease;
     font-weight: bold;
     letter-spacing: 1px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 [data-theme="dark"] .tab {
@@ -106,16 +109,20 @@ hr.divider {
     color: #888;
 }
 
-.tab:hover {
-    background-color: #eee;
-    border: 1px solid #ddd;
-    border-bottom: none;
-    color: #444;
+@media (hover: hover) {
+    .tab:hover {
+        background-color: #eee;
+        border: 1px solid #ddd;
+        border-bottom: none;
+        color: #444;
+    }
 }
 
-[data-theme="dark"] .tab:hover {
-    background-color: #444;
-    color: #ddd;
+@media (hover: hover) {
+    [data-theme="dark"] .tab:hover {
+        background-color: #444;
+        color: #ddd;
+    }
 }
 
 .tab:active {
@@ -144,8 +151,10 @@ hr.divider {
     color: #ddd;
 }
 
-.tabSelected:hover {
-    background-color: #444;
+@media (hover: hover) {
+    .tabSelected:hover {
+        background-color: #444;
+    }
 }
 
 .tabSelected:active {
