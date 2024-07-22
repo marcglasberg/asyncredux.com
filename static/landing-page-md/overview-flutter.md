@@ -38,9 +38,8 @@ Widget build(context) {
 ```dart
 class MyWidget extends StatelessWidget {
 
-  Widget build(context) {
-    return Text('${context.state.name} has ${context.state.age} years old');
-  }
+  Widget build(context) 
+    => Text('${context.state.name} has ${context.state.age} years old');  
 }
 ```
 
