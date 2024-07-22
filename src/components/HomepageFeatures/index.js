@@ -13,9 +13,8 @@ const FeatureList = [
     Svg: require('@site/static/img/react.svg').default,
     description: (
       <>
-        Designed to be easier to use than Redux Toolkit, Zustand, MobX, and TanStack Query.
         On&nbsp;<a
-        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;since&nbsp;July&nbsp;2024.
+        href='https://www.npmjs.com/package/async-redux-react'>npm</a>&nbsp;since&nbsp;July&nbsp;2024
       </>
     ),
     page: 'react',
@@ -25,9 +24,7 @@ const FeatureList = [
     Svg: require('@site/static/img/flutter.svg').default,
     description: (
       <>
-        Designed to be easier to use than Bloc, Redux and MobX.
-        Top 8% most-used package.
-        On&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a>&nbsp;since&nbsp;2020.
+        On&nbsp;<a href='https://pub.dev/packages/async_redux'>pub.dev</a>&nbsp;since&nbsp;Aug 2019
       </>
     ),
     page: 'flutter',
