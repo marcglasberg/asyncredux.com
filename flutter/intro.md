@@ -15,20 +15,23 @@ and other people on your team will easily understand and modify your code.
 
 ## What is it?
 
-Async Redux is an optimized, unofficial version of Redux, created
-by [Marcelo Glasberg](https://github.com/marcglasberg).
-It's a mature solution, available since August 2019,
-meaning its features have been battle-tested in hundreds of real-world applications.
+Async Redux is a modern version of Redux, created
+by [Marcelo Glasberg](https://github.com/marcglasberg), available
+on [pub.dev](https://pub.dev/packages/async_redux) since August 2019.
+It's a mature solution, and its features have been battle-tested in hundreds of real-world
+applications.
 
 Since July 2024, it's also available for [React](https://www.npmjs.com/package/async-redux-react).
 
-Async Redux is a complete state management solution, and doesn't compete with
-packages like Provider and Flutter Hooks, which are not. On the contrary, it can
-optionally be [used with them](./category/other-packages), although that's not necessary.
+### How does it compare?
 
-However, Async Redux is an alternative to Bloc, MobX, and the original vanilla Redux.
-It is designed to be easier to use than those, and to help you create stable apps
-that are easier to test, maintain and extend.
+Async Redux is a powerful alternative to Bloc, MobX, and the original vanilla Redux, but it’s
+designed to be much easier to use than those. Check out [this page](./miscellaneous/comparisons) to
+compare Async Redux with the original Redux.
+
+Async Redux is a full state management solution and doesn't compete with packages like Provider and
+Flutter Hooks, which aren't full solutions. Instead, it
+can [work with them](./category/other-packages) if you want, though it's not required.
 
 ## Installation
 
@@ -40,20 +43,16 @@ the [most recent version here](https://pub.dev/packages/async_redux)):
     async_redux: ^23.1.1
 ```
 
-## How does it compare?
-
-[Comparing with the original Redux](./miscellaneous/comparisons)
-
 ## Resources
 
 After you finish learning Async Redux, you can visit these example projects:
 
-* The <a href="https://github.com/marcglasberg/SameAppDifferentTech/blob/main/MobileAppFlutterRedux/README.md">Stock Example App</a>
-  allows you to buy and sell stocks, see stock prices and create portfolio.
+* The
+  [Stock Example App](https://github.com/marcglasberg/SameAppDifferentTech/blob/main/MobileAppFlutterRedux/README.md)
+  is a complete app that allows you to buy and sell stocks to create a portfolio.
   Documented in the **source code** and the **README**.
 
-
-* The <a href="https://github.com/marcglasberg/redux_app_example">Number Example App</a>
-  allows you to get descriptions related to the numbers you type.
+* The [Number Example App](https://github.com/marcglasberg/redux_app_example) is a simpler app
+  that allows you to get descriptions related to the numbers you type.
   Documented in the **source code only**.
 

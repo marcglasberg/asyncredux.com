@@ -18,7 +18,7 @@ and other people on your team will easily understand and modify your code.
 
 ## What is it?
 
-Async Redux is an optimized, unofficial version of Redux.
+Async Redux is a modern, unofficial version of Redux.
 It was written from the ground up and shares no code with the original Redux.
 It was created by [Marcelo Glasberg](https://github.com/marcglasberg),
 and launched in July 2024.
