@@ -4,21 +4,10 @@ sidebar_position: 1
 
 # Comparing with Redux Toolkit
 
-The original Redux has been criticized for its excessive boilerplate, to the point that its main
-author [advises against its use for beginners](https://medium.com/@dan_abramov/you-might-not-need-redux-be46360cf367):
-
-> If you’re just learning React, don’t make Redux your first choice.
-
-Redux Toolkit was later developed to simplify writing Redux applications.
+Redux Toolkit was developed to simplify writing Redux applications.
 However, it still involves considerable boilerplate and requires difficult to use middleware
 like [redux-thunk](https://www.npmjs.com/package/redux-thunk)
 or RTK Query to handle asynchronous processes.
-
-<br></br>
-
-Async Redux, on the contrary, can and should be used even for simple apps.
-It is an excellent starting point for those new to React due to its simplicity and ease of use,
-and it is scalable to meet the needs of growing applications.
 
 Async Redux shares several goals with Redux:
 
