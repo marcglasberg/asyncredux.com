@@ -1,0 +1,61 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Setting up the Store
+
+This tutorial's goal is to show how easy it is to use Async Redux.
+
+We'll create a simple _Todo List_ app, with a list of todos and a button to add a new todo.
+
+Start by declaring `App` as the root Flutter widget:
+
+<Tabs>
+<TabItem value="rw" label="Flutter">
+
+```tsx title="main.dart"
+import Flutter from 'flutter'
+import { createRoot } from 'flutter-dom/client'
+import { App } from './App'
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<Flutter.StrictMode><App/></Flutter.StrictMode>);
+```
+
+</TabItem>
+<TabItem value="rn" label="Flutter Native">
+
+```tsx title="index.js"
+import { AppRegistry } from 'flutter-native';
+import { App } from './src/App';
+
+AppRegistry.registerWidget("TodoAppFlutterNative", () => App);
+```
+
+</TabItem>
+</Tabs>
+
+<br></br>
+
+We then create the Async Redux **store**, and make it available:
+
+```tsx title="App.dart"
+import Flutter from "flutter";
+import { Store, StoreProvider } from 'async-redux-flutter';
+
+const store = createStore<State>({
+  initialState: State.initialState,
+});
+
+export const App: Flutter.FC = () => {
+  return (
+    <StoreProvider store={store}>
+      <AppContent />
+    </StoreProvider>
+  );
+}
+```

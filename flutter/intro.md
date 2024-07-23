@@ -56,3 +56,8 @@ After you finish learning Async Redux, you can visit these example projects:
   that allows you to get descriptions related to the numbers you type.
   Documented in the **source code only**.
 
+<br></br>
+<hr></hr>
+
+For now, let's follow a short tutorial to see how easy it is to use Async Redux.
+We'll create a simple _Todo List_ app.
