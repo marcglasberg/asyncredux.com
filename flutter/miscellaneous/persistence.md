@@ -154,7 +154,6 @@ class ProcessLifecycleChangeAction extends ReduxAction<AppState> {
   final AppLifecycleState lifecycle;
   ProcessLifecycleChangeAction(this.lifecycle);
 
-  @override
   Future<AppState?> reduce() async {
     if (lifecycle == AppLifecycleState.resumed || lifecycle == AppLifecycleState.inactive) {
       store.resumePersistor();  

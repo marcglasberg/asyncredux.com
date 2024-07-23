@@ -16,6 +16,5 @@ doing.
 # Example
 
 ```dart
-@override
 bool abortDispatch() => state.user == null;
 ```

@@ -55,11 +55,7 @@ class AppState {
   AppState({required this.name, required this.age});  
 
   static AppState initialState() => AppState(name: "", age: 0);
-  
-  // To change the name
   AppState withName(String name) => AppState(name: name, age: age);
-  
-  // To change the age
   AppState withAge(int age) => AppState(name: name, age: age);              
 }
 ```
@@ -71,13 +67,9 @@ at once:
 class AppState {
   ...
   
-  // To change the name
   AppState withName(String name) => copy(name: name);
-  
-  // To change the age
   AppState withAge(int age) => copy(age: age);
   
-  // To change any of the fields
   AppState copy({String? name, int? age}) =>
     AppState(
       name: name ?? this.name, 

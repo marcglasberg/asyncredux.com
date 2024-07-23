@@ -33,14 +33,12 @@ You can then extend both `ReduxAction` and `VmFactory` to provide typed access t
 abstract class AppFactory<T extends Widget?, Model extends Vm> extends VmFactory<int, T, Model> {
   AppFactory([T? connector]) : super(connector);
 
-  @override
   Environment get env => super.env as Environment;
 }
 
 
 abstract class Action extends ReduxAction<int> {
 
-  @override
   Environment get env => super.env as Environment;
 }
 ```
@@ -51,7 +49,6 @@ Then, use the environment when creating the view-model:
 class Factory extends AppFactory<MyHomePageConnector> {
   Factory(connector) : super(connector);
 
-  @override
   ViewModel fromStore() => ViewModel(
         counter: env.limit(state),
         onIncrement: () => dispatch(IncrementAction(amount: 1)),

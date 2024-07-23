@@ -29,7 +29,6 @@ class SetNameAction extends ReduxAction<AppState> {
   final String name;
   SetNameAction(this.name);
 
-  @override
   AppState reduce() {
     var newUser = state.user.withName(name);
     return state.withUser(newUser);

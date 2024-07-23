@@ -23,7 +23,6 @@ class RecoverStateAction extends ReduxAction<AppState> {
 
    RecoverStateAction(this.recoveredState);
 
-   @override
    AppState reduce() => recoveredState;
 }
 ```
