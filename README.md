@@ -16,6 +16,11 @@ We recommend that you begin by typing:
 `cd asyncredux.com`
 `npm start`
 
+## Deploy
+
+- To deploy, simply push to the `main` branch. The website will be automatically deployed by CloudFlare
+  after a few seconds.
+
 ## Test on Android Simulator for Windows
 
 - Open the terminal
