@@ -21,7 +21,7 @@ some time to finish (and will hopefully finish soon). For example:
 
 <br></br>
 
-In [Wait, fail, succeed](../../basics/wait-fail-succeed) I explain that
+In [Wait, fail, succeed](/flutter/basics/wait-fail-succeed.md) I explain that
 the easiest way to do that is to use:
 
 * `isWaiting(MyAction)` in actions
@@ -34,7 +34,7 @@ If you have a rare case where `store.isWaiting()` is not enough, keep reading.
 
 ## WaitAction and Wait
 
-In [Before and After the Reducer](../../advanced-actions/before-and-after-the-reducer) section I show
+In [Before and After the Reducer](/flutter/advanced-actions/before-and-after-the-reducer.md) section I show
 how to manually create a `BarrierAction` with a boolean flag that is used to add or remove a modal 
 barrier in the screen (see the
 code <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_before_and_after.dart">here</a>).
@@ -64,7 +64,7 @@ For example:
 ```dart
 dispatch(WaitAction.add("my flag")); // To add a flag.   
 dispatch(WaitAction.remove("my flag")); // To remove a flag.   
-```            
+```
 
 When you are using the state:
 
@@ -101,7 +101,7 @@ Then, in the button:
 ```dart
 if (wait.isWaitingForType<LoadAction>()) { // Show the button as disabled }
 else { // Show the button as enabled }
-``` 
+```
 
 Note: You may also define a **mixin** to implement the waiting:
 
@@ -139,11 +139,11 @@ buttons is currently downloading.
 
 The flag in this case is simply the index of the button, from `0` to `9`:
 
-```dart                                                        
+```dart
 int index;
 void before() => dispatch(WaitAction.add(index));
 void after() => dispatch(WaitAction.remove(index));
-```                            
+```
 
 In the `ViewModel`, just as before, if there's any waiting, then `state.wait.isWaitingAny` will
 return `true`. However, now you can check each button wait flag separately by its index.
@@ -160,7 +160,7 @@ the <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib
 ```dart
 void before() => dispatch(WaitAction.add("button-download", ref: index));
 void after() => dispatch(WaitAction.remove("button-download", ref: index));
-```                            
+```
 
 Now, to check a button's wait flag, you must pass both the flag and the reference:
 `state.wait.isWaiting("button-download", ref: index)`.
@@ -186,4 +186,3 @@ object in different ways, you can do so by injecting your custom reducer into `W
 during your app's initialization. Refer to
 the `WaitAction` <a href="https://github.com/marcglasberg/async_redux/blob/master/lib/src/wait_action.dart">
 documentation</a> for more information.
-

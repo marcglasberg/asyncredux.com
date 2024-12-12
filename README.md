@@ -16,13 +16,13 @@ We recommend that you begin by typing:
 `cd asyncredux.com`
 `npm start`
 
-# Test on Android Simulator for Windows
+## Test on Android Simulator for Windows
 
 - Open the terminal
 - Type ipconfig and copy your `IPv4 Address`. For example, it could be `192.168.0.11`
 - In your Docusaurus project's `docusaurus.config.js`, replace the `url` field:
 
-  ```js                                                                        
+  ```js
   // From:
   url: 'https://asyncredux.com',
   
@@ -40,7 +40,7 @@ We recommend that you begin by typing:
 - After making these changes and starting your server with the new command, you should be able
   to access your Docusaurus site from your Android emulator by navigating to:
 
-  ```url 
+  ```url
   http://192.168.0.11:3000
   ```  
   
