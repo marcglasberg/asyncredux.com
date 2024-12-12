@@ -21,7 +21,7 @@ some time to finish (and will hopefully finish soon). For example:
 
 <br></br>
 
-In [Wait, fail, succeed](../basics/wait-fail-succeed) I explain that
+In [Wait, fail, succeed](../../basics/wait-fail-succeed) I explain that
 the easiest way to do that is to use:
 
 * `isWaiting(MyAction)` in actions
@@ -34,7 +34,7 @@ If you have a rare case where `store.isWaiting()` is not enough, keep reading.
 
 ## WaitAction and Wait
 
-In [Before and After the Reducer](../advanced-actions/before-and-after-the-reducer) section I show
+In [Before and After the Reducer](../../advanced-actions/before-and-after-the-reducer) section I show
 how to manually create a `BarrierAction` with a boolean flag that is used to add or remove a modal 
 barrier in the screen (see the
 code <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_before_and_after.dart">here</a>).
