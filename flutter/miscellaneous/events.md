@@ -46,20 +46,21 @@ static AppState initialState() {
 
 ## Using events
 
-Events are accessible in the `StoreConnector` just like any other state:
+Events are accessible in the `context` of widgets, and also in `StoreConnector`, just like any other state:
 
 ```dart
 class MyConnector extends StatelessWidget {
   
   Widget build(BuildContext context) {
-	return StoreConnector<AppState, ViewModel>(
-	  vm: () => Factory(this),
-	  builder: (context, vm) => MyWidget(
-		initialText: vm.initialText,
-		clearTextEvt: vm.clearTextEvt,
-		changeTextEvt: vm.changeTextEvt,
-		onClear: vm.onClear,
-	  ));
+    return StoreConnector<AppState, ViewModel>(
+      vm: () => Factory(this),
+      builder: (context, vm) => MyWidget(
+      initialText: vm.initialText,
+      clearTextEvt: vm.clearTextEvt,
+      changeTextEvt: vm.changeTextEvt,
+      onClear: vm.onClear,
+      )
+   );
   }
 }
 
@@ -74,18 +75,20 @@ class ViewModel extends BaseModel<AppState> {
     changeTextEvt: state.changeTextEvt,
     onClear: () => dispatch(ClearTextAction()),
   );
-	  
+
   ViewModel({
     required this.initialText,
-	required this.clearTextEvt,
-	required this.changeTextEvt,
+    required this.clearTextEvt,
+    required this.changeTextEvt,
   }) : super(equals: [initialText, clearTextEvt, changeTextEvt]);
 }
-
+           
+// This action clears the text, by creating a boolean event.
 class ClearTextAction extends ReduxAction<AppState> {  
   AppState reduce() => state.copy(changeTextEvt: Event());
-}
+}                                                     
 
+// This action changes the text, by creating an event with a String payload.
 class ChangeTextAction extends ReduxAction<AppState> {
   String newText;
   ChangeTextAction(this.newText);
@@ -132,8 +135,8 @@ void consumeEvents() {
 	  WidgetsBinding.instance.addPostFrameCallback((_) {
 		if (mounted) controller.clear();
 	  });
-
-	String newText = widget.changeTextEvt.consume();
+     
+	var newText = widget.changeTextEvt.consume();
 	
 	if (newText != null)
 	  WidgetsBinding.instance.addPostFrameCallback((_) {
