@@ -60,7 +60,7 @@ class MyConnector extends StatelessWidget {
       changeTextEvt: vm.changeTextEvt,
       onClear: vm.onClear,
       )
-   );
+    );
   }
 }
 
@@ -97,9 +97,7 @@ class ChangeTextAction extends ReduxAction<AppState> {
 }
 ```
 
-As you can see above, the dumb-widget gets the events as constructor parameters.
-
-It will then "consume" the events in its `didUpdateWidget` method,
+The widget will then "consume" the events in its `didUpdateWidget` method,
 and do something with the event payload:
 
 ```dart
@@ -109,45 +107,54 @@ void didUpdateWidget(MyWidget oldWidget) {
 }
 
 void consumeEvents() {
-  if (widget.clearTextEvt.consume()) { // Do something }
 
-  var payload = widget.changeTextEvt.consume();
-  if (payload != null) { // Do something }
+  // Consume the event that clears the text.
+  // In this case the payload is a boolean.
+  if (widget.clearTextEvt.consume()) { 
+    // Do something 
+  }
+                                    
+  // Consume the event that changes the text.
+  // In this case the payload is a String.
+  String? payload = widget.changeTextEvt.consume();
+  if (payload != null) { 
+    // Do something 
+  }
 }
 ```
 
-The `evt.consume()` will return the payload once, and then that event is considered "spent".
+The `Event.consume()` method will return the payload once, and then that event is considered "spent".
 
 In more detail, if the event **has no value and no generic type**, then it's a boolean event.
-This means `evt.consume()` returns **true** once, and then **false** for subsequent calls.
+This means `consume()` returns **true** once, and then **false** for subsequent calls.
 
-However, if the event **has value or some generic type**, then `Event.consume()` returns the 
-**value** once, and then **null** for subsequent calls.
+However, if the event **has value or some generic type**, then `consume()` returns the **value** once, 
+and then **null** for subsequent calls.
 
 So, for example, if you use a `controller` to hold the text in a `TextField`:
 
 ```dart
-void consumeEvents() {
-
-    var clearText = widget.clearTextEvt.consume();
-    
-	if (clearText)
-	  WidgetsBinding.instance.addPostFrameCallback((_) {
-		if (mounted) controller.clear();
-	  });
+void consumeEvents() {    
+         
+    // Consume the event that clears the text.
+    if (clearTextEvt.consume()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) controller.clear();
+      });             
+    }
      
-	var newText = widget.changeTextEvt.consume();
-	
-	if (newText != null)
-	  WidgetsBinding.instance.addPostFrameCallback((_) {
-		if (mounted) controller.value = controller.value.copyWith(text: newText);
-	  });
-  }
+    // Consume the event that changes the text.
+    var newText = widget.changeTextEvt.consume();
+    if (newText != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) controller.value = controller.value.copyWith(text: newText);
+      });
+    }
+}    
 ```
 
-Try running
-the: <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_event_redux.dart">
-Event Example</a>.
+Try running the:
+[Event Example](https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_event_redux.dart).
 
 <br></br>
 

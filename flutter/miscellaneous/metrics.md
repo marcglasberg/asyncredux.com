@@ -77,7 +77,9 @@ This is an implementation example:
 
  class MyAction extends AppAction {
    
-    AppState? reduce() { // Do something }
+    AppState? reduce() { 
+      // Do something 
+    }
    
     void trackEvent(AppState prevState, AppState newState, Object? error) =>
        MyMetrics().track(this, newState, error);
