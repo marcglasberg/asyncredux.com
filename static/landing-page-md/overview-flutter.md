@@ -327,23 +327,7 @@ class LoadPrices extends Action with Throttle {
 
 &nbsp;
 
-## OptimisticUpdate
-
-To provide instant feedback on actions that save information to the server, this feature immediately
-applies state changes as if they were already successful, before confirming with the server.
-If the server update fails, the change is rolled back and, optionally, a notification can inform
-the user of the issue.
-
-```tsx
-class SaveName extends Action with OptimisticUpdate { 
-   
-  async reduce() { ... } 
-}
-```
-
-&nbsp;
-
-## Debounce (soon)
+## Debounce
 
 To limit how often an action occurs in response to rapid inputs, you can add the `Debounce` mixin
 to your action class. For example, when a user types in a search bar, debouncing ensures that not
@@ -365,6 +349,22 @@ class SearchText extends Action with Debounce {
         
     return state.copy(searchResult: response.body);
   }
+}
+```
+
+&nbsp;
+
+## OptimisticUpdate
+
+To provide instant feedback on actions that save information to the server, this feature immediately
+applies state changes as if they were already successful, before confirming with the server.
+If the server update fails, the change is rolled back and, optionally, a notification can inform
+the user of the issue.
+
+```tsx
+class SaveName extends Action with OptimisticUpdate { 
+   
+  async reduce() { ... } 
 }
 ```
 
