@@ -306,6 +306,43 @@ class LoadText extends Action with Retry, UnlimitedRetries {
 
 &nbsp;
 
+## Throttle
+
+To prevent an action from running too frequently, you can add the `Throttle` mixin to your
+action class. This means that once the action runs it's considered _fresh_, and it won't run
+again for a set period of time, even if you try to dispatch it.
+After this period ends, the action is considered _stale_ and is ready to run again.
+
+```tsx
+class LoadPrices extends Action with Throttle {  
+  
+  final int throttle = 5000; // Milliseconds
+
+  Future<AppState> reduce() async {      
+    var result = await loadJson('https://example.com/prices');              
+    return state.copy(prices: result);
+  }
+}
+```
+
+&nbsp;
+
+## OptimisticUpdate
+
+To provide instant feedback on actions that save information to the server, this feature immediately
+applies state changes as if they were already successful, before confirming with the server.
+If the server update fails, the change is rolled back and, optionally, a notification can inform
+the user of the issue.
+
+```tsx
+class SaveName extends Action with OptimisticUpdate { 
+   
+  async reduce() { ... } 
+}
+```
+
+&nbsp;
+
 ## Debounce (soon)
 
 To limit how often an action occurs in response to rapid inputs, you can add the `Debounce` mixin
@@ -328,43 +365,6 @@ class SearchText extends Action with Debounce {
         
     return state.copy(searchResult: response.body);
   }
-}
-```
-
-&nbsp;
-
-## Throttle (soon)
-
-To prevent an action from running too frequently, you can add the `Throttle` mixin to your
-action class. This means that once the action runs it's considered _fresh_, and it won't run
-again for a set period of time, even if you try to dispatch it.
-After this period ends, the action is considered _stale_ and is ready to run again.
-
-```tsx
-class LoadPrices extends Action with Throttle {  
-  
-  final int throttle = 5000; // Milliseconds
-
-  Future<AppState> reduce() async {      
-    var result = await loadJson('https://example.com/prices');              
-    return state.copy(prices: result);
-  }
-}
-```
-
-&nbsp;
-
-## OptimisticUpdate (soon)
-
-To provide instant feedback on actions that save information to the server, this feature immediately
-applies state changes as if they were already successful, before confirming with the server.
-If the server update fails, the change is rolled back and, optionally, a notification can inform
-the user of the issue.
-
-```tsx
-class SaveName extends Action with OptimisticUpdate { 
-   
-  async reduce() { ... } 
 }
 ```
 
