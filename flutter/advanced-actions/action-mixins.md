@@ -12,7 +12,7 @@ You can add **mixins** to your actions, to accomplish common tasks.
 otherwise an **error dialog** prompts users to check their connection:
 
 ```dart
-class LoadText extends Action with CheckInternet {
+class LoadText extends AppAction with CheckInternet {
       
    Future<String> reduce() async {
       var response = await http.get('https://dummyjson.com/todos/1');
@@ -29,7 +29,7 @@ If you don't want the dialog to open, you can add the `NoDialog` mixin too,
 and then display the error information in your widgets:
 
 ```dart
-class LoadText extends Action with CheckInternet, NoDialog { 
+class LoadText extends AppAction with CheckInternet, NoDialog { 
   ... 
   }
 
@@ -113,7 +113,7 @@ Compatibility:
 internet connection. For example:
 
 ```dart
-class LoadText extends ReduxAction<AppState> with AbortWhenNoInternet {
+class LoadText extends AppAction with AbortWhenNoInternet {
   Future<String> reduce() async {
     var response = await http.get('http://numbersapi.com/42');
     return response.body;
@@ -145,7 +145,7 @@ To prevent an action from being dispatched while it's already running,
 add the `NonReentrant` mixin to your action class:
 
 ```dart
-class LoadText extends Action with NonReentrant {
+class LoadText extends AppAction with NonReentrant {
    ...
    }
 ```
@@ -167,7 +167,7 @@ Compatibility:
 Add the `Retry` mixin to your actions, to retry them a few times with exponential backoff, if they fail.
 
 ```dart
-class LoadText extends Action with Retry, UnlimitedRetries {
+class LoadText extends AppAction with Retry, UnlimitedRetries {
    ...
    }
 ```
@@ -201,7 +201,7 @@ If you want to retry unlimited times, you can add the `UnlimitedRetries` mixin,
 which is the same as setting `maxRetries` to `-1`:
 
 ```dart
-class MyAction extends ReduxAction<AppState> with Retry, UnlimitedRetries { ... }
+class MyAction extends AppAction with Retry, UnlimitedRetries { ... }
 ```
 
 Notes:
@@ -223,7 +223,7 @@ Compatibility:
  to avoid multiple instances of the same action running at the same time:
 
   ```dart
-  class MyAction extends ReduxAction<AppState> with Retry, NonReentrant { ... }
+  class MyAction extends AppAction with Retry, NonReentrant { ... }
   ```
 
 ## Throttle
@@ -265,7 +265,7 @@ class MyScreenConnector extends StatelessWidget {
 and then:
 
 ```dart
-class LoadAction extends ReduxAction<AppState> with Throttle {
+class LoadAction extends AppAction with Throttle {
 
   final int throttle = 5000;
 
@@ -280,7 +280,7 @@ The `throttle` is given in milliseconds, and the default is`1000 milliseconds (1
 You can override this default:
 
 ```dart
-class MyAction extends ReduxAction<AppState> with Throttle {
+class MyAction extends AppAction with Throttle {
     final int throttle = 500; // Here!
     ...
 }
@@ -295,12 +295,12 @@ different lock, you can override the `lockBuilder` method.
 For example, here we throttle two different actions based on the same lock:
 
 ```dart
-class MyAction1 extends ReduxAction<AppState> with Throttle {
+class MyAction1 extends AppAction with Throttle {
     Object? lockBuilder() => 'myLock';
     ...
 }
 
-class MyAction2 extends ReduxAction<AppState> with Throttle {
+class MyAction2 extends AppAction with Throttle {
     Object? lockBuilder() => 'myLock';
     ...
 }
@@ -309,7 +309,7 @@ class MyAction2 extends ReduxAction<AppState> with Throttle {
 Another example is to throttle based on some field of the action:
 
 ```dart
-class MyAction extends ReduxAction<AppState> with Throttle {
+class MyAction extends AppAction with Throttle {
     final String lock;
     MyAction(this.lock);
     Object? lockBuilder() => lock;
@@ -324,17 +324,22 @@ Compatibility:
 
 ## Debounce
 
-To limit how often an action occurs in response to rapid inputs, you can add the `Debounce` mixin
-to your action class. For example, when a user types in a search bar, debouncing ensures that not
-every keystroke triggers a server request. Instead, it waits until the user pauses typing before
-acting.
+Debouncing delays the execution of a function until after a certain period of inactivity.
+Each time the debounced function is called, the period of inactivity (or wait time) is reset.
+
+The function will only execute after it stops being called for the duration of the wait time.
+Debouncing is useful in situations where you want to ensure that a function is not called too frequently
+and only runs after some “quiet time.”
+
+For example, it’s commonly used for handling input validation in text fields,
+where you might not want to validate the input every time the user presses a key,
+but rather after they've stopped typing for a certain amount of time. For example:
 
 ```dart
-class SearchText extends Action with Debounce {
-  final String searchTerm;
-  SearchText(this.searchTerm);
+class SearchText extends AppAction with Debounce {
   
-  final int debounce = 350; // Milliseconds
+  final String searchTerm;
+  SearchText(this.searchTerm);  
 
   Future<AppState> reduce() async {
       
@@ -346,6 +351,46 @@ class SearchText extends Action with Debounce {
   }
 }
 ```
+
+The `debounce` value is given in milliseconds, and the default is 333 milliseconds (1/3 of a second).
+You can override this default:
+
+```dart
+class SearchText extends AppAction with Debounce {
+    final int debounce = 1000; // Here!
+    ...
+}
+```
+
+### Advanced debounce usage
+
+  The debounce is, by default, based on the action `runtimeType`. This means it will reset the debounce period
+  when another action of the same runtimeType was is dispatched within the debounce period. In other words,
+  the runtimeType is the "lock". If you want to debounce based on a different lock, you can override
+  the `lockBuilder` method. For example, here we debounce two different actions based on the same lock:
+
+  ```dart
+  class MyAction1 extends AppAction with Debounce {
+     Object? lockBuilder() => 'myLock';
+     ...
+  }
+  
+  class MyAction2 extends AppAction with Debounce {
+     Object? lockBuilder() => 'myLock';
+     ...
+  }
+  ```
+
+  Another example is to debounce based on some field of the action:
+
+  ```dart
+  class MyAction extends AppAction with Debounce {
+     final String lock;
+     MyAction(this.lock);
+     Object? lockBuilder() => lock;
+     ...
+  }
+  ```
 
 Compatibility:
 
@@ -366,7 +411,7 @@ Let's use a "Todo" app as an example. We want to save a new Todo to a TodoList.
 This code saves the Todo, then reloads the TotoList from the cloud:
 
 ```dart
-class SaveTodo extends ReduxAction<AppState> {
+class SaveTodo extends AppAction {
    final Todo newTodo;
    SaveTodo(this.newTodo);
 
@@ -391,7 +436,7 @@ while we save then load, which is not a good user experience.
 The solution is optimistically updating the TodoList before saving the new Todo to the cloud:
 
 ```dart
-class SaveTodo extends ReduxAction<AppState> {
+class SaveTodo extends AppAction {
    final Todo newTodo;
    SaveTodo(this.newTodo);
 
@@ -417,7 +462,7 @@ That's better. But if the saving fails, the users still have to wait for
 the reload until they see the reverted state. We can further improve this:
 
 ```dart
-class SaveTodo extends ReduxAction<AppState> {
+class SaveTodo extends AppAction {
    final Todo newTodo;
    SaveTodo(this.newTodo);
 
