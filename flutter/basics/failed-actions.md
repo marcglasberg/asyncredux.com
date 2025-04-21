@@ -14,7 +14,7 @@ depending on the error type. We will see later how to set up this general error 
 but for the moment let's see how to deal with only a specific type of error called
 a **user exception**.
 
-# User exceptions
+## User exceptions
 
 An `UserException` is a special type of error, provided natively by Async Redux.
 It's meant to be shown to the user, and not to be considered a bug in the code.
@@ -22,9 +22,9 @@ It's meant to be shown to the user, and not to be considered a bug in the code.
 In other words, if something wrong happens in an action, and it's something that the user can fix,
 you can `throw UserException('Some error message')` with a suitable error message.
 
-For example, if a user is transferring money and the amount is zero,   
+For example, if a user is transferring money and the amount is zero,
 you don't want to log this as an error, but you want to show a message to the user
-saying "You can't transfer zero money":
+saying "You cannot transfer zero money":
 
 ```dart
 class TransferMoneyAction extends AppAction {
@@ -32,7 +32,7 @@ class TransferMoneyAction extends AppAction {
   TransferMoneyAction(this.amount);
   
   Future<AppState> reduce() async {
-    if (amount == 0) throw UserException('You can't transfer zero money.');
+    if (amount == 0) throw UserException('You cannot transfer zero money.');
     else return state.copy(cashBalance: state.cashBalance - amount);
   }
 }
@@ -99,7 +99,7 @@ class MyApp extends StatelessWidget {
 
 > Note: In the `Store` constructor you can set the maximum number of errors that queue can hold.
 
-# Changing the default error dialog
+## Changing the default error dialog
 
 As explained in the beginning of this section, if you use the build-in error handling you must wrap
 your home-page with `UserExceptionDialog`. There, you may pass the `onShowUserExceptionDialog`
@@ -111,7 +111,7 @@ UserExceptionDialog<AppState>(
     (BuildContext context, UserException userException) => showDialog(...),
   child: MyHomePage(),  
 );
-``` 
+```
 
 The `UserExceptionDialog` can display any error widget you want in front of all the others
 on the screen. If this is not what you want, you can easily create your
@@ -128,4 +128,4 @@ Show Error Dialog Example</a>.
 
 <hr></hr>
 
-Next, let's see how failed actions can also be shown as error messages inside your widgets. 
+Next, let's see how failed actions can also be shown as error messages inside your widgets.

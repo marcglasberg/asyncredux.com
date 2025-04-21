@@ -21,6 +21,11 @@ Async Redux has special provisions for dealing with errors thrown by actions,
 including observing errors, showing errors to users, and wrapping errors into more meaningful
 descriptions.
 
+## Showing a dialog when an action fails
+
+We have already discussed how to show a dialog to the user when an action fails, [here](../basics/failed-actions).
+Please make sure to read that page first.
+
 ## Stopping the action
 
 As previously discussed, apart from the `reduce()` method that all actions must override,
