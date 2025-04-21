@@ -31,7 +31,7 @@ compare Async Redux with the original Redux.
 
 Async Redux is a full state management solution and doesn't compete with packages like Provider and
 Flutter Hooks, which aren't full solutions. Instead, it
-can [work with them](./category/other-packages-and-frameworks) if you want, though it's not required.
+can [work with them](./category/other-packages) if you want, though it's not required.
 
 ## Installation
 
