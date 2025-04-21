@@ -11,7 +11,7 @@ Actions that fail can simply [throw errors](../advanced-actions/errors-thrown-by
 
 Those errors can be of any type, but in this page we'll discuss a special type of
 error called **`UserException`**, which is provided natively by Async Redux.
-It represents errors that are **not bugs** in the code, 
+It represents errors that are **not bugs** in the code,
 but rather something that the user can fix.
 
 In other words, if something wrong happens in an action,
@@ -141,7 +141,7 @@ export const userExceptionDialog: ShowUserException = (exception: UserException,
 </TabItem>
 <TabItem value="rn" label="React Native">
 
-```tsx 
+```tsx
 import { Alert } from 'react-native';
 
 export const userExceptionDialog: ShowUserException =
@@ -156,4 +156,3 @@ export const userExceptionDialog: ShowUserException =
 
 </TabItem>
 </Tabs>
-
