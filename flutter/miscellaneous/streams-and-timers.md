@@ -13,8 +13,8 @@ To deal with Streams and Timers, follow this advice:
 
 - Don't put streams and timers into the store state. They are not app state, and they should not be
   persisted to the local filesystem. Instead, they are something that "generates state changes".
-                                                        
-## Example 
+
+## Example
 
 Let's pretend you want to listen to changes to the user name, in a Firestore database.
 First, create an action to start listening, and another action to cancel. We could name

@@ -286,6 +286,43 @@ class MyAction extends AppAction with Throttle {
 }
 ```
 
+You can also specify the `ignoreThrottle` parameter, which allows you to ignore the throttle period
+for a specific action. This is useful when you want to bypass the throttle for certain actions,
+while still applying it to others. For example:
+
+```dart
+class MyAction extends ReduxAction<AppState> with Throttle {
+    final bool force;
+    MyAction({this.force = false});  
+
+    bool get ignoreThrottle => force; // Here!   
+    ...
+}
+```
+  
+The throttle period is NOT reset if the action fails.
+In other words, if the action fails it will not run a second time if you dispatch it again within the throttle period.
+However, you can use the `removeLockOnError` parameter to remove the lock when an error occurs,
+allowing the action to be dispatched again right away.
+
+```dart
+class MyAction extends ReduxAction<AppState> with Throttle {
+    bool removeLockOnError = true; // Here!
+    ...
+}
+```
+
+Note that `removeLockOnError` is currently implemented in the `after` method, like this:
+
+```dart
+@override
+void after() {
+  if (removeLockOnError && (status.originalError != null)) removeLock();
+}
+```
+
+You can override the `after` method to customize this behavior of removing the lock under some conditions.
+
 ### Advanced throttle usage
 
 The throttle is, by default, based on the action `runtimeType`.
