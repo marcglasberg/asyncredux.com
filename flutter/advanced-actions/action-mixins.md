@@ -291,7 +291,7 @@ for a specific action. This is useful when you want to bypass the throttle for c
 while still applying it to others. For example:
 
 ```dart
-class MyAction extends ReduxAction<AppState> with Throttle {
+class MyAction extends AppAction with Throttle {
     final bool force;
     MyAction({this.force = false});  
 
@@ -306,7 +306,7 @@ However, you can use the `removeLockOnError` parameter to remove the lock when a
 allowing the action to be dispatched again right away.
 
 ```dart
-class MyAction extends ReduxAction<AppState> with Throttle {
+class MyAction extends AppAction with Throttle {
     bool removeLockOnError = true; // Here!
     ...
 }
