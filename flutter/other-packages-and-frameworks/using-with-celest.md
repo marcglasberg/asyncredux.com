@@ -21,15 +21,3 @@ will reach the frontend already translated as
 `UserException('La contraseña que ingresaste no es válida')` if the user
 device is in Spanish.
 
-## Setup
-
-For all this to work in Serverpod, after you import `async_redux_core` in the `pubspec.yaml` file of the server project,
-you must add the `UserException` class to your `generator.yaml` file, in its `extraClasses` section:
-
-```yaml  
-type: server
-...
-
-extraClasses:
-    - package:async_redux_core/async_redux_core.dart:UserException
-```  
