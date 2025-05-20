@@ -1,8 +1,0 @@
-{
-  "label": "Tutorial",
-  "position": 2,
-  "link": {
-    "type": "generated-index",
-    "description": "This tutorial's goal is to show how easy it is to use Async Redux. We'll create a simple Todo List app, with a list of todos and a button to add a new todo."
-  }
-}
