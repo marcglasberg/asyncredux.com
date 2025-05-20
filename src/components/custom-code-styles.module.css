@@ -1,0 +1,82 @@
+.codeBlockBold {
+  font-weight: bold !important;
+}
+
+/* Make all tokens bold by default */
+.codeBlockBold :global(.token) {
+  font-weight: bold !important;
+}
+
+/* Target comments specifically and ensure they are NOT bold */
+.codeBlockBold :global(.token.comment),
+.codeBlockBold :global(.token.doctype),
+.codeBlockBold :global(.token.cdata),
+.codeBlockBold :global(.token.prolog),
+.codeBlockBold :global(.docusaurus-highlight-code-line .token.comment),
+.codeBlockBold :global(.prism-code .comment),
+/* Add specific rules for Prism's comment tokens */
+.codeBlockBold :global(span.token.comment),
+.codeBlockBold :global(.prism-code span[class~="comment"]),
+/* More specific selectors for line and block comments */
+.codeBlockBold :global(.token.block-comment),
+.codeBlockBold :global(.token.line-comment) {
+  font-weight: normal !important;
+  font-style: italic !important; 
+  opacity: 0.85 !important; /* Slightly increased opacity for better visibility */
+}
+
+/* Theme-specific colors */
+html[data-theme='light'] .codeBlockBold :global(.token.comment),
+html[data-theme='light'] .codeBlockBold :global(.token.doctype),
+html[data-theme='light'] .codeBlockBold :global(.token.cdata),
+html[data-theme='light'] .codeBlockBold :global(.token.prolog),
+html[data-theme='light'] .codeBlockBold :global(.prism-code .comment),
+html[data-theme='light'] .codeBlockBold :global(span.token.comment),
+html[data-theme='light'] .codeBlockBold :global(.token.block-comment),
+html[data-theme='light'] .codeBlockBold :global(.token.line-comment) {
+  color: #6e6e6e !important; /* Original darker gray for light mode */
+}
+
+/* Theme-specific background colors - only for light mode */
+html[data-theme='light'] .codeBlockBold :global(.prism-code),
+html[data-theme='light'] .codeBlockBold :global(pre),
+html[data-theme='light'] .codeBlockBold :global(div[class*="codeBlockContainer"]) {
+  background-color: rgb(249, 245, 245) !important;
+}
+
+html[data-theme='dark'] .codeBlockBold :global(.token.comment),
+html[data-theme='dark'] .codeBlockBold :global(.token.doctype),
+html[data-theme='dark'] .codeBlockBold :global(.token.cdata),
+html[data-theme='dark'] .codeBlockBold :global(.token.prolog),
+html[data-theme='dark'] .codeBlockBold :global(.prism-code .comment),
+html[data-theme='dark'] .codeBlockBold :global(span.token.comment),
+html[data-theme='dark'] .codeBlockBold :global(.token.block-comment),
+html[data-theme='dark'] .codeBlockBold :global(.token.line-comment) {
+  color: #a0a0a0 !important; /* Lighter gray for dark mode */
+}
+
+/* Special handling for inline comments */
+.codeBlockBold :global(code .comment),
+.codeBlockBold :global(pre .comment) {
+  font-weight: normal !important;
+  font-style: italic !important;
+  opacity: 0.85 !important;
+}
+
+/* Theme-specific colors for inline comments */
+html[data-theme='light'] .codeBlockBold :global(code .comment),
+html[data-theme='light'] .codeBlockBold :global(pre .comment) {
+  color: #6e6e6e !important; /* Original darker gray for light mode */
+}
+
+html[data-theme='dark'] .codeBlockBold :global(code .comment),
+html[data-theme='dark'] .codeBlockBold :global(pre .comment) {
+  color: #a0a0a0 !important; /* Lighter gray for dark mode */
+}
+
+/* Ensure other elements remain bold */
+.codeBlockBold :global(code:not(.comment)),
+.codeBlockBold :global(pre:not(.comment)),
+.codeBlockBold :global(.token:not(.comment):not(.block-comment):not(.line-comment):not(.prolog):not(.doctype):not(.cdata)) {
+  font-weight: bold !important;
+}

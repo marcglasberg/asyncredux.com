@@ -22,3 +22,10 @@
   justify-content: center;
 }
 
+.overview {
+  padding: 2rem 0;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+

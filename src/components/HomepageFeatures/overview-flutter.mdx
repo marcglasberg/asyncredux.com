@@ -1,0 +1,517 @@
+> <i>On <a href="https://pub.dev/packages/async_redux" target="_blank">pub.dev</a> since Aug 2019.<br></br>Also available for React as [Kiss State](https://kissforreact.org/).</i>
+
+<br></br>
+
+# Store, state, actions and reducers
+
+The store holds all the application **state**. A few examples:
+
+```dart
+// Here, the state is a number
+var store = Store<int>(initialState: 1);
+```
+
+```dart
+// Here, the state is an object
+class AppState {
+  final String name;
+  final int age;
+  State(this.name, this.age);
+}
+
+var store = Store<AppState>(initialState: AppState('Mary', 25));
+```
+
+&nbsp;
+
+To use the store, add it in a `StoreProvider` at the top of your widget tree.
+
+```dart
+Widget build(context) {
+  return StoreProvider<int>(
+    store: store,
+    child: MaterialApp( ... ), 
+    );                      
+}
+```
+
+&nbsp;
+
+# Widgets use the state
+
+```dart
+class MyWidget extends StatelessWidget {
+
+  Widget build(context) 
+    => Text('${context.state.name} has ${context.state.age} years old');  
+}
+```
+
+&nbsp;
+
+# Actions and reducers
+
+An **action** is a class that contain its own **reducer**.
+
+```dart
+class Increment extends Action {
+
+  // The reducer has access to the current state
+  int reduce() => state + 1; // It returns a new state
+}
+```
+
+&nbsp;
+
+# Dispatch an action
+
+The store state is **immutable**.
+
+The only way to change the store **state** is by dispatching an **action**.
+The action reducer returns a new state, that replaces the old one.
+
+```tsx
+// Dispatch an action
+store.dispatch(Increment());
+
+// Dispatch multiple actions
+store.dispatchAll([Increment(), LoadText()]);
+
+// Dispatch an action and wait for it to finish
+await store.dispatchAndWait(Increment());
+
+// Dispatch multiple actions and wait for them to finish
+await store.dispatchAndWaitAll([Increment(), LoadText()]);
+```
+
+&nbsp;
+
+# Widgets can dispatch actions
+
+The context extensions to dispatch actions are `dispatch` , `dispatchAll` etc.
+
+```dart
+class MyWidget extends StatelessWidget {
+ 
+  Widget build(context) { 
+    return ElevatedButton(
+      onPressed: () => context.dispatch(Increment());
+    }     
+}
+```
+
+&nbsp;
+
+# Actions can do asynchronous work
+
+They download information from the internet, or do any other async work.
+
+```dart
+var store = Store<String>(initialState: '');
+```
+
+```dart
+class LoadText extends Action {
+
+  // This reducer returns a Future  
+  Future<String> reduce() async {
+  
+    // Download something from the internet
+    var response = await http.get('https://dummyjson.com/todos/1');
+    
+    // Change the state with the downloaded information
+    return response.body;      
+  }
+}
+```
+
+&nbsp;
+
+> If you want to understand the above code in terms of traditional Redux patterns,
+> all code until the last `await` in the `reduce` method is the equivalent of a middleware,
+> and all code after that is the equivalent of a traditional reducer.
+> It's still Redux, just written in a way that is easy and boilerplate-free.
+> No need for Thunks or Sagas.
+
+&nbsp;
+
+# Actions can throw errors
+
+If something bad happens, you can simply **throw an error**. In this case, the state will not
+change. Errors are caught globally and can be handled in a central place, later.
+
+In special, if you throw a `UserException`, which is a type provided by Async Redux,
+a dialog (or other UI) will open automatically, showing the error message to the user.
+
+```dart
+class LoadText extends Action {
+    
+  Future<String> reduce() async {  
+    var response = await http.get('https://dummyjson.com/todos/1');
+
+    if (response.statusCode == 200) return response.body;
+    else throw UserException('Failed to load');         
+  }
+}
+```
+
+&nbsp;
+
+To show a spinner while an asynchronous action is running, use `isWaiting(action)`.
+
+To show an error message inside the widget, use `isFailed(action)`.
+
+```dart
+class MyWidget extends StatelessWidget {
+
+  Widget build(context) {
+    
+    if (context.isWaiting(LoadText)) return CircularProgressIndicator();
+    if (context.isFailed(LoadText)) return Text('Loading failed...');
+    return Text(context.state);
+  }
+}
+```
+
+&nbsp;
+
+# Actions can dispatch other actions
+
+You can use `dispatchAndWait` to dispatch an action and wait for it to finish.
+
+```dart
+class LoadTextAndIncrement extends Action {
+
+  Future<AppState> reduce() async {    
+    
+    // Dispatch and wait for the action to finish
+    await dispatchAndWait(LoadText());
+    
+    // Only then, increment the state
+    return state.copy(count: state.count + 1);
+  }
+}
+```
+
+&nbsp;
+
+You can also dispatch actions in **parallel** and wait for them to finish:
+
+```dart
+class BuyAndSell extends Action {
+
+  Future<AppState> reduce() async {
+  
+    // Dispatch and wait for both actions to finish
+    await dispatchAndWaitAll([
+      BuyAction('IBM'), 
+      SellAction('TSLA')
+    ]);
+    
+    return state.copy(message: 'New cash balance is ${state.cash}');
+  }
+}
+```
+
+&nbsp;
+
+You can also use `waitCondition` to wait until the `state` changes in a certain way:
+
+```dart
+class SellStockForPrice extends Action {
+  final String stock;
+  final double limitPrice;
+  SellStockForPrice(this.stock, this.limitPrice);
+
+  Future<AppState?> reduce() async {  
+  
+    // Wait until the stock price is higher than the limit price
+    await waitCondition(
+      (state) => state.stocks[stock].price >= limitPrice
+    );
+      
+    // Only then, post the sell order to the backend
+    var amount = await postSellOrder(stock);    
+    
+    return state.copy(
+      stocks: state.stocks.setAmount(stock, amount),
+    ); 
+}
+```
+
+&nbsp;
+
+# Add features to your actions
+
+You can add **mixins** to your actions, to accomplish common tasks.
+
+## Check for Internet connectivity
+
+`CheckInternet` ensures actions only run with internet,
+otherwise an **error dialog** prompts users to check their connection:
+
+```dart
+class LoadText extends Action with CheckInternet {
+      
+   Future<String> reduce() async {
+      var response = await http.get('https://dummyjson.com/todos/1');
+      ...      
+   }
+}   
+```
+
+&nbsp;
+
+`NoDialog` can be added to `CheckInternet` so that no dialog is opened.
+Instead, you can display some information in your widgets:
+
+```dart
+class LoadText extends Action with CheckInternet, NoDialog { 
+  ... 
+  }
+
+class MyWidget extends StatelessWidget {
+  Widget build(context) {     
+     if (context.isFailed(LoadText)) Text('No Internet connection');
+  }
+}   
+```
+
+&nbsp;
+
+`AbortWhenNoInternet` aborts the action silently (without showing any dialogs) if there is no
+internet connection.
+
+&nbsp;
+
+## NonReentrant
+
+To prevent an action from being dispatched while it's already running,
+add the `NonReentrant` mixin to your action class.
+
+```dart
+class LoadText extends Action with NonReentrant {
+   ...
+   }
+```
+
+&nbsp;
+
+## Retry
+
+Add `Retry` to retry the action a few times with exponential backoff, if it fails.
+Add `UnlimitedRetries` to retry indefinitely:
+
+```dart
+class LoadText extends Action with Retry, UnlimitedRetries {
+   ...
+   }
+```
+
+&nbsp;
+
+## Throttle
+
+To prevent an action from running too frequently, you can add the `Throttle` mixin to your
+action class. This means that once the action runs it's considered _fresh_, and it won't run
+again for a set period of time, even if you try to dispatch it.
+After this period ends, the action is considered _stale_ and is ready to run again.
+
+```tsx
+class LoadPrices extends Action with Throttle {  
+  
+  final int throttle = 5000; // Milliseconds
+
+  Future<AppState> reduce() async {      
+    var result = await loadJson('https://example.com/prices');              
+    return state.copy(prices: result);
+  }
+}
+```
+
+&nbsp;
+
+## Debounce
+
+To limit how often an action occurs in response to rapid inputs, you can add the `Debounce` mixin
+to your action class. For example, when a user types in a search bar, debouncing ensures that not
+every keystroke triggers a server request. Instead, it waits until the user pauses typing before
+acting.
+
+```dart
+class SearchText extends Action with Debounce {
+  final String searchTerm;
+  SearchText(this.searchTerm);
+  
+  final int debounce = 350; // Milliseconds
+
+  Future<AppState> reduce() async {
+      
+    var response = await http.get(
+      Uri.parse('https://example.com/?q=' + encoded(searchTerm))
+    );
+        
+    return state.copy(searchResult: response.body);
+  }
+}
+```
+
+&nbsp;
+
+## OptimisticUpdate
+
+To provide instant feedback on actions that save information to the server, this feature immediately
+applies state changes as if they were already successful, before confirming with the server.
+If the server update fails, the change is rolled back and, optionally, a notification can inform
+the user of the issue.
+
+```tsx
+class SaveName extends Action with OptimisticUpdate { 
+   
+  async reduce() { ... } 
+}
+```
+
+&nbsp;
+
+# Events
+
+Flutter widgets like `TextField` and `ListView` hold their own internal state.
+You can use `Events` to interact with them.
+
+```dart
+// Action that changes the text of a TextField
+class ChangeText extends Action {
+  final String newText;
+  ChangeText(this.newText);    
+ 
+  AppState reduce() => state.copy(changeText: Event(newText));
+  }
+}
+
+// Action that scrolls a ListView to the top
+class ScrollToTop extends Action {
+  AppState reduce() => state.copy(scroll: Event(0));
+  }
+}
+```
+
+&nbsp;
+
+# Persist the state
+
+You can add a `persistor` to save the state to the local device disk.
+
+```dart
+var store = Store<AppState>(
+  persistor: MyPersistor(),  
+);  
+```
+
+&nbsp;
+
+# Testing your app is easy
+
+Just dispatch actions and wait for them to finish.
+Then, verify the new state or check if some error was thrown.
+
+```dart
+class AppState {  
+  List<String> items;    
+  int selectedItem;
+}
+
+test('Selecting an item', () async {   
+
+    var store = Store<AppState>(
+      initialState: AppState(        
+        items: ['A', 'B', 'C']
+        selectedItem: -1, // No item selected
+      ));
+    
+    // Should select item 2                
+    await store.dispatchAndWait(SelectItem(2));    
+    expect(store.state.selectedItem, 'B');
+    
+    // Fail to select item 42
+    var status = await store.dispatchAndWait(SelectItem(42));    
+    expect(status.originalError, isA<>(UserException));
+});
+```
+
+&nbsp;
+
+# Advanced setup
+
+If you are the Team Lead, you set up the app's infrastructure in a central place,
+and allow your developers to concentrate solely on the business logic.
+
+You can add a `stateObserver` to collect app metrics, an `errorObserver` to log errors,
+an `actionObserver` to print information to the console during development,
+and a `globalWrapError` to catch all errors.
+
+```dart
+var store = Store<String>(    
+  stateObserver: [MyStateObserver()],
+  errorObserver: [MyErrorObserver()],
+  actionObservers: [MyActionObserver()],
+  globalWrapError: MyGlobalWrapError(),
+```
+
+&nbsp;
+
+For example, the following `globalWrapError` handles `PlatformException` errors thrown
+by Firebase. It converts them into `UserException` errors, which are built-in types that
+automatically show a message to the user in an error dialog:
+
+```dart
+Object? wrap(error, stackTrace, action) =>
+  (error is PlatformException)
+    ? UserException('Error connecting to Firebase')
+    : error;
+}  
+```
+
+&nbsp;
+
+# Advanced action configuration
+
+The Team Lead may create a base action class that all actions will extend, and add some common
+functionality to it. For example, getter shortcuts to important parts of the state,
+and selectors to help find information.
+
+```dart
+class AppState {  
+  List<Item> items;    
+  int selectedItem;
+}
+
+class Action extends ReduxAction<AppState> {
+
+  // Getter shortcuts   
+  List<Item> get items => state.items;
+  Item get selectedItem => state.selectedItem;
+  
+  // Selectors 
+  Item? findById(int id) => items.firstWhereOrNull((item) => item.id == id);
+  Item? searchByText(String text) => items.firstWhereOrNull((item) => item.text.contains(text));
+  int get selectedIndex => items.indexOf(selectedItem);     
+}
+```
+
+&nbsp;
+
+Now, all actions can use them to access the state in their reducers:
+
+```dart
+class SelectItem extends Action {
+  final int id;
+  SelectItem(this.id);
+    
+  AppState reduce() {
+    Item? item = findById(id);
+    if (item == null) throw UserException('Item not found');
+    return state.copy(selected: item);
+  }    
+}
+```
