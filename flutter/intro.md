@@ -21,7 +21,7 @@ on [pub.dev](https://pub.dev/packages/async_redux) since August 2019.
 It's a mature solution, and its features have been battle-tested in hundreds of real-world
 applications.
 
-Since July 2024, it's also available for [React](https://www.npmjs.com/package/async-redux-react).
+Since May 2025, it's also available for React under the name [Kiss State](https://www.npmjs.com/package/kiss-for-react).
 
 ### How does it compare?
 

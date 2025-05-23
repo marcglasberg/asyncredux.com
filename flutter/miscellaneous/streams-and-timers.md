@@ -41,7 +41,11 @@ class StartTimerAction extends ReduxAction<AppState> {
 
     setProp(
       'my timer', 
-      Timer.periodic(Duration(seconds: 1), (timer) { dispatch(DoSomethingAction(timer.tick)); }));
+      Timer.periodic(
+        Duration(seconds: 1), 
+        (timer) { dispatch(DoSomethingAction(timer.tick)); }
+      )
+    );
 
     return null;
   }
@@ -56,7 +60,7 @@ class StopTimerAction extends ReduxAction<AppState> {
 }  
 ```
 
-Note that `disposeProp('my times')` is equivalent to:
+Note that `disposeProp('my timer')` above is equivalent to:
 
 ```dart
 var timer = prop<Timer?>('my timer');
