@@ -38,24 +38,32 @@ and they are accessible from the reducers.
 class StartTimerAction extends ReduxAction<AppState> {
 
   Future<AppState> reduce() async {
-    props["my timer"] = Timer.periodic(Duration(seconds: 1), (timer) {
-      dispatch(DoSomethingAction(timer.tick));
-    });
-    return null;	
+
+    setProp(
+      'my timer', 
+      Timer.periodic(Duration(seconds: 1), (timer) { dispatch(DoSomethingAction(timer.tick)); }));
+
+    return null;
   }
 }
 
 class StopTimerAction extends ReduxAction<AppState> {
     
-  Future<AppState> reduce() async {
-    Timer? timer = props["my timer"];
-    if (timer != null) {
-       timer.cancel();
-       props.remove("my timer");
-    }
-    return null;	
+  Future<AppState> reduce() async {    
+    disposeProp('my timer');    
+    return null; 
   }
 }  
+```
+
+Note that `disposeProp('my times')` is equivalent to:
+
+```dart
+var timer = prop<Timer?>('my timer');
+if (timer != null) {
+  timer.cancel();
+  props.remove('my timer');
+}
 ```
 
 If your stream/timer should only be removed when the app shuts down, you can
@@ -79,7 +87,7 @@ streamSub = stream.listen((QuerySnapshot querySnapshot) {
   }, onError: ...);
 ```
 
-## To sum up:
+## To sum up
 
 1. Put your stream/timer where it can be accessed by the reducers, like in the store
    props or any other suitable place, but NOT inside the store state.
