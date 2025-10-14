@@ -276,7 +276,7 @@ class LoadAction extends AppAction with Throttle {
 }
 ```
 
-The `throttle` is given in milliseconds, and the default is`1000 milliseconds (1 second).
+The `throttle` is given in milliseconds, and the default is 1000 milliseconds (1 second).
 You can override this default:
 
 ```dart
@@ -402,8 +402,8 @@ class SearchText extends AppAction with Debounce {
 ### Advanced debounce usage
 
   The debounce is, by default, based on the action `runtimeType`. This means it will reset the debounce period
-  when another action of the same runtimeType was is dispatched within the debounce period. In other words,
-  the runtimeType is the "lock". If you want to debounce based on a different lock, you can override
+  when another action of the same runtime-type is dispatched within the debounce period. In other words,
+  the runtime-type is the "lock". If you want to debounce based on a different lock, you can override
   the `lockBuilder` method. For example, here we debounce two different actions based on the same lock:
 
   ```dart
@@ -467,8 +467,9 @@ class SaveTodo extends AppAction {
 }
 ```
 
-The problem with the above code is that it make take a second to update the todoList in the screen,
-while we save then load, which is not a good user experience.
+The issue with the above code is that updating the todoList on the screen may take a second, 
+since it waits for both saving and loading operations to complete. 
+This delay results in a poor user experience.
 
 The solution is optimistically updating the TodoList before saving the new Todo to the cloud:
 

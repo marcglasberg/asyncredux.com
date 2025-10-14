@@ -96,13 +96,3 @@ which then can be used by all your actions.
 
 The only requirement is that your actions now
 extend `AppAction` instead of `ReduxAction<AppState>`.
-
-<hr></hr>
-
-This concludes the explanation of advanced action features.
-You now know how to use `before()` and `after()` methods,
-wrap the reducer, abort the action dispatch, handle action errors,
-check actions status, and subclass actions.
-
-The next section will explain how to uncouple accessing the store state, 
-by using the connector pattern.
