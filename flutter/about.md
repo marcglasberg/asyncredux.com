@@ -36,6 +36,7 @@ Simon Lightfoot.*
 * <a href="https://pub.dev/packages/weak_map">weak_map</a>
 * <a href="https://pub.dev/packages/themed">themed</a>
 * <a href="https://pub.dev/packages/bdd_framework">bdd_framework</a>
+* <a href="https://pub.dev/packages/tiktoken_tokenizer_gpt4o_o1">tiktoken_tokenizer_gpt4o_o1</a>
 
 *My Medium Articles:*
 

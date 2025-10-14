@@ -4,7 +4,7 @@ sidebar_position: 17
 
 # Streams and Timers
 
-To deal with Streams and Timers, follow this advice:
+To deal with **streams** and **timers**, follow this advice:
 
 - Don't send streams and timers down to the widgets, not even if you are using a `StoreConnector`.
   If you are declaring, subscribing to, or unsubscribing from streams inside of widgets, it means
@@ -24,8 +24,8 @@ them `StartListenUserNameAction` and `CancelListenUserNameAction`.
   starts, right after you create the store, possibly in `main`. And cancel it when the app finishes.
 
 - If the stream/timer should run only when the user is viewing some screen, you may dispatch the
-  action from `initState` (of the screen widget) or `onInit` (StoreConnector), and cancel it from
-  the `dispose` (of the screen widget) or `onDispose` (StoreConnector).
+  action from `initState` (of the screen widget) or `onInit` (of the `StoreConnector`), and cancel 
+  it from the `dispose` (of the screen widget) or `onDispose` (of the `StoreConnector`).
 
 - If the stream/timer should run only when some action demands it, the action reducer may dispatch
   some other action to start and cancel them as needed.
@@ -96,7 +96,7 @@ streamSub = stream.listen((QuerySnapshot querySnapshot) {
 1. Put your stream/timer where it can be accessed by the reducers, like in the store
    props or any other suitable place, but NOT inside the store state.
 
-2. Don't use streams or timers directly in widgets (not in the Connector widget, and not in the
+2. Don't use streams or timers directly in widgets (not in the connector widget, and not in the
    dumb-widget).
 
 3. Create actions to start and cancel streams and timers, and call them when necessary.

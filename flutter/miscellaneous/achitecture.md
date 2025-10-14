@@ -52,7 +52,7 @@ Async Redux also helps with code errors, by simply letting your reducers throw e
 will catch them and deal with them appropriately, while vanilla Redux forces your middleware to
 catch errors and maybe even dispatch actions do deal with them.
 
-### Is Async Redux a minimalist or lightweight Redux version?
+### Is Async Redux a minimalist/lightweight Redux version?
 
 No. Async Redux is concerned with being "easy to use", not with being lightweight. In terms of
 library code size it's larger than the original Redux implementation. However, it's still very

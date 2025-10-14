@@ -17,8 +17,8 @@ This could be your action reducer:
 
 ```dart
 Future<AppState> reduce() async {
-	var something = await myDao.loadSomething();
-	return state.copy(something: something);
+  var something = await myDao.loadSomething();
+  return state.copy(something: something);
 }
 ```
 

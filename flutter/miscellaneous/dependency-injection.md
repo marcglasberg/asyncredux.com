@@ -30,20 +30,27 @@ store = Store<AppState>(
 You can then extend both `ReduxAction` and `VmFactory` to provide typed access to your environment:
 
 ```dart
-abstract class AppFactory<T extends Widget?, Model extends Vm> extends VmFactory<int, T, Model> {
-  AppFactory([T? connector]) : super(connector);
-
+abstract class Action extends ReduxAction<int> {
   Environment get env => super.env as Environment;
 }
 
-
-abstract class Action extends ReduxAction<int> {
-
+abstract class AppFactory<T extends Widget?, Model extends Vm> extends VmFactory<int, T, Model> {
+  AppFactory([T? connector]) : super(connector);
   Environment get env => super.env as Environment;
 }
 ```
 
-Then, use the environment when creating the view-model:
+Then, use the environment when creating your actions:
+
+```dart
+class IncrementAction extends Action {
+  final int amount;
+  IncrementAction({required this.amount});  
+  int reduce() => env.incrementer(state, amount);
+}
+```
+
+And also in your view-model:
 
 ```dart
 class Factory extends AppFactory<MyHomePageConnector> {
@@ -53,18 +60,6 @@ class Factory extends AppFactory<MyHomePageConnector> {
         counter: env.limit(state),
         onIncrement: () => dispatch(IncrementAction(amount: 1)),
       );
-}
-
-```
-
-And also in your actions:
-
-```dart
-class IncrementAction extends Action {
-  final int amount;
-  IncrementAction({required this.amount});
-  
-  int reduce() => env.incrementer(state, amount);
 }
 ```
 
