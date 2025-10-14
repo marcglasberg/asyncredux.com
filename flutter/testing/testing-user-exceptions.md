@@ -25,8 +25,7 @@ First of all, the status can tell us if the action finished with or without erro
 Then, there are two errors we can read:
 
 * `status.originalError` is the error that was originally thrown by the action's `before`
-  or `reduce` methods. However, this error might have been changed by the action itself, by the
-  action's `wrapError()` method.
+  or `reduce` methods. However, this error might have been changed by the action's `wrapError()` method.
 
 * `status.wrappedError` is the error that was thrown by the action's `before` or `reduce` methods,
   after being changed by the action itself, by the action's `wrapError()` method.

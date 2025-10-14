@@ -59,8 +59,7 @@ var error = action.status.originalError;
 
 That's called an "original error" because it's the error that was originally thrown by the
 action's `before` or `reduce` methods.
-However, this error might have been changed by the action itself, by the action's `wrapError()`
-method.
+However, this error might have been changed by the action's `wrapError()` method.
 
 For this reason you can also get the "wrapped error":
 
@@ -86,10 +85,10 @@ The action status is useful mainly in testing and debugging scenarios.
 In production code, you are usually more interested in the state change that the action caused,
 rather than the action status.
 
-However, one possible use case in production is taking some action only if the action completed.
+However, one possible use case in production is doing something only if an action completed.
 
 As an example, suppose you want to save some info,
-and you want to leave the current screen if and only if the save process succeeded.
+and you want to leave the current screen if and only if a save process succeeded.
 
 You could have the following save action:
 

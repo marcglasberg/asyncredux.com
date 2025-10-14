@@ -83,8 +83,8 @@ class LoadText extends AppAction UnlimitedRetryCheckInternet {
 
 Notes:
 
-* This mixin combines `Retry`, `UnlimitedRetries`, `AbortWhenNoInternet` and `NonReentrant` mixins.
-  You should **not** combone it with those mixins.
+* This mixin replaces `Retry`, `UnlimitedRetries`, `AbortWhenNoInternet` and `NonReentrant` mixins.
+  You should **not** combine it with those mixins.
 
 * Make sure your `before` method does not throw an error, or the retry will **not** happen.
 
