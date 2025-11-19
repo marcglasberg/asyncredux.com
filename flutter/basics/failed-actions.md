@@ -42,9 +42,9 @@ As another example, suppose you want to save the user's name, and you only accep
 least 4 characters:
 
 ```dart
-class SaveUserAction extends ReduxAction<AppState> {
+class SaveUser extends ReduxAction<AppState> {
   final String name;
-  SaveUserAction(this.name);
+  SaveUser(this.name);
 
   Future<AppState> reduce() async {
     if (name.length < 4) throw UserException('Name must have at least 4 letters.'));

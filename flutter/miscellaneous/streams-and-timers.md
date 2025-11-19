@@ -35,7 +35,7 @@ store "properties". The `props` are a map that you can use to store any object y
 and they are accessible from the reducers.
 
 ```dart
-class StartTimerAction extends ReduxAction<AppState> {
+class StartTimer extends ReduxAction<AppState> {
 
   Future<AppState> reduce() async {
 
@@ -51,7 +51,7 @@ class StartTimerAction extends ReduxAction<AppState> {
   }
 }
 
-class StopTimerAction extends ReduxAction<AppState> {
+class StopTimer extends ReduxAction<AppState> {
     
   Future<AppState> reduce() async {    
     disposeProp('my timer');    

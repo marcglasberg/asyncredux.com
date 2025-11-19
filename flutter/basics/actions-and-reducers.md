@@ -24,12 +24,27 @@ and must return a new state, which then becomes the **new** store state.
 This is an example of an action:
 
 ```dart
-class SetNameAction extends ReduxAction<AppState> {
+// Give your action a meaningful name, and extend ReduxAction<AppState>
+class Increment extends ReduxAction<AppState> {  
 
+  // Override the reduce() method 
+  AppState reduce()  
+    // And return a new modified state
+    => state.copy(counter: state.counter + 1);    
+}
+```
+
+Here is another example of an action that takes parameters:
+
+```dart
+class SetName extends ReduxAction<AppState> {
+
+  // Declare any fields you need to pass data to the action
   final String name;
-  SetNameAction(this.name);
-
+  SetName(this.name);
+  
   AppState reduce() {
+    // Use the action fields and the current state to create a new state
     var newUser = state.user.withName(name);
     return state.withUser(newUser);
   }
@@ -42,7 +57,7 @@ The reducer has direct access to:
 
 - The store `state` (which is a getter of the `ReduxAction` class).
 - The action **fields**, passed to the action when it was instantiated and dispatched.
-- The `dispatch` method, so that the reducer can dispatch other actions, if necessary.
+- A lot of other `ReduxAction` methods, that will be covered later.
 
 <br></br>
 
@@ -60,14 +75,14 @@ To that end, the `reduce()` method may return:
 The abstract `ReduxAction.reduce()` method signature has a return type of `FutureOr<AppState?>`.
 
 This means your action reducer, which overrides it,
-must return one or the other: 
+must return one or the other:
 
-* `AppState?` or 
+* `AppState?` or
 * `Future<AppState?>`
 
-If it returns `AppState?` it's considered a **synchronous** action.
+If it returns `AppState?` the action is considered **synchronous**.
 
-If it returns `Future<AppState?>` it's considered an **asynchronous** action.
+If it returns `Future<AppState?>` it's considered **asynchronous**.
 
 Note Async Redux knows if an action is synchronous or asynchronous by checking
 the `reduce()` method signature. If you return `FutureOr<AppState?>` it can't know if it's sync

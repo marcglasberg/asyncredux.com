@@ -10,9 +10,9 @@ complete when the store state meets a certain condition.
 For example:
 
 ```dart
-class SaveAppointmentAction extends ReduxAction<AppState> {  
+class SaveAppointment extends ReduxAction<AppState> {  
   final Appointment appointment;  
-  SaveAppointmentAction(this.appointment);    
+  SaveAppointment(this.appointment);    
 
   Future<AppState> reduce() {    
     dispatch(CreateCalendarIfNecessaryAction());    

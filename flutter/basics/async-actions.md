@@ -14,7 +14,7 @@ As an example, suppose you want to increment a counter by a value you get from t
 The database access is async, so you must use an async reducer:
 
 ```dart
-class GetAmountAndIncrementAction extends ReduxAction<AppState> {
+class GetAmountAndIncrement extends ReduxAction<AppState> {
   
   Future<AppState?> reduce() async {
     int value = await getAmount();
@@ -26,7 +26,7 @@ class GetAmountAndIncrementAction extends ReduxAction<AppState> {
 This action can be dispatched elsewhere like this:
 
 ```dart
-store.dispatch(GetAmountAndIncrementAction());
+store.dispatch(GetAmountAndIncrement());
 ```
 
 > Note: While the `reduce()` method of a *sync* reducer runs synchronously with the dispatch,

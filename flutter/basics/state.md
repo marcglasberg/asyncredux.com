@@ -89,7 +89,7 @@ class AppState {
 
   AppState({required this.todos});
 
-  static AppState initialState() => AppState(todos: []);
+  static AppState initialState() => AppState(todos: IList.empty());
 }
 
 class Todo {
@@ -101,8 +101,8 @@ class Todo {
 ```
 
 Note that the `todos` field is an immutable list of type `IList`, provided by the
-<a href="https://pub.dev/packages/fast_immutable_collections">fast_immutable_collections</a>
-package, which was also created by me.
+[fast_immutable_collections](https://pub.dev/packages/fast_immutable_collections)
+package (one of [my other 16 Flutter packages](https://pub.dev/publishers/glasberg.dev/packages)).
 
 You don't need to use package `fast_immutable_collections`, but it's recommended because it
 provides immutable lists, sets and maps that are easier to use than trying to use standard Dart collections
@@ -116,7 +116,7 @@ class AppState {
 
   AppState({required this.todos});
 
-  static AppState initialState() => AppState(todos: IList<Todo>());
+  static AppState initialState() => AppState(todos: IList.empty());
   
   AppState copy({IList<Todo>? todos}) =>
     AppState(todos: todos ?? this.todos);

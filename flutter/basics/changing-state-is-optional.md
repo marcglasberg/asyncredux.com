@@ -8,7 +8,7 @@ For both sync and async reducers, returning a new state is optional. If you don'
 the state, simply return `null`. This is the same as returning the state unchanged:
 
 ```dart
-class GetAmountAction extends ReduxAction<AppState> {
+class GetAmount extends ReduxAction<AppState> {
   
   Future<AppState?> reduce() async {    
     int amount = await getAmount();

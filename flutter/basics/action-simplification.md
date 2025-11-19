@@ -19,7 +19,7 @@ Then, all your actions can extend this `AppAction` class, instead of `ReduxActio
 Instead of:
 
 ```dart
-class IncrementAction extends ReduxAction<AppState> {
+class Increment extends ReduxAction<AppState> {
   
   AppState? reduce() { 
     ... 
@@ -30,7 +30,7 @@ class IncrementAction extends ReduxAction<AppState> {
 You can write:
 
 ```dart
-class IncrementAction extends AppAction {
+class Increment extends AppAction {
   
   AppState? reduce() { 
     ... 
@@ -49,23 +49,24 @@ assuming you have created this `AppAction` class in your code.
 
 ## Naming conventions
 
-I personally like to suffix my actions with `Action`, so I can easily identify them in my code.
-However, that's just my convention, and you can name your actions as you prefer. For example,
-you could name them `Increment`, `GetAmount` etc.:
+Some people like to suffix their actions with `Action`, as to easily identify them in the code.
+However, that's just a convention, and you can name your actions as you prefer. For example:
 
 ```dart
-class Increment extends AppAction {
-  
-  AppState? reduce() {  
-    ... 
-  }  
-}
+// One possible name
+class Increment extends AppAction { ...
+
+// Another possible name
+class IncrementAction extends AppAction { ...
 ```
 
 And later:
 
 ```dart
 dispatch(Increment());
+
+// Or
+dispatch(IncrementAction());
 ```
 
 <hr></hr>

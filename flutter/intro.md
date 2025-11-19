@@ -40,7 +40,7 @@ the [most recent version here](https://pub.dev/packages/async_redux)):
 
 ```yaml
   dependencies:
-    async_redux: ^23.1.1
+    async_redux: ^25.6.1
 ```
 
 ## Resources

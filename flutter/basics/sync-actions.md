@@ -11,9 +11,9 @@ return a new state.
 For example, let's start with a simple action to increment a counter by some value:
 
 ```dart
-class IncrementAction extends ReduxAction<AppState> {
+class Increment extends ReduxAction<AppState> {
   final int amount;
-  IncrementAction({this.amount});
+  Increment({this.amount});
   
   AppState? reduce() {
     return state.copy(counter: state.counter + amount));
@@ -27,7 +27,7 @@ and to the action state (the field `amount`).
 This action can be dispatched elsewhere like this:
 
 ```dart
-store.dispatch(IncrementAction(amount: 3));
+store.dispatch(Increment(amount: 3));
 ```
 
 Try running

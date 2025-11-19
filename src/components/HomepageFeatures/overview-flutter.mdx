@@ -41,7 +41,7 @@ Using `context.state`, your widgets rebuild when the state changes.
 class MyWidget extends StatelessWidget {
 
   Widget build(context)
-   => Text('${context.state.name} has ${context.state.age} years old');
+   => Text('${context.state.name} is ${context.state.age} years old');
 }
 ```
 
@@ -57,7 +57,7 @@ Widget build(context) {
      age: st.user.age),
   );
 
-  return Text('${state.name} has ${state.age} years old');
+  return Text('${state.name} is ${state.age} years old');
 }
 ```
 
@@ -68,7 +68,7 @@ Widget build(context) {
   var name = context.select((st) => st.name);
   var age = context.select((st) => st.age);
 
-  return Text('$name has $age years old');
+  return Text('$name is $age years old');
 }
 ```
 

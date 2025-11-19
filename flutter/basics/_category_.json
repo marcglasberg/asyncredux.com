@@ -3,6 +3,6 @@
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "What is Redux? A single store object holds all the application state, which is immutable. When you need to modify some state, you dispatch an action. Then a reducer creates a new copy of the state, with the desired changes. Your widgets know when the state changes, and rebuild as needed. The next pages explain all the basic Async Redux concepts."
+    "description": "What is Redux? A single immutable object holds all the application state. When you need to modify some part of the state, you dispatch an action. Then the action's reducer creates a new copy of the state, with the desired changes. Your widgets listen to state changes, and rebuild as needed. The next pages explain all the basic Async Redux concepts."
   }
 }

@@ -150,9 +150,9 @@ class _AppLifecycleManagerState extends State<AppLifecycleManager> with WidgetsB
 Finally, define your `ProcessLifecycleChange_Action` to pause and resume the persistor:
 
 ```dart
-class ProcessLifecycleChangeAction extends ReduxAction<AppState> {
+class ProcessLifecycleChange extends ReduxAction<AppState> {
   final AppLifecycleState lifecycle;
-  ProcessLifecycleChangeAction(this.lifecycle);
+  ProcessLifecycleChange(this.lifecycle);
 
   Future<AppState?> reduce() async {
     if (lifecycle == AppLifecycleState.resumed || lifecycle == AppLifecycleState.inactive) {

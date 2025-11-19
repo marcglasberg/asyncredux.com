@@ -18,10 +18,10 @@ That observer should add all the states it gets to a list. When you want to reco
 states, simple call an action called `RecoverStateAction`, like so:
 
 ```dart
-class RecoverStateAction extends ReduxAction<AppState> {
+class RecoverState extends ReduxAction<AppState> {
    final AppState recoveredState;
 
-   RecoverStateAction(this.recoveredState);
+   RecoverState(this.recoveredState);
 
    AppState reduce() => recoveredState;
 }

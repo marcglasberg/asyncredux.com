@@ -73,7 +73,7 @@ class ViewModel extends BaseModel<AppState> {
     initialText: state.initialText,
     clearTextEvt: state.clearTextEvt,
     changeTextEvt: state.changeTextEvt,
-    onClear: () => dispatch(ClearTextAction()),
+    onClear: () => dispatch(ClearText()),
   );
 
   ViewModel({
@@ -84,14 +84,14 @@ class ViewModel extends BaseModel<AppState> {
 }
            
 // This action clears the text, by creating a boolean event.
-class ClearTextAction extends ReduxAction<AppState> {  
+class ClearText extends ReduxAction<AppState> {  
   AppState reduce() => state.copy(changeTextEvt: Event());
 }                                                     
 
 // This action changes the text, by creating an event with a String payload.
-class ChangeTextAction extends ReduxAction<AppState> {
+class ChangeText extends ReduxAction<AppState> {
   String newText;
-  ChangeTextAction(this.newText);
+  ChangeText(this.newText);
     
   AppState reduce() => state.copy(changeTextEvt: Event<String>(newText));
 }
