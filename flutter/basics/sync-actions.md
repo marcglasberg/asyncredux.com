@@ -4,30 +4,34 @@ sidebar_position: 5
 
 # Sync actions
 
-If you want to modify the state synchronously, 
-simply declare the reducer to return `AppState?` and 
-return a new state.
+Your action is synchronous if the return type of its `reduce()` method is `AppState?`.
 
-For example, let's start with a simple action to increment a counter by some value:
+This means that the action will complete as soon as the `reduce()` method returns, 
+and the state will be updated immediately.
+For example, here's a simple synchronous action that increments a counter by a given amount:
 
 ```dart
 class Increment extends ReduxAction<AppState> {
   final int amount;
   Increment({this.amount});
   
-  AppState? reduce() {
-    return state.copy(counter: state.counter + amount));
-  }
+  AppState? reduce() 
+    => state.copy(counter: state.counter + amount));  
 }
 ```
 
-Note the `reduce()` method above has direct access to both the counter state (`state.counter`)
-and to the action state (the field `amount`).
-
-This action can be dispatched elsewhere like this:
+Note the reducer above has access to both the current state (`state.counter`) 
+and to the action field (`amount`) that was passed when the action was dispatched.
 
 ```dart
+// Current state
+print(store.state.counter); // 2
+
+// Dispatch a synchronous action
 store.dispatch(Increment(amount: 3));
+
+// The state was updated 
+print(store.state.counter); // 5
 ```
 
 Try running

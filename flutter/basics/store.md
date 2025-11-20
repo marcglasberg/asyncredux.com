@@ -4,14 +4,14 @@ sidebar_position: 2
 
 # Store
 
-Declare your store by instantiating the `Store` class and using `AppState` as the type parameter:
+Declare your store by creating an instance of the `Store` class, with `AppState` as the state type:
 
 ```dart
 var store = Store<AppState>( ... );
 ```  
 
-However, you must provide an initial state, which, simply for encapsulation purposes is usually
-created by calling a static method `initialState` on your `AppState` class:
+You must also provide an initial state.
+For better encapsulation, this is usually done with a static `initialState` method on your `AppState` class:
 
 ```dart
 var store = Store<AppState>(
@@ -19,7 +19,7 @@ var store = Store<AppState>(
 );
 ```  
 
-Then, to use the store, add it in a `StoreProvider` widget, at the top of your widget tree:
+Then, to use the store, wrap your whole widget tree with a `StoreProvider`:
 
 ```dart
 import 'package:async_redux/async_redux.dart';

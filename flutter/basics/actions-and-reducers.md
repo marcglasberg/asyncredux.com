@@ -4,24 +4,22 @@ sidebar_position: 4
 
 # Actions and reducers
 
-As discussed, the `AppState` class that represents the state is _immutable_.
+The `AppState` class that holds the application state is _immutable_.
 
-This means you can't change the store state directly.
-Instead, you must create another state object with the desired changes,
-and then tell the store to use that new state.
+This means you cannot change the state directly. 
+Instead, you create a new state object with the desired changes and tell the store to use it.
 
-Also, the store state is private, and you can't simply change it from anywhere in your code.
-To change the store state, the only way is to "dispatch" an **action**.
+The only way to do that is by **dispatching** an **action**.
 
-In Async Redux all actions are classes that extend `ReduxAction<AppState>`.
-This class has an abstract `reduce()` method, and all actions you create must override this method.
+In Async Redux, every action is a class that extends `ReduxAction<AppState>`. 
+This class has an abstract `reduce()` method that you must override.
 
-The `reduce()` method is called the "reducer" of the action, and it runs when the action is
-dispatched.
-The reducer has access to the **current** store state,
-and must return a new state, which then becomes the **new** store state.
+The `reduce()` method is called the "reducer". 
+It runs when the action is dispatched. 
+It receives the **current** state and must return a **new** state, 
+which will then become the new current state.
 
-This is an example of an action:
+Here is an example of an action:
 
 ```dart
 // Give your action a meaningful name, and extend ReduxAction<AppState>
@@ -34,7 +32,7 @@ class Increment extends ReduxAction<AppState> {
 }
 ```
 
-Here is another example of an action that takes parameters:
+Here is another example of an action that takes a parameter:
 
 ```dart
 class SetName extends ReduxAction<AppState> {
@@ -56,13 +54,12 @@ class SetName extends ReduxAction<AppState> {
 The reducer has direct access to:
 
 - The store `state` (which is a getter of the `ReduxAction` class).
-- The action **fields**, passed to the action when it was instantiated and dispatched.
-- A lot of other `ReduxAction` methods, that will be covered later.
+- The action **fields**, passed to the action when it was dispatched.
+- Other `ReduxAction` methods, that will be covered later.
 
 <br></br>
 
 The reducer's job is to create a new state, which will then become the new store state.
-
 To that end, the `reduce()` method may return:
 
 * A new state, which will be applied to the store immediately.
@@ -72,21 +69,21 @@ To that end, the `reduce()` method may return:
 
 ## Synchronous or Asynchronous
 
-The abstract `ReduxAction.reduce()` method signature has a return type of `FutureOr<AppState?>`.
+The abstract `ReduxAction.reduce()` method that you will override has a return type of `FutureOr<AppState?>`.
 
-This means your action reducer, which overrides it,
-must return one or the other:
+This means your `reduce()` methods must return one of the following:
 
-* `AppState?` or
-* `Future<AppState?>`
+* `AppState?` if you want the action to be **synchronous**.
+* `Future<AppState?>` if you want the action to be **asynchronous**.
 
-If it returns `AppState?` the action is considered **synchronous**.
+In other words, 
+Async Redux determines whether an action is sync or async by checking what your `reduce()` method returns.
 
-If it returns `Future<AppState?>` it's considered **asynchronous**.
+In other words, Async Redux knows if an action is synchronous or asynchronous by checking
+the return value of your `reduce()` methods. 
 
-Note Async Redux knows if an action is synchronous or asynchronous by checking
-the `reduce()` method signature. If you return `FutureOr<AppState?>` it can't know if it's sync
-or async, and it will throw a `StoreException`:
+Important: Do not return `FutureOr<AppState?>` directly. 
+If you do, Async Redux cannot know if the action is sync or async, and will throw a `StoreException`:
 
 ```
 Reducer should return `St?` or `Future<St?>`. 

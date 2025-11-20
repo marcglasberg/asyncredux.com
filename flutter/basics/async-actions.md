@@ -4,11 +4,16 @@ sidebar_position: 6
 
 # Async actions
 
-If you want to do some asynchronous work, simply declare the action reducer to
-return `Future<AppState?>`.
+Your action is asynchronous if the return type of its `reduce()` method is `Future<AppState?>`.
+
+It's only necessary to make your action async if you need to do some asynchronous work
+inside the `reduce()` method, such as accessing a database, calling a web service, reading
+a file, etc.
 
 > Note: In other Redux versions you can only do async work by using the so-called "middleware",
 > which is complex. In Async Redux you can simply return a `Future` and it works.
+
+&nbsp;
 
 As an example, suppose you want to increment a counter by a value you get from the database.
 The database access is async, so you must use an async reducer:
@@ -23,7 +28,7 @@ class GetAmountAndIncrement extends ReduxAction<AppState> {
 }
 ```
 
-This action can be dispatched elsewhere like this:
+This async action can be dispatched just like a sync action:
 
 ```dart
 store.dispatch(GetAmountAndIncrement());
@@ -39,16 +44,21 @@ Increment Async Example</a>.
 
 ## Converting Sync to Async
 
-In IntelliJ, to convert the reducer from sync to async, press `Alt+ENTER` and
-select `Convert to async function body`.
+To convert a reducer from sync to async in IntelliJ or Android Studio on Windows or Linux, 
+press `Alt + Enter` inside the `reduce()` method and choose Convert to async function body. 
+On macOS the shortcut is `Option + Enter`, and the same option appears. 
+
+In VS Code on both Windows and Mac there is no quick fix, so you must do it manually by changing
+`AppState? reduce()` to `Future<AppState?> reduce() async` and making sure the method returns 
+a `Future<AppState?>`.
 
 ## One important rule
 
 When your reducer is async (i.e., returns `Future<AppState?>`) you must make sure you **do not
 return a completed future**, meaning all execution paths of the reducer must pass through at least
-one `await` keyword. 
+one `await` keyword.
 
-In other words, don't return a Future if you don't need it.
+In other words, **don't return a Future if you don't need it**.
 
 If you don't follow this rule, Async Redux may seem to work ok, but will eventually misbehave.
 
@@ -112,7 +122,7 @@ It's generally easy to make sure you are not returning a _completed future_.
 
 In the rare case your reducer function is very complex, and you are unsure that all code paths
 pass through an `await`, just add `assertUncompletedFuture();` at the very END of your `reduce`
-method, right before the `return`. 
+method, right before the `return`.
 
 If you do that, an error will be shown in the console if
 the `reduce` method ever returns a completed future.

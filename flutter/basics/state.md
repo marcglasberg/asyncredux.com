@@ -81,12 +81,11 @@ class AppState {
 Your state can be composed of any immutable objects,
 including other immutable objects that you create.
 For example, the following is a state that represents a _Todo List_.
-The `Todo` class is immutable:
+The `Todo` class is also immutable:
 
 ```dart
 class AppState {
   final IList<Todo> todos;
-
   AppState({required this.todos});
 
   static AppState initialState() => AppState(todos: IList.empty());
@@ -131,29 +130,30 @@ class AppState {
 
 If you think having a single state class to represent all your app state is too restrictive,
 it's actually not. You can have multiple state classes, as long as you put them all inside a single
-class in the end. For example, suppose we need to represent a state that has a Todo List
-plus some user information:
+class in the end. For example, suppose we need to represent a state that contains both:
+
+* A Todo List
+* Some user information:
+
+First, create separate classes for each part of the state:
 
 ```dart
 // Todo List
 class TodoList {
   final IList<Todo> list;
-
   TodoList({this.list = const IList<Todo>()});
 
   TodoList copy({IList<Todo>? list}) =>
     TodoList(list: list ?? this.list);
 
   TodoList add(Todo todo) => copy(list: list.add(todo));
-
   TodoList remove(Todo todo) => copy(list: list.remove(todo));
 }
- 
- // User information
+
+// User information
 class User {
   final String name;
   final int age;
-
   User({this.name = "", this.age = 0});
 
   User copy({String? name, int? age}) =>
@@ -161,7 +161,7 @@ class User {
 }
 ```
 
-You can then create a single `AppState` class that holds both the `TodoList` and the `User`:
+Then, create a single `AppState` class that holds both of them:
 
 ```dart
 class AppState {
@@ -176,11 +176,27 @@ class AppState {
   AppState copy({TodoList? todoList, User? user}) =>
     AppState(todoList: todoList ?? this.todoList, user: user ?? this.user);
     
-  AppState withTodoList(LodoList todoList) => copy(todoList: todoList);
-  
+  AppState withTodoList(LodoList todoList) => copy(todoList: todoList);  
   AppState withUser(User user) => copy(user: user);
 }
 ```
+
+## Testing the state
+
+Since your state is immutable and its methods return new instances, testing is very easy.
+LLMs like Claude, ChatGPT, and Gemini can easily write very complete unit tests for your state classes.
+
+This is a suggested prompt for an AI agent:
+
+> _Read file `app_state.dart` that defines the `AppState` class._ 
+> _Start by listing every state class in the file, and include any state classes they use._ 
+> _Follow this recursively until the full set of state classes is found._ 
+> _This will be the complete list of all classes that make up the application state._
+> _Create a todo list to write unit tests for each class in that list._
+> _For every class, write complete unit tests that cover all its methods._ 
+> _This includes constructors, `copy` methods, and any method that returns a new instance._
+> _Each class must have its own separate Dart test file._ 
+> _If a test file already exists, review it and add any missing tests._
 
 <hr></hr>
 

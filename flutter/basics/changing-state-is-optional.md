@@ -4,8 +4,9 @@ sidebar_position: 7
 
 # Changing state is optional
 
-For both sync and async reducers, returning a new state is optional. If you don't plan on changing
-the state, simply return `null`. This is the same as returning the state unchanged:
+For both sync and async reducers, returning a new state is always optional. 
+If you don't plan on changing the state, simply return `null`. 
+This is the same as returning the state unchanged:
 
 ```dart
 class GetAmount extends ReduxAction<AppState> {
@@ -23,8 +24,8 @@ class GetAmount extends ReduxAction<AppState> {
     
 <br></br>
 
-This is also useful if some action is used to simply start other async processes, or dispatch other
-actions. For example:
+This is also useful when you want an action that simply starts other async processes or dispatches other actions. 
+For example:
 
 ```dart
 class InitAction extends ReduxAction<AppState> {
@@ -32,8 +33,7 @@ class InitAction extends ReduxAction<AppState> {
   AppState? reduce() {
     dispatch(ReadDatabaseAction());        
     dispatch(StartTimersAction());          
-    dispatch(TurnOnListenersAction());
-              
+    dispatch(TurnOnListenersAction());              
     return null;          
   }
 }
