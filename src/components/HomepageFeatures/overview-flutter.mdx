@@ -104,7 +104,7 @@ It must include a method called `reduce`.
 This "reducer" has access to the current state, and must return a new one to replace it.
 
 ```dart
-class Increment extends Action {
+class Increment extends AppAction {
 
   // The reducer has access to the current state
   AppState reduce()
@@ -135,7 +135,7 @@ class MyWidget extends StatelessWidget {
 Actions may download information from the internet, or do any other async work.
 
 ```dart
-class LoadText extends Action {
+class LoadText extends AppAction {
 
   // This reducer returns a Future
   Future<AppState> reduce() async {
@@ -161,7 +161,7 @@ In special, if you throw a `UserException`, which is a type provided by Async Re
 a dialog (or other UI) will open automatically, showing the error message to the user.
 
 ```dart
-class LoadText extends Action {
+class LoadText extends AppAction {
 
   Future<String> reduce() async {
     var response = await http.get('https://dummyjson.com/todos/1');
@@ -197,7 +197,7 @@ class MyWidget extends StatelessWidget {
 You can use `dispatchAndWait` to dispatch an action and wait for it to finish.
 
 ```dart
-class LoadTextAndIncrement extends Action {
+class LoadTextAndIncrement extends AppAction {
 
   Future<AppState> reduce() async {
 
@@ -215,7 +215,7 @@ class LoadTextAndIncrement extends Action {
 You can also dispatch actions in **parallel** and wait for them to finish:
 
 ```dart
-class BuyAndSell extends Action {
+class BuyAndSell extends AppAction {
 
   Future<AppState> reduce() async {
 
@@ -235,7 +235,7 @@ class BuyAndSell extends Action {
 You can also use `waitCondition` to wait until the `state` changes in a certain way:
 
 ```dart
-class SellStockForPrice extends Action {
+class SellStockForPrice extends AppAction {
   final String stock;
   final double limitPrice;
   SellStockForPrice(this.stock, this.limitPrice);
@@ -268,7 +268,7 @@ Mixin `CheckInternet` ensures actions only run with internet,
 otherwise an **error dialog** prompts users to check their connection:
 
 ```dart
-class LoadText extends Action with CheckInternet {
+class LoadText extends AppAction with CheckInternet {
 
    Future<String> reduce() async {
       var response = await http.get('https://dummyjson.com/todos/1');
@@ -283,7 +283,7 @@ Mixin `NoDialog` can be added to `CheckInternet` so that no dialog is opened.
 Instead, you can display some information in your widgets:
 
 ```dart
-class LoadText extends Action with CheckInternet, NoDialog {
+class LoadText extends AppAction with CheckInternet, NoDialog {
   ...
   }
 
@@ -306,7 +306,7 @@ internet connection.
 Mixin `NonReentrant` prevents an action from being dispatched while it's already running.
 
 ```dart
-class LoadText extends Action with NonReentrant {
+class LoadText extends AppAction with NonReentrant {
    ...
    }
 ```
@@ -319,7 +319,7 @@ Mixin `Retry` retries the action a few times with exponential backoff,
 if it fails. Add `UnlimitedRetries` to retry indefinitely:
 
 ```dart
-class LoadText extends Action with Retry, UnlimitedRetries {
+class LoadText extends AppAction with Retry, UnlimitedRetries {
    ...
    }
 ```
@@ -334,7 +334,7 @@ Only after the throttle period ends is the information considered _stale_,
 allowing the action to run again to reload the information.
 
 ```tsx
-class LoadPrices extends Action with Throttle {
+class LoadPrices extends AppAction with Throttle {
 
   final int throttle = 5000; // Milliseconds
 
@@ -354,7 +354,7 @@ For example, when a user types in a search bar, debouncing ensures that not ever
 triggers a server request. Instead, it waits until the user pauses typing before acting.
 
 ```dart
-class SearchText extends Action with Debounce {
+class SearchText extends AppAction with Debounce {
   final String searchTerm;
   SearchText(this.searchTerm);
 
@@ -381,7 +381,7 @@ before confirming with the server. If the server update fails, the change is rol
 optionally, a notification can inform the user of the issue.
 
 ```tsx
-class SaveName extends Action with OptimisticUpdate {
+class SaveName extends AppAction with OptimisticUpdate {
 
   async reduce() { ... }
 }
@@ -397,7 +397,7 @@ own internal state.
 
 ```dart
 // Action that changes the text of a TextField
-class ChangeText extends Action {
+class ChangeText extends AppAction {
   final String newText;
   ChangeText(this.newText);
   AppState reduce() => state.copy(changeText: Evt(newText));
@@ -405,7 +405,7 @@ class ChangeText extends Action {
 }
 
 // Action that scrolls a ListView to the top
-class ScrollToTop extends Action {
+class ScrollToTop extends AppAction {
   AppState reduce() => state.copy(scroll: Evt(0));
   }
 }
@@ -534,7 +534,7 @@ class Action extends ReduxAction<AppState> {
 Now, all actions can use them to access the state in their reducers:
 
 ```dart
-class SelectItem extends Action {
+class SelectItem extends AppAction {
   final int id;
   SelectItem(this.id);
 

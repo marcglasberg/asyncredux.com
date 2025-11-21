@@ -4,11 +4,10 @@ sidebar_position: 8
 
 # Action simplification
 
-As discussed, all your actions are classes that extend the abstract base
-class `ReduxAction<AppState>`.
+All your actions must extend the abstract base class `ReduxAction<AppState>`.
 
-If you want to simplify your actions, you can create another "base action" in your own code,
-called simply `Action` or `AppAction` that already contains the generic type `AppState`:
+To avoid repeating the generic type, add a custom "base action" to your code,
+such as `Action` or `AppAction`, with the type `AppState` already included:
 
 ```dart
 abstract class AppAction extends ReduxAction<AppState> { } 
@@ -38,19 +37,18 @@ class Increment extends AppAction {
 }
 ```
 
-> Note: Creating your own base `AppAction` class is also nice because we can then add some extra
-> functionality to it, which as a result becomes available to all your actions, as we will see later
-> on.
+> As we will see later, creating your own `AppAction` class is also useful because you can add extra features to it, 
+> and they will be available to all your actions.
 
 ## Important
 
-From now on in this documentation, I will extend `AppAction` instead of `ReduxAction<AppState>`,
-assuming you have created this `AppAction` class in your code.
+From now on, this documentation will extend `AppAction` instead of `ReduxAction<AppState>`, 
+assuming you created the `AppAction` class in your code.
 
 ## Naming conventions
 
-Some people like to suffix their actions with `Action`, as to easily identify them in the code.
-However, that's just a convention, and you can name your actions as you prefer. For example:
+Some people like to add the `Action` suffix at the end of their action names to make them easier to spot in the code. 
+This is only a convention. You can name them as you like. For example:
 
 ```dart
 // One possible name

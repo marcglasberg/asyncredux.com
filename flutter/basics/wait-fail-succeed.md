@@ -4,9 +4,10 @@ sidebar_position: 12
 
 # Wait, fail, succeed
 
-A common pattern involves having a process that can either succeed or fail.
-You want to display a spinner during the process, show the result when it completes,
-and present an error message if it fails.
+Most async processes in your app take some time to finish, and they can either succeed or fail.
+For example, loading data from a server or saving something to a database. 
+You want to display a spinner while it's running, show the result when it completes,
+or present an error message if it fails.
 
 These are called "process states":
 
@@ -14,10 +15,10 @@ These are called "process states":
 * **Failed**: The process failed with an error.
 * **Succeeded**: The process succeeded.
 
-In Async Redux, these processes start when actions are dispatched, which means we need a way to
-know if an action is currently being processed, if it just failed, and eventually show an error.
+In Async Redux, these processes happen when actions are dispatched, which means we need a way to
+know if an action is currently being processed, if it succeeded, or if it just failed.
 
-Thankfully, this is very easy to do with Async Redux, by using the following store methods:
+Thankfully, this is very easy to do with Async Redux, by using the following methods:
 
 * `isWaiting(actionType)`: Returns true if the given action type is currently being processed.
 * `isFailed(actionType)`: Returns true if the given action type just failed.
@@ -27,22 +28,20 @@ Thankfully, this is very easy to do with Async Redux, by using the following sto
 ## In widgets
 
 In widgets, we have access to those methods by using the built-in extension methods on
-the `BuildContext` object.
+the `context` object.
 
 We have already previously seen how to read the state and dispatch actions from widgets:
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-      Text('Counter: ${context.state.counter}'),
-      ElevatedButton(
-        onPressed: () => context.dispatch(IncrementAction()),
-        child: Text('Increment'),
-      ],
-    );
-}
+Widget build(BuildContext context) {
+  return Column(
+    children: [
+    Text('Counter: ${context.state.counter}'),
+    ElevatedButton(
+      onPressed: () => context.dispatch(IncrementAction()),
+      child: Text('Increment'),
+    ],
+  );
 ```
 
 Now, let's see how to show a spinner while an action is being processed, and show an error message.
@@ -53,16 +52,16 @@ Method `isWaiting(actionType)` returns true if the given action type is currentl
 processed. By using this method, you can show a spinner while an action is being processed:
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    return context.isWaiting(IncrementAction) 
-      ? CircularProgressIndicator(),
-      : Text('Counter: ${context.state.counter}');
-  }          
+Widget build(BuildContext context) {
+  return context.isWaiting(IncrementAction) 
+    ? CircularProgressIndicator(),
+    : Text('Counter: ${context.state.counter}');
+}    
 ```
 
 Try running
-the: <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_show_spinner.dart">Show Spinner Example</a>.
+the: <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_show_spinner.dart">Show Spinner
+Example</a>.
 When you press the "+" button, it dispatches an increment action that
 takes 2 seconds to finish. Meanwhile, a spinner is shown in the button, and the counter text gets
 grey.
@@ -73,11 +72,10 @@ Method `isFailed(actionType)` returns true if the given action type just failed.
 By using this method, you can show an error message when an action fails:
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    if (context.isFailed(IncrementAction)) return Text('Loading failed');
-    else return Text('Counter: ${context.state.counter}');
-  }          
+Widget build(BuildContext context) {
+  if (context.isFailed(IncrementAction)) return Text('Failed');
+  else return Text('Counter: ${context.state.counter}');
+}  
 ```
 
 If the action failed with a `UserException`, you can get the exception by doing
@@ -85,58 +83,55 @@ If the action failed with a `UserException`, you can get the exception by doing
 to eventually show it in the UI.
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    if (context.isFailed(IncrementAction)) {
-      var exception = context.exceptionFor(IncrementAction);
-      return Text('Loading failed: ${exception.message}');
-    }
-    else return Text('Counter: ${context.state.counter}');
+Widget build(BuildContext context) {
+  if (context.isFailed(IncrementAction)) {
+    var exception = context.exceptionFor(IncrementAction);
+    return Text('Failed: ${exception.message}');
   }
+  else return Text('Counter: ${context.state.counter}');
+}
 ```
 
 ## Combining `isWaiting` and `isFailed`
 
-Let's suppose we've got an async action that gets a list of items from a server. You can show a
+Suppose we have an async action that gets a list of items from a server. You can show a
 spinner while the action is being processed, and show an error message if the action fails:
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    if (context.isWaiting(GetItemsAction)) return CircularProgressIndicator();
-    else if (context.isFailed(GetItemsAction)) return Text('Loading failed');
-    else return ListView.builder(
-      itemCount: context.state.items.length,
-      itemBuilder: (context, index) => Text(context.state.items[index].name),
-    );
-  }          
+Widget build(BuildContext context) {
+  if (context.isWaiting(GetItemsAction)) return CircularProgressIndicator();
+  else if (context.isFailed(GetItemsAction)) return Text('Failed');
+  else return ListView.builder(
+    itemCount: context.state.items.length,
+    itemBuilder: (context, index) => Text(context.state.items[index].name),
+  );
+}          
 ```
 
 Now let's repeat the previous code, but add a button (in a Column) that retries the action:
 
 ```dart
-class MyWidget extends StatelessWidget {  
-  Widget build(BuildContext context) {
-    if (context.isWaiting(GetItemsAction)) return CircularProgressIndicator();
-    else if (context.isFailed(GetItemsAction)) return Column(
-      children: [
-        Text('Loading failed'),
-        ElevatedButton(
-          onPressed: () => context.dispatch(GetItemsAction()),
-          child: Text('Retry'),
-        ),
-      ],
-    );
-    else return ListView.builder(
-      itemCount: context.state.items.length,
-      itemBuilder: (context, index) => Text(context.state.items[index].name),
-    );
-  }          
+Widget build(BuildContext context) {
+  if (context.isWaiting(GetItemsAction)) return CircularProgressIndicator();
+  else if (context.isFailed(GetItemsAction)) return Column(
+    children: [
+      Text('Failed'),
+      ElevatedButton(
+        onPressed: () => context.dispatch(GetItemsAction()),
+        child: Text('Retry'),
+      ),
+    ],
+  );
+  else return ListView.builder(
+    itemCount: context.state.items.length,
+    itemBuilder: (context, index) => Text(context.state.items[index].name),
+  );
+}          
 ```
 
-As soon as the user presses the retry button, the spinner will be shown again, and the
-error message will be cleared. This happens because the error message is cleared automatically when
-the action is dispatched again.
+As soon as the user presses the retry button, the spinner will be shown again, 
+and the error message will be cleared. 
+This happens because the error message is cleared automatically when the action is dispatched again.
 
 You can always clear the error message explicitly by
 calling `context.clearExceptionFor(actionType)`, but it's not necessary to do so before

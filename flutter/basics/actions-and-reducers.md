@@ -4,15 +4,15 @@ sidebar_position: 4
 
 # Actions and reducers
 
-The `AppState` class that holds the application state is _immutable_.
+The class that holds the application state, typically named `AppState`, is _immutable_.
 
 This means you cannot change the state directly. 
-Instead, you create a new state object with the desired changes and tell the store to use it.
+Instead, you create a new state object with the changes you want and tell the Redux store to use it.
 
 The only way to do that is by **dispatching** an **action**.
 
-In Async Redux, every action is a class that extends `ReduxAction<AppState>`. 
-This class has an abstract `reduce()` method that you must override.
+In Async Redux, every action is a class that extends `ReduxAction<AppState>`,
+and it includes an abstract `reduce()` method that you need to override.
 
 The `reduce()` method is called the "reducer". 
 It runs when the action is dispatched. 

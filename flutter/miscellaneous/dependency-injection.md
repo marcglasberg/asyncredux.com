@@ -43,7 +43,7 @@ abstract class AppFactory<T extends Widget?, Model extends Vm> extends VmFactory
 Then, use the environment when creating your actions:
 
 ```dart
-class IncrementAction extends Action {
+class IncrementAction extends AppAction {
   final int amount;
   IncrementAction({required this.amount});  
   int reduce() => env.incrementer(state, amount);

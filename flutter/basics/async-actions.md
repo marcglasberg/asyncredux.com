@@ -42,15 +42,17 @@ Try running
 the: <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_increment_async.dart">
 Increment Async Example</a>.
 
-## Converting Sync to Async
+## Convert to Async in the IDE
 
-To convert a reducer from sync to async in IntelliJ or Android Studio on Windows or Linux, 
-press `Alt + Enter` inside the `reduce()` method and choose Convert to async function body. 
-On macOS the shortcut is `Option + Enter`, and the same option appears. 
+* **IntelliJ or Android Studio**
+  On Windows or Linux, place the cursor inside the `reduce()` method and press `Alt + Enter`,
+  then choose Convert to async function body. On macOS use `Option + Enter`.
 
-In VS Code on both Windows and Mac there is no quick fix, so you must do it manually by changing
-`AppState? reduce()` to `Future<AppState?> reduce() async` and making sure the method returns 
-a `Future<AppState?>`.
+* **VS Code**
+  On Windows and Mac, place the cursor inside the method body and open the code action menu
+  with `Ctrl + .` or by clicking the lightbulb. Choose Convert to async function body.
+  This converts the body and adds `async`, but it may not change the return type automatically.
+  If the analyzer suggests a fix, apply it to change `AppState? reduce()` to `Future<AppState?> reduce()`.
 
 ## One important rule
 

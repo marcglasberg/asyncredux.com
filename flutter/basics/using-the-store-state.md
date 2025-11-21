@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Using the store state
 
-Copy the following extension code to the same file where you defined the state class of your application:
+Copy the following extension code to the same file where you defined the state class of your application, `AppState`:
 
 ```dart
 extension BuildContextExtension on BuildContext {
@@ -21,7 +21,7 @@ with the actual name of your state class.
 
 ## context.state
 
-Once you defined the above extension, you can access your state from any widget by simply using `context.state`
+Once you defined the above extensions, you can access your state from any widget by simply using `context.state`
 in the `build` method. For example:
 
 ```dart
