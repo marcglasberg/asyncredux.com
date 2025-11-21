@@ -4,8 +4,8 @@ sidebar_position: 1
 
 # Before and after the reducer
 
-Suppose you want to prevent the user from touching the screen, while `MyAction` is running.
-This means adding a modal barrier before the action starts, and removing it after the action ends.
+Suppose you want to prevent the user from touching the screen while some action `MyAction` is running.
+This can be achieved by adding a modal barrier before the action starts, and removing it after it ends.
 
 It's indeed common to have some side effects before and after the reducer runs.
 To help you with these use cases, you may override your action methods `before()`
@@ -60,7 +60,7 @@ even if there was an error later in the reducer.
 ## Example
 
 In our model barrier example described above,
-we could dispatch an action to turn on a modal barrier on and off.
+we could dispatch an action to turn a modal barrier on and off.
 
 Suppose we define a `BarrierAction`:
 
@@ -97,7 +97,7 @@ class MyAction extends AppAction {
 ```
 
 The above `BarrierAction` is demonstrated
-in <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_event_redux.dart">
+in <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_event.dart">
 this example</a>.
            
 ### Creating a Mixin

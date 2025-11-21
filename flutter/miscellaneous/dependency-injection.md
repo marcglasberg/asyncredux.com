@@ -6,15 +6,12 @@ sidebar_position: 10
 
 While you can always use <a href="https://pub.dev/packages/get_it">get_it</a> or any other
 dependency injection solution, Async Redux lets you inject your dependencies directly in the
-**store**, and then access them in your actions and view-model factories.
-             
+**store**, and then access them in your actions, widgets, and view-model factories.
+
 One advantage of this approach is that your objects are scoped to the store, which means
 they are automatically disposed when the store is disposed. This is specially useful for
 tests, when you want to create a new store for each test, and you don't want to manually
 dispose the dependencies.
-
-The dependency injection idea was contributed by <a href="https://github.com/craigomac">Craig
-McMahon</a>.
 
 ## How to use
 
@@ -30,11 +27,11 @@ store = Store<AppState>(
 You can then extend both `ReduxAction` and `VmFactory` to provide typed access to your environment:
 
 ```dart
-abstract class Action extends ReduxAction<int> {
+abstract class AppAction extends ReduxAction<AppState> {
   Environment get env => super.env as Environment;
 }
 
-abstract class AppFactory<T extends Widget?, Model extends Vm> extends VmFactory<int, T, Model> {
+abstract class AppFactory<T extends Widget?, Model extends Vm> extends VmFactory<AppState, T, Model> {
   AppFactory([T? connector]) : super(connector);
   Environment get env => super.env as Environment;
 }
@@ -43,26 +40,28 @@ abstract class AppFactory<T extends Widget?, Model extends Vm> extends VmFactory
 Then, use the environment when creating your actions:
 
 ```dart
-class IncrementAction extends AppAction {
+class Increment extends AppAction {
   final int amount;
-  IncrementAction({required this.amount});  
-  int reduce() => env.incrementer(state, amount);
+  Increment({required this.amount});  
+  AppState reduce() => env.incrementer(state, amount);
 }
 ```
 
-And also in your view-model:
+And also in your view-model (if you use `StoreConnector`):
 
 ```dart
 class Factory extends AppFactory<MyHomePageConnector> {
   Factory(connector) : super(connector);
 
   ViewModel fromStore() => ViewModel(
-        counter: env.limit(state),
-        onIncrement: () => dispatch(IncrementAction(amount: 1)),
-      );
+    counter: env.limit(state),
+    onIncrement: () => dispatch(Increment(amount: 1)),
+  );
 }
 ```
 
 Try running
 the: <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_environment.dart">
 Dependency Injection Example</a>.
+
+> _The dependency injection idea was contributed by <a href="https://github.com/craigomac">Craig McMahon</a>._
