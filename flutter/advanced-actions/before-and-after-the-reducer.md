@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Before and after the reducer
    
-The ReduxAction class comes with two optional methods, `before()` and `after()`,
+The `ReduxAction` class comes with the optional methods `before()` and `after()`.
 
 ## Overview
 
@@ -12,7 +12,7 @@ Suppose you want to stop the user from touching the screen while an action `MyAc
 You can do this by adding a modal barrier before the action starts and removing it after it ends.
 
 It is common to have side effects before and after the reducer runs.
-To help with that, you can override the methods `before()` and `after()`, 
+To help with that, you can override methods `before()` and `after()`, 
 which run before and after the reducer (method `reduce()`).
 
 > Note: The `reduce()` method is required, but `before()` and `after()` are optional.
@@ -53,7 +53,7 @@ Future<void> before() async {
 
 The `after()` method runs after the reducer.
 
-It works like a finally block, because it always runs, 
+It works like a _finally block_, because it always runs, 
 even if `before()` or `reduce()` throws an error.
 This makes it safe to undo anything done in `before()`, even when something goes wrong later.
 

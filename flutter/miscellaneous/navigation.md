@@ -5,7 +5,8 @@ sidebar_position: 1
 # Navigation
 
 Navigation in Flutter is a complex topic, and it's not directly related to state management.
-However, Async Redux lets you navigate your app by dispatching actions, which makes it easier to write navigation tests.
+However, Async Redux lets you navigate your app by dispatching actions, 
+mainly because this makes it easy to write unit tests to test navigation.
 
 Using Async Redux for navigation is completely optional.
 If you prefer to handle navigation in another way, you can skip this page.
@@ -37,7 +38,7 @@ return StoreProvider<AppState>(
   store: store,
   child: MaterialApp(
     ...
-    navigatorKey: navigatorKey,
+    navigatorKey: navigatorKey, // Here!
     initialRoute: '/',
     onGenerateRoute: ...
   ),

@@ -1,19 +1,18 @@
 ---
-sidebar_position: 16
+sidebar_position: 17
 ---
 
 # Database and Cloud
 
-How to interact with the database or the cloud?
+How do you interact with the database or the cloud?
 
-Pretend the user presses a button in the widget, which ends up dispatching an action.
-This action reducer will connect to the cloud and/or database to get the desired information.
+Imagine the user presses a button in the widget, which dispatches an **action**.
+The action reducer then connects to the cloud or database to fetch some information.
 
-You could directly connect to the cloud and database from the async reducer,
-but it's better to have a **DAO** (data access object) to abstract those implementation
-details.
+You could connect to the cloud or database directly inside the async reducer,
+but it is better to use a **DAO** (data access object) to hide those details.
 
-This could be your action reducer:
+Here is an example action reducer:
 
 ```dart
 Future<AppState> reduce() async {
@@ -22,6 +21,9 @@ Future<AppState> reduce() async {
 }
 ```
 
-In this example, all the implementation details on how to interact with the database are not
-present in the action reducer itself, but are instead hidden in the `loadSomething` method
-of the DAO. 
+In this example, the code that handles the database interaction is not in the reducer itself.
+It is kept inside the DAO, in the `loadSomething` method.
+
+To see some complete examples of using Async Redux with DAOs, check out these GitHub repos:
+* [SameAppDifferentTech - Flutter with Redux](https://github.com/marcglasberg/SameAppDifferentTech/blob/main/MobileAppFlutterRedux/README.md) 
+* [Redux App Example](https://github.com/marcglasberg/redux_app_example) 

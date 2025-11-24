@@ -5,7 +5,7 @@ sidebar_position: 4
 # Advanced Events
 
 We have previously discussed [how to use events](../basics/events.md) to interact with
-controllers or run one time actions in your app.
+controllers or run one-time actions in your app.
 
 On this page we answer common questions and explore advanced event features.
 
@@ -18,7 +18,7 @@ Events are used in a controlled way and were designed to work well with the Redu
 Their `equals()` and `hashcode()` methods prevent any extra widget rebuilds, when used as intended.
 
 You can think of events as piggybacking in the Redux infrastructure, not as part of the store state.
-You should still remember **not to persist them** when saving the app state to the local storage of the device.
+Just remember **not to persist them** when saving the app state to the local storage of the device.
 
 ### When should I use events?
 

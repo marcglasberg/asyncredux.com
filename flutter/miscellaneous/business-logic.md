@@ -1,5 +1,5 @@
 ---
-sidebar_position: 20
+sidebar_position: 21
 ---
 
 # Business logic
@@ -11,8 +11,8 @@ Where to put your business logic?
 
 ## Rules of thumb
 
-* Recommended: Put your business logic in your state classes  
-* You can also put your business logic in your Action reducers, but that's not the best place
+* Recommended: Put your business logic in your state classes.  
+* You can also put your business logic in your Action reducers, but that's not the best place.
 
 However:
  

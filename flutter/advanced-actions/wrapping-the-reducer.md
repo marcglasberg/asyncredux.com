@@ -7,14 +7,13 @@ sidebar_position: 8
 You may wrap an action reducer to allow for some pre- or post-processing.
 
 :::warning
-
-This is a complex power feature that you may not need to learn.
+This is a power feature that you may not need to learn.
 If you do, use it with caution.
 :::
 
-Actions allow you to define a `wrapReduce()` function,
+Actions allow you to override the `wrapReduce()` method,
 that gets a reference to the action reducer as a parameter.
-If you override `wrapReduce()` it's up to you to call `reduce()` and
+When overriding `wrapReduce()` it's up to you to call `reduce()` and
 return a result.
 
 In `wrapReduce()` you may run some code before and after the reducer runs,
@@ -54,7 +53,7 @@ application know the message is now `received`.
 If the message status is updated to `received` by the websocket before `service.sendMessage(msg)`
 returns, the message status will be overwritten back to `sent` when the action completes.
 
-One way to fix this, is checking if the message status is already `received` before updating
+One way to fix this is checking if the message status is already `received` before updating
 it to `sent`. In this case, you abort the reducer.
 
 This can be done in the reducer itself, by returning `null` to abort and avoid modifying the state:
@@ -141,12 +140,14 @@ class SendMsg extends AppAction with AbortIfStateChanged {
 }
 ```
 
+&nbsp;
+
 <hr></hr>
 
 This concludes the explanation of advanced action features.
 You now know how to use `before()` and `after()` methods,
 wrap the reducer, abort the action dispatch, handle action errors,
-check actions status, and subclass actions.
+check actions status, and add selectors to your base action.
 
 The next section will explain how to uncouple accessing the store state,
-by using the connector pattern.
+by using the connector (smart/dumb widget) pattern.

@@ -1,11 +1,11 @@
 ---
-sidebar_position: 14
+sidebar_position: 15
 ---
 
 # Metrics
 
-When you instantiate your store, you can optionally pass it a list of `stateObservers`,
-which may be used for collecting metrics for your app:
+When you instantiate your store, you can optionally pass it a list of `stateObservers`
+that you can use to collect metrics for your app:
 
 ```dart
 var store = Store<AppState>(
@@ -14,7 +14,10 @@ var store = Store<AppState>(
 );
 ```
 
-This is the `StateObserver` definition:
+## StateObserver
+
+The `StateObserver` is an abstract class with an `observe` method
+which you can implement to be notified of any **state changes**:
 
 ```dart
 abstract class StateObserver<St> {
@@ -29,40 +32,43 @@ abstract class StateObserver<St> {
 }
 ```
 
-For example, you may create a `MetricsObserver` class, which extends `StateObserver`.
 It will then be notified of all **state changes**, right after the reducer returns,
-resulting from all dispatched actions.
+for all dispatched actions.
 
-That notification happens before the
-`after()` method is called, and before the action's `wrapError()` and the
-global `globalWrapError()` methods are called.
+This notification happens before the `after()` method is called, and before the
+action `wrapError()` and the global `globalWrapError()` methods are called.
 
 The parameters are:
 
-* `action` = The action itself.
+* `action`: The action itself.
 
-* `prevState` = The state right before the new state returned by the reducer is applied. Note this
-  may be different from the state when the reducer was called.
+* `prevState`: The state right before the new state returned by the reducer is applied. 
+  Note this may be different from the state when the reducer was called.
 
-* `newState` = The state returned by the reducer. Note: If you need to know if the state was
+* `newState`: The state returned by the reducer. If you need to know whether the state was
   changed or not by the reducer, you can compare both states:
   `bool ifStateChanged = !identical(prevState, newState);`
 
-* `error` = Is `null` if the reducer completed with no error and returned. Otherwise, will be the
-  error thrown by the reducer (before any `wrapError` is applied). Note that, in case of
-  error, both `prevState` and `newState` will be the current store state when the error is
-  thrown.
+* `error`: Is `null` if the reducer completed with no error and returned. 
+  Otherwise, it is the error thrown by the reducer (before any `wrapError` is applied). 
+  In case of error, both `stateIni` and `stateEnd` will be the current store state when the error is thrown.
 
-* `dispatchCount` = The sequential number of the dispatch.
+* `dispatchCount`: The sequential number of the dispatch.
 
-This is an implementation example:
+This is an implementation idea. Here, we define a method called `trackEvent()` in the base
+action class, which does nothing by default. Then, in the `MetricsObserver`, we call that method
+for all actions. Finally, in a specific action, we override `trackEvent()` to actually
+collect metrics.
 
 ```dart
- abstract class AppAction extends ReduxAction<AppState> {
-   void trackEvent(AppState stateIni, AppState stateEnd) { // Don't to anything }
+ abstract class AppAction extends AppAction {
+ 
+   void trackEvent(AppState stateIni, AppState stateEnd) { 
+     // Do nothing 
+   }
  }
 
- class AppStateObserver implements StateObserver<AppState> {
+ class MetricsObserver implements StateObserver<AppState> {
    
    void observe(
      ReduxAction<AppState> action,
@@ -79,6 +85,7 @@ This is an implementation example:
    
     AppState? reduce() { 
       // Do something 
+      return state;
     }
    
     void trackEvent(AppState prevState, AppState newState, Object? error) =>
@@ -89,7 +96,7 @@ This is an implementation example:
 ## Printing actions to the console
 
 Async Redux comes with a built-in `ConsoleActionObserver` class that you can use as
-a state observer. It will print all actions to the console, in yellow, like so:
+a state observer. It will print all actions to the console, in yellow, like this:
 
 ```dart
 I/flutter (15304): | Action MyAction
@@ -103,8 +110,8 @@ var store = Store<AppState>(
 );
 ```
 
-If you implement the action's `toString()`, you can display more information.
-For example, suppose a `LoginAction` which has a `username` field:
+If you implement method `toString()` of the action, you can display more information.
+For example, suppose a `LoginAction` that has a `username` field:
 
 ```dart
 class LoginAction extends ReduxAction {

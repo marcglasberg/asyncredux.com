@@ -1,5 +1,5 @@
 ---
-sidebar_position: 18
+sidebar_position: 19
 ---
 
 # Undo and Redo
@@ -27,5 +27,5 @@ class RecoverState extends ReduxAction<AppState> {
 }
 ```
 
-Note: This also works to undo/redo only part of the state. If you are only interested in undoing
-part of the state, your observer can save only that part, and your action can revert only that part.
+Note: This also works to undo/redo only **part** of the state. 
+Your observer can save only that part, and your action can revert only that part.

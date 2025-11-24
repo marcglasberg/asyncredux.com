@@ -1,35 +1,10 @@
 ---
-sidebar_position: 8
+sidebar_position: 9
 ---
 
-# Selectors
+# Cached Selectors (Reselectors)
 
-Whether you access your store state with `context.state` or using a `StoreConnector`, you will need
-to select the part of the state your widget needs. Sometimes that's very easy to do, for 
-example, `state.user.name`. But sometimes it's more complex, like:
-
-```dart
-state.todos.where((todo) => todo.user == user).toList()
-```
-
-If you have some complex selecting logic that you use in different places, you may optionally 
-want to create a "selector", which are named functions to return the part of the state you need. 
-For example: 
-
-```dart
-static List<Todo> selectTodosForUser(AppState state, User user)
-   => state.todoState.todos.where((todo) => (todo.user == user)).toList();
-```     
-
-Selectors may be put:
-
-* Into separate dart files as global functions. 
-* Into state classes, as static methods. 
-* Into your base action (like `AppAction`) class, as instance methods.
-
-## Cache (Reselectors)
-
-Suppose your widget uses a `ListView.builder` to display user names as list items. 
+Suppose your widget uses a `ListView.builder` to display usernames as list items. 
 You could get this information like so:
 
 ```dart
@@ -43,8 +18,8 @@ could filter the user list to remove all other names, like this:
 state.users.where((user) => user.name.startsWith("A")).toList()[index].name;
 ```                                                                                           
 
-This works, but will filter the list repeatedly, once for each index. This is not a problem for
-small lists, but will become slow if the list contains thousands of users.
+This works, but will filter the list repeatedly, once for each index. 
+This is not a problem for small lists, but will become slow if the list contains thousands of users.
 
 The solution to this problem is caching the filtered list. 
 To that end, you can use the cache functionality provided by Async Redux,
@@ -53,18 +28,18 @@ which is also called a "reselector".
 First, create a **selector** that returns the information you need:
 
 ```dart
-static List<User> selectUsersWithNamesStartingWith(AppState state, {String text})
+List<User> selectUsersWithNamesStartingWith(AppState state, {String text})
    => state.users.where((user)=>user.name.startsWith(text)).toList();
 ```    
 
-And then use it in your widget like this:
+And then use it like this:
 
 ```dart
 selectUsersWithNamesStartingWith(state, text: "A")[index].name;
 ```                                                                                           
 
-Next, we have to modify the selector so that it caches the filtered list, turning into 
-a **reselector**. 
+Next, we have to modify the selector so that it caches the filtered list, 
+turning into a **reselector**. 
 
 Async Redux provides a few global functions which you can use, 
 depending on the number of states, and the number of parameters your selector needs.
@@ -73,7 +48,7 @@ In this example, we have a single state and a single parameter, so we're going t
 method:
 
 ```dart                                                    
-static List<User> selectUsersWithNamesStartingWith(AppState state, {String text})
+List<User> selectUsersWithNamesStartingWith(AppState state, {String text})
    => _selectUsersWithNamesStartingWith(state)(text);
 
 static final _selectUsersWithNamesStartingWith = cache1_1(
@@ -93,7 +68,7 @@ changes. Since `state.users` is a subset of `state`, it will change less often. 
 would be this:
 
 ```dart
-static List<User> selectUsersWithNamesStartingWith(AppState state, {String text})
+List<User> selectUsersWithNamesStartingWith(AppState state, {String text})
    => _selectUsersWithNamesStartingWith(state.users)(text);
  
 static final _selectUsersWithNamesStartingWith = cache1_1(
@@ -104,21 +79,28 @@ static final _selectUsersWithNamesStartingWith = cache1_1(
 
 ## Cache syntax
 
-For the moment, Async Redux provides these six methods that combine 1 or 2 states with 0, 1 or 2
-parameters:
+For the moment, Async Redux provides these ten methods that 
+combine 1, or 2, or 3 states 
+with 0, 1, or 2 parameters 
+to create cached selectors:
 
 ```dart
-cache1((state) => () => ...);
-cache1_1((state) => (parameter) => ...);
-cache1_2((state) => (parameter1, parameter2) => ...);
+cache1state((state) => () => ...);
+cache1state_1param((state) => (parameter) => ...);
+cache1state_2params((state) => (parameter1, parameter2) => ...);
+cache1state_0params_x((state1, extra) => () => ...);
 
-cache2((state1, state2) => () => ...);
-cache2_1((state1, state2) => (parameter) => ...);
-cache2_2((state1, state2) => (parameter1, parameter2) => ...);
+cache2states((state1, state2) => () => ...);
+cache2states_1param((state1, state2) => (parameter) => ...);
+cache2states_2params((state1, state2) => (parameter1, parameter2) => ...);
+cache2states_0params_x((state1, state2, extra) => () => ...);
+
+cache3states((state1, state2, state3) => () => ...);
+cache3states_0params_x((state1, state2, state3, extra) => () => ...);
 ```    
 
-I have created only those above, because for my own usage I never required more than that. Please,
-open an <a href="https://github.com/marcglasberg/async_redux/issues">issue</a>
+I have created only those above, because for my own usage I never required more than that. 
+Please open an [issue](https://github.com/marcglasberg/async_redux/issues)
 to ask for more variations in case you feel the need.
 
 This syntax treats the states and the parameters differently. If you call some selector while
@@ -135,7 +117,7 @@ hold to old information and have a negative impact in memory usage.
 ## External reselect package
 
 The reselect functionality explained above is provided out-of-the-box with Async Redux. However,
-Async Redux also works perfectly with the external <a href="https://pub.dev/packages/reselect">reselect</a> package.
+Async Redux also works perfectly with the external [reselect](https://pub.dev/packages/reselect) package.
 
 Then, why did I care to reimplement a similar functionality? What are the differences?
 

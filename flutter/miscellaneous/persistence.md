@@ -1,15 +1,15 @@
 ---
-sidebar_position: 12
+sidebar_position: 13
 ---
 
 # Persistence
 
-When you instantiate your store, you can optionally pass it a `persistor`,
-which is an object that may be used for local persistence, i.e., keeping
-the current app state saved to the local disk of the device.
+When you create your store, you can optionally pass a `persistor`.
+This object handles local persistence,
+meaning it keeps the current app state saved to the device's disk.
 
-You should create your own `MyPersistor` class which extends the `Persistor` abstract class. 
-This is the recommended way to use it:
+You should create your own `MyPersistor` class that extends the `Persistor` abstract class.
+Here is the recommended way to use it:
 
 ```dart                       
 var persistor = MyPersistor();          
@@ -27,12 +27,11 @@ var store = Store<AppState>(
 );
 ```           
 
-As you can see above, when the app starts you use the persistor's `readState` method to try and
-read the state from the disk.
+At startup, the app calls the persistor's `readState` method to try to read the state from disk.
 If this method returns `null`, you must create the default initial state and save it.
-You then create the store with that `initialState` and the `persistor`.
+Then create the store with that `initialState` and the `persistor`.
 
-This is the abstract `Persistor` definition:
+Here is the abstract `Persistor` definition:
 
 ```dart
 abstract class Persistor<St> {
@@ -44,34 +43,34 @@ abstract class Persistor<St> {
 }
 ```                   
 
-The `persistDifference` method is the one you should implement to be notified whenever you must save
-the state. It tells you the `newState` and the `lastPersistedState`, so that you can compare them
-and save the difference. Or, if your app state is simple, you can simply save the
-whole `newState` each time the method is called.
+The `persistDifference` method is the one you should implement to save the state.
+It provides both `newState` and `lastPersistedState`, so you can compare them
+and save only the difference. Or, if the state is simple, you can just save
+the whole `newState` each time.
 
-The `persistDifference` method will be called by Async Redux whenever the state changes, but not
-more than once each 2 seconds, which is the throttle period. All state changes within these 2
-seconds will be collected, and then a single call to the method will be made with all the changes
-after this period.
+Note Async Redux will call `persistDifference` whenever the state changes,
+but never more than once every 2 seconds,
+which is the throttle period.
+All changes within this time will be collected and saved in a single call.
 
-Also, the `persistDifference` method won't be called while the previous save is not finished, even
-if the throttle period is done. In this case, if a new state becomes available the method will be
-called as soon as the current save finishes.
+This method will not be called again until the previous save has finished.
+If a new state becomes available during a save,
+the method will run again only as soon as the current save completes.
 
-Note you can also override the `throttle` getter to define a different throttle period. In special,
-if you define it as `null` there will be no throttle, and you'll be able to save the state as soon
-as it changes.
+You can override the `throttle` getter to change the throttle period.
+If you return `null`, no throttle will be used and the state will be saved as soon as it changes.
 
-Even if you have a non-zero throttle period, sometimes you may want to save the state immediately.
-This is usually the case, for example, when the app is closing. You can do that by dispatching the
-provided `PersistAction`. This action will ignore the throttle period and call
-the `persistDifference` method right away to save the current state.
+Sometimes you may want to save the state immediately, for example when the app is closing.
+You can do that by dispatching `PersistAction`, which ignores the throttle and
+calls `persistDifference` right away.
 
 ```dart
 store.dispatch(PersistAction());
 ```  
 
-You can use this code to help you start extending the abstract `Persistor` class:
+## Extending Persistor
+
+Here is some code to help you start extending `Persistor`:
 
 ```dart
 class MyPersistor extends Persistor<AppState> {  
@@ -97,15 +96,15 @@ class MyPersistor extends Persistor<AppState> {
   
   Duration get throttle => const Duration(seconds: 2);
 }
-
 ```
 
-The persistor can also be paused and resumed, with methods `store.pausePersistor()`,
-`store.persistAndPausePersistor()` and `store.resumePersistor()`. This may be used together with the
-app lifecycle, to prevent a persistence process to start when the app is being shut down.
+## Other Persistor Features
 
-When logging out of the app, you can call `store.deletePersistedState()` to ask the persistor to
-delete the state from disk.
+The persistor can be paused and resumed with `store.pausePersistor()`, `store.persistAndPausePersistor()` and
+`store.resumePersistor()`. This can be useful with the app lifecycle, so that persistence does not start while the app
+is shutting down.
+
+When the user logs out of your app, call `store.deletePersistedState()` to delete the state from disk.
 
 First, add an `AppLifecycleManager` to your widget tree:
 
@@ -117,7 +116,7 @@ child: StoreProvider<AppState>(
       child: MaterialApp( ...
 ```
 
-Then, create the `AppLifecycleManager` with a `WidgetsBindingObserver` that dispatches
+Then create the `AppLifecycleManager` with a `WidgetsBindingObserver` that dispatches
 a `ProcessLifecycleChange_Action`:
 
 ```dart
@@ -175,10 +174,10 @@ Persistence tests</a>.
 
 ## Saving and Loading
 
-You can choose any way you want to save the state difference to the local disk, 
-but one way is using the provided `LocalPersist` class, which is very easy to use.
+You can use any method you prefer to save the state to disk,
+but an easy option is the provided `LocalPersist` class.
 
-Note: At the moment it only works for Android/iOS, not for the web.
+Note: It currently works only for Android and iOS, not for the web.
 
 First, import it:
 
@@ -186,47 +185,47 @@ First, import it:
 import 'package:async_redux/local_persist.dart';
 ```
 
-You need to convert yourself your objects to a list of **simple objects**
-composed only of numbers, booleans, strings, lists and maps (you can nest lists and maps).
+You must convert your objects to a list of **simple objects** made only of numbers,
+booleans, strings, lists and maps. You can nest lists and maps.
 
-For example, this is a list of simple objects:
+Example:
 
 ```dart
 List<Object> simpleObjs = [
   'Goodbye',
-  '"Life is what happens\n\rwhen you\'re busy making other plans." -John Lennon',
+  'Life is what happens\nwhen you are busy making other plans.',
   [100, 200, {"name": "João"}],
   true,
   42,
 ];
 ```
 
-Then create a `LocalPersist` class to use the `/db/myFile.db` file:
+Then create a `LocalPersist` instance to use the `/db/myFile.db` file:
 
 ```dart
 var persist = LocalPersist("myFile");
 ```
 
-You can save the list to the file:
+Save the list to the file:
 
 ```dart
 await persist.save(simpleObjs);
 ```
 
-And then later load these objects:
+And then later load it:
 
 ```dart                                       
 List<Object> simpleObjs = await persistence.load();
 ```
 
-Usually the `save` method rewrites the file. But it also lets you append more objects:
+The `save` method usually rewrites the file, but it can also append data:
 
 ```dart
 List<Object> moreObjs = ['Lets', 'append', 'more'];
 await persist.save(simpleObjs, append: true);
 ```
 
-You can also delete the file, get its length, see if it exists etc:
+You can delete the file, check its length, or see if it exists:
 
 ```dart                      
 int length = await persist.length();
@@ -234,9 +233,8 @@ bool exists = await persist.exists();
 await persist.delete();
 ```                            
 
-Note: `LocalPersist` uses a file format similar to JSON, but not exactly JSON, because JSON cannot
-be appended to. If you want to save and load a single object into standard JSON, use the `saveJson`
-and `loadJson` methods:
+Note `LocalPersist` uses a format similar to JSON but not exactly JSON, since JSON cannot be appended to. 
+If you want to save and load a single object using standard JSON, use `saveJson` and `loadJson`:
 
 ```dart
 await persist.saveJson(simpleObj);

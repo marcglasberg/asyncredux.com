@@ -1,14 +1,19 @@
 ---
-sidebar_position: 15
+sidebar_position: 16
 ---
 
 # Observing rebuilds
 
-Your store optionally accepts a `modelObserver`, which lets you visualize rebuilds.
-It's rarely used, so feel free to skip this section.
+When you instantiate your store, you can optionally pass it a `modelObserver`
+that you can use to visualize rebuilds.
 
-The `ModelObserver` is an abstract class with an `observe` method which you can implement to be
-notified, by each `StoreConnector` currently in the widget tree, whenever there is a state change.
+:::warning
+This is a power feature only useful for creators of developer tools.
+Feel free to skip this page.
+:::
+
+The `ModelObserver` is an abstract class with an `observe` method you can override to be notified, 
+by each `StoreConnector` currently in the widget tree, whenever there is a state change.
 You can create your own `ModelObserver`, but the provided `DefaultModelObserver` can be used out of
 the box to print to the console and do basic testing:
 
@@ -29,13 +34,9 @@ Model D:3 R:3 = Rebuid:true, Connector:MyWidgetConnector, Model:MyViewModel{C}.
 ```
 
 You can see above that the first and third state changes resulted in a rebuild (`Rebuid:true`), but
-the second one did not, probably because the part of the state that changed was not part
-of `MyViewModel`.
+the second one did not, probably because the part of the state that changed was not in `MyViewModel`.
 
-<a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_dispatch_future.dart">This example</a>
-also shows the `ModelObserver` in action.
-
-Note: You must pass `debug:this` as a `StoreConnector` constructor parameter, if you want
+Note: You must pass `debug: this` as a `StoreConnector` constructor parameter, if you want
 the `ModelObserver` to be able to print the `StoreConnector` type to the output. You can also
 override your `ViewModel.toString()` to print out any extra info you need.
 

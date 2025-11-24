@@ -1,6 +1,6 @@
 {
   "label": "Connector",
-  "position": 4,
+  "position": 5,
   "link": {
     "type": "generated-index",
     "description": "How to uncouple accessing the store state, by using the connector pattern: Dumb and Smart widgets."

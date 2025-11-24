@@ -1,19 +1,39 @@
 ---
-sidebar_position: 6
+sidebar_position: 4
 ---
 
 # Action mixins
 
-You can add **mixins** to your actions, to accomplish common tasks.
+You can add **mixins** to your actions to handle common tasks.
+For example, instead of writing:
+
+```dart
+class LoadText extends AppAction { ...
+```
+
+You can write:
+
+```dart
+class LoadText extends AppAction with CheckInternet { ...
+```
+
+Sometimes you can even combine multiple mixins:
+
+```dart
+class LoadText extends AppAction with CheckInternet, NonReentrant, Retry { ...
+```
+
+Let's see the available mixins.
+
+---
 
 ## Check for Internet connectivity
 
-`CheckInternet` ensures actions only run with internet,
-otherwise an **error dialog** prompts users to check their connection:
+Mixin `CheckInternet` makes sure actions only run when there is internet.
+If there is no internet, an **error dialog** will ask the user to check their connection:
 
 ```dart
-class LoadText extends AppAction with CheckInternet {
-      
+class LoadText extends AppAction with CheckInternet {      
    Future<String> reduce() async {
       var response = await http.get('https://dummyjson.com/todos/1');
       ...      
@@ -21,56 +41,49 @@ class LoadText extends AppAction with CheckInternet {
 }   
 ```
 
-It will automatically check if there is internet before running the action.
-If there is no internet, the action will fail, stop executing, and will show a dialog to the user with title:
-_'There is no Internet' and content: 'Please, verify your connection.'_.
+It automatically checks the connection before running the action.
+If there is no internet, the action stops and shows a dialog with
+title _'There is no Internet' and content: 'Please, verify your connection.'_.
 
-If you don't want the dialog to open, you can add the `NoDialog` mixin too,
-and then display the error information in your widgets:
+If you do not want the dialog to open, add the `NoDialog` mixin.
+Then you can show the error in your widgets:
 
 ```dart
 class LoadText extends AppAction with CheckInternet, NoDialog { 
   ... 
   }
 
-class MyWidget extends StatelessWidget {
-  Widget build(context) {     
-     if (context.isFailed(LoadText)) Text('No Internet connection');
+// Then, in your widget:
+Widget build(context) {     
+  if (context.isFailed(LoadText)) {
+    var message = context.exceptionFor(LoadText)?.errorText ?? 'No Internet connection';
+    return Text(message);    
   }
 }   
 ```
 
-Or, using the exception message itself:
+**Notes:**
 
-```dart
-if (context.isFailed(LoadText)) Text(context.exceptionFor(LoadText)?.errorText ?? 'No Internet connection');
-```
+* `CheckInternet` only checks if the device has internet on or off. It does not check if the internet provider is
+  working or if the server is available. So it may pass the check but still fail requests.
 
-Notes:
+* You can customize the dialog or `errorText` by overriding `connectionException()`,
+  which is a method added by the mixin to your action, and returning a custom `UserException`.
 
-* `CheckInternet` only checks if the internet is on or off on the device, not if the internet provider is
-  really providing the service or if the server is available. So, it is possible that the check passes
-  but internet requests still fail.
+**Compatibility:**
 
-* If you want to customize the dialog or the `errorText`, you can override method `connectionException()`,
-  which is a method added by the mixin to your action, and then return a `UserException` with the desired message.
+* `CheckInternet` can be safely combined with `NonReentrant` or `Throttle` (but not both).
+* Should **not** be combined with mixins that override `before`.
+* Should **not** be combined with other internet check mixins like `AbortWhenNoInternet` or
+  `UnlimitedRetryCheckInternet`.
 
-Compatibility:
+## Retry until there is internet connectivity
 
-* The `CheckInternet` mixin can safely be combined with `NonReentrant` or `Throttle` (not both).
+Mixin `UnlimitedRetryCheckInternet` retries the action until there is internet.
+If there is no internet, it aborts silently and keeps retrying the `reduce` method without limit.
+It also retries if there is internet but the action fails.
 
-* It should **not** be combined with other mixins that override `before`.
-
-* It should **not** be combined with other mixins that check the internet connection, like `AbortWhenNoInternet`
-  or `UnlimitedRetryCheckInternet`.
-  
-### Retry until there is internet connectivity
-
-Mixin `UnlimitedRetryCheckInternet` can be used to check if there is internet when you run some action that needs it.
-If there is no internet, the action will abort silently, and then retry the `reduce` method unlimited times,
-until there is internet. It will also retry if there is internet but the action failed.
-
-Just add `with UnlimitedRetryCheckInternet` to your action. For example:
+Just add it like this:
 
 ```dart
 class LoadText extends AppAction UnlimitedRetryCheckInternet {
@@ -81,36 +94,32 @@ class LoadText extends AppAction UnlimitedRetryCheckInternet {
 }
 ```
 
-Notes:
+**Notes:**
 
-* This mixin replaces `Retry`, `UnlimitedRetries`, `AbortWhenNoInternet` and `NonReentrant` mixins.
-  You should **not** combine it with those mixins.
+* This mixin replaces `Retry`, `UnlimitedRetries`, `AbortWhenNoInternet`, and `NonReentrant`. Do **not** combine it with
+  those.
 
-* Make sure your `before` method does not throw an error, or the retry will **not** happen.
+* If your `before` method throws an error, retries will **not** happen.
 
-* All retries will be printed to the console. To remove the print message, or if you want to log the retries,
-  override method `printRetries()`:
-  
+* All retries are printed to the console. To disable or customize this, override `printRetries()`:
+
   ```dart
   void printRetries(String message) {}
   ```
 
-* `UnlimitedRetryCheckInternet` only checks if the internet is on or off on the device, not if the internet
-  provider is really providing the service or if the server is available. So, it is possible that the check passes
-  but internet requests still fail.
+* `UnlimitedRetryCheckInternet` only checks if internet is on or off.
+  It does not check if the internet provider is
+  working or if the server is available. So it may pass the check but still fail requests.
 
-Compatibility:
+**Compatibility:**
 
-* The `UnlimitedRetryCheckInternet` mixin should **not** be combined with other mixins that
-  override `wrapReduce` or `abortDispatch`.
-  
-* It should **not** be combined with other mixins that check the internet connection, like `CheckInternet`
-  and `AbortWhenNoInternet`.
+* `UnlimitedRetryCheckInternet` should **not** be combined with mixins that override `wrapReduce` or `abortDispatch`.
+* Should **not** be combined with other internet check mixins like `CheckInternet` or `AbortWhenNoInternet`.
 
-### Abort the action when there is no Internet
+## Abort the action when there is no Internet
 
-`AbortWhenNoInternet` aborts the action silently (without showing any dialogs) if there is no
-internet connection. For example:
+Mixin `AbortWhenNoInternet` aborts the action silently (without showing any dialogs) if there is no
+internet connection:
 
 ```dart
 class LoadText extends AppAction with AbortWhenNoInternet {
@@ -121,148 +130,136 @@ class LoadText extends AppAction with AbortWhenNoInternet {
 }
 ```
 
-Notes:
+**Notes:**
 
-* `AbortWhenNoInternet` only checks if the internet is on or off on the device, not if the internet provider is
-  really providing the service or if the server is available. So, it is possible that the check passes
-  but internet requests still fail.
+* `AbortWhenNoInternet` only checks if internet is on or off.
+  It does not check if the internet provider is
+  working or if the server is available. So it may pass the check but still fail requests.
 
-* If you want to customize the dialog or the `errorText`, you can override method `connectionException()`,
-  which is a method added by the mixin to your action, and then return a `UserException` with the desired message.
+**Compatibility:**
 
-Compatibility:
+* `AbortWhenNoInternet` can be safely combined with `NonReentrant` or `Throttle` (but not both).
+* Should **not** be combined with mixins that override `before`.
+* Should **not** be combined with other internet check mixins like `CheckInternet` or `UnlimitedRetryCheckInternet`.
 
-* The `AbortWhenNoInternet` mixin can safely be combined with `NonReentrant` or `Throttle` (not both at the same time).
-
-* It should **not** be combined with other mixins that override `before`.
-
-* It should **not** be combined with other mixins that check the internet connection, like `CheckInternet`
-  or `UnlimitedRetryCheckInternet`.
+---
 
 ## NonReentrant
 
-To prevent an action from being dispatched while it's already running,
-add the `NonReentrant` mixin to your action class:
+To prevent an action from running while it is already running, add `NonReentrant`:
 
 ```dart
 class LoadText extends AppAction with NonReentrant {
-   ...
-   }
+  ...
+}
 ```
 
-In other words, a dispatched action will be aborted in case an action of the same runtime-type is still
-running from a previous dispatch.
+If an action of the same runtime-type is still running, the new one is aborted.
 
-Compatibility:
+**Compatibility:**
 
-* The `NonReentrant` mixin can safely be combined with `Retry`,
-  `CheckInternet`, `UnlimitedRetryCheckInternet`, `AbortWhenNoInternet` and `NoDialog`.
+* `NonReentrant` be safely combined with `Retry`, `CheckInternet`, `UnlimitedRetryCheckInternet`,
+  `AbortWhenNoInternet`, and `NoDialog`.
+* Should **not** be combined with mixins that override `abortDispatch`.
+* Should **not** be combined with `Throttle`.
 
-* It should **not** be combined with other mixins that override `abortDispatch`.
-
-* It should **not** be combined with `Throttle`.
+---
 
 ## Retry
 
-Add the `Retry` mixin to your actions, to retry them a few times with exponential backoff, if they fail.
+Use the `Retry` mixin to retry actions a few times with exponential backoff when they fail:
 
 ```dart
 class LoadText extends AppAction with Retry, UnlimitedRetries {
-   ...
-   }
+  ...
+}
 ```
 
-In more detail: The action's `reduce` method will be retried in case this method throws an error.
-Note, if the `before` method throws an error, the retry will **not** happen.
+The `reduce` method is retried only if it throws an error.
+If the `before` method throws, retries will **not** happen.
 
-Keep in mind that all actions using the `Retry` mixin will become asynchronous,
-even if the original action was synchronous.
+All actions using `Retry` become asynchronous, even if originally synchronous.
 
-You can override the following parameters:
+You can override these parameters:
 
 * `initialDelay`: The delay before the first retry attempt. Default is `350` milliseconds.
 
-* `multiplier`: The factor by which the delay increases for each subsequent retry.
-  Default is `2`, which means the default delays are: 350 millis, 700 millis, and 1.4 seg.
+* `multiplier`: The factor by which the delay increases for each later retry.
+  Default is `2`, meaning default delays of: 350 millis, 700 millis, and 1.4 seconds.
 
 * `maxRetries`: The maximum number of retries before giving up. Default is `3`,
   meaning it will try a total of 4 times.
 
-* `maxDelay`: The maximum delay between retries to avoid excessively long wait times. Default is `5` seconds.
+* `maxDelay`: The maximum delay between retries to avoid excessively long wait times. Default is `5` secs.
 
-Note the retry delays only start after the reducer finishes executing. For example,
-if the reducer takes 1 second to fail, and the retry delay is 350 millis, the first
-retry will happen 1.35 seconds after the first reducer started.
+Retry delays start after the reducer finishes. Example:
+If `reduce()` fails after 1 second and `initialDelay` is 350 ms, the retry happens 1.35 seconds after start.
 
-When the action finally fails (`maxRetries` was reached),
-the last error will be rethrown, and the previous ones will be ignored.
+When the action finally fails (`maxRetries` is reached),
+the last error is thrown, and the previous ones will be ignored.
 
-If you want to retry unlimited times, you can add the `UnlimitedRetries` mixin,
+To retry unlimited times, use `UnlimitedRetries`,
 which is the same as setting `maxRetries` to `-1`:
 
 ```dart
-class MyAction extends AppAction with Retry, UnlimitedRetries { ... }
+class MyAction extends AppAction with Retry, UnlimitedRetries { ... 
 ```
 
-Notes:
+**Notes:**
 
-* If you do `await dispatchAndWait(action)` and the action uses `UnlimitedRetries`,
-  it may never finish if it keeps failing. So, be careful when using it.
+* If you use `await dispatchAndWait(action)` and the action uses `UnlimitedRetries`,
+  it may never finish if it keeps failing. Be careful.
 
 * If you want to fail an action when there is no internet, but keep trying unlimited times until the
   internet is back, use the `UnlimitedRetryCheckInternet` mixin instead of `Retry`.
 
-Compatibility:
+**Compatibility:**
 
-* The `Retry` minin should **not** be combined with `CheckInternet`, `AbortWhenNoInternet`
-  or `UnlimitedRetryCheckInternet`.
+* `Retry` should **not** be combined with `CheckInternet`, `AbortWhenNoInternet`, or `UnlimitedRetryCheckInternet`.
+* Should **not** be combined with mixins that override `wrapReduce`.
 
-* The `Retry` mixin should **not** be combined with other mixins that override `wrapReduce`.
-
-* For most actions that use `Retry`, consider also adding `NonReentrant`,
- to avoid multiple instances of the same action running at the same time:
+* For most actions using `Retry`, also add `NonReentrant`:
 
   ```dart
   class MyAction extends AppAction with Retry, NonReentrant { ... }
   ```
 
+---
+
 ## Throttle
 
-Add the `Throttle` mixin to ensure the action will be dispatched at most once in a specified throttle period.
+Mixin `Throttle` ensures the action runs at most once during a given time period.
 In other words, it prevents the action from running too frequently.
 
-If an action is dispatched multiple times within a throttle period, it will only execute the first time,
-and the others will be aborted. After the throttle period has passed, the action will be allowed to execute again,
-which will reset the throttle period.
+If the action is dispatched multiple times during that period, only the first one runs.
+After the throttle period passes, it's allowed to run again, and the period resets.
 
-If you use the action to load information, the throttle period may be considered as the time the loaded information
-is _"fresh"_. After the throttle period, the information is considered _"stale"_ and the action will be allowed to
-load the information again.
+### Fresh and stale
 
-For example, if you are using a `StatefulWidget` that needs to load some information, you can dispatch the loading
-action when widget is created, and specify a throttle period so that it doesn't load the information again too often.
+If the action loads information, you can think of the throttle period as how long the information stays _"fresh"_.
+After that time, it is considered _"stale"_ and the action is allowed to load it again.
 
-Or if you are using a `StoreConnector`, you can use the `onInit` parameter:
+For example, if you are using a `StatefulWidget` that needs to load some information when the widget is created,
+you can dispatch the loading action in its `initState()`:
 
 ```dart
-class MyScreenConnector extends StatelessWidget {
-  Widget build(BuildContext context) => StoreConnector<AppState, _Vm>(
-    vm: () => _Factory(),
-    onInit: _onInit, // Here!
-    builder: (context, vm) {
-      return MyScreenConnector(
-        information: vm.information,
-        ...
-      ),
-    );
-
-  void _onInit(Store<AppState> store) {
-    store.dispatch(LoadAction());
-  }
+void initState() {
+  super.initState();
+  context.dispatch(LoadAction());
 }
+``` 
+
+Or, if you are using a `StoreConnector`, you can use its `onInit` parameter:
+
+```dart
+StoreConnector<AppState, _Vm>(
+  onInit: _onInit, // Here!
+  ...
+  
+void _onInit(store) => store.dispatch(LoadAction());  
 ```
 
-and then:
+The load action can specify a throttle period so that it doesn't load the information again too often:
 
 ```dart
 class LoadAction extends AppAction with Throttle {
@@ -276,70 +273,63 @@ class LoadAction extends AppAction with Throttle {
 }
 ```
 
-The `throttle` is given in milliseconds, and the default is 1000 milliseconds (1 second).
-You can override this default:
+Note the `throttle` is given in milliseconds, and the default is 1000 (1 second).
+This default was overridden in the example above to 5000 millis (5 seconds).
+
+### Bypassing the throttle
+
+You can also selectively bypass the throttle using `ignoreThrottle`:
 
 ```dart
 class MyAction extends AppAction with Throttle {
-    final int throttle = 500; // Here!
-    ...
+  final bool force;
+  MyAction({this.force = false});  
+      
+  bool get ignoreThrottle => force; // Here!   
+  ...
 }
 ```
 
-You can also specify the `ignoreThrottle` parameter, which allows you to ignore the throttle period
-for a specific action. This is useful when you want to bypass the throttle for certain actions,
-while still applying it to others. For example:
+If the action fails, the throttle period is **not** reset. In other words,
+if the action fails it will not run a second time if you dispatch it again within the throttle period.
+To change this behavior, use `removeLockOnError`.
+It will allow the action to run again, right away:
 
 ```dart
 class MyAction extends AppAction with Throttle {
-    final bool force;
-    MyAction({this.force = false});  
-
-    bool get ignoreThrottle => force; // Here!   
-    ...
-}
-```
-  
-The throttle period is NOT reset if the action fails.
-In other words, if the action fails it will not run a second time if you dispatch it again within the throttle period.
-However, you can use the `removeLockOnError` parameter to remove the lock when an error occurs,
-allowing the action to be dispatched again right away.
-
-```dart
-class MyAction extends AppAction with Throttle {
-    bool removeLockOnError = true; // Here!
-    ...
+  bool removeLockOnError = true; // Here!
+  ...
 }
 ```
 
-Note that `removeLockOnError` is currently implemented in the `after` method, like this:
+Note that `Throttle` implements `removeLockOnError` by overriding the action's `after()` method.
+You can override it yourself if you want to remove the lock only when conditions you define are met.
 
 ```dart
-@override
 void after() {
   if (removeLockOnError && (status.originalError != null)) removeLock();
 }
 ```
 
-You can override the `after` method to customize this behavior of removing the lock under some conditions.
+## Advanced throttle usage
 
-### Advanced throttle usage
+By default, throttling is based on the action's `runtimeType`.
+This means an action will be throttled
+if another action with the same `runtimeType` was dispatched during the throttle period.
+In short, the `runtimeType` works as the _"lock"_.
+If you want to use a different lock, you can override the `lockBuilder` method.
 
-The throttle is, by default, based on the action `runtimeType`.
-This means it will throttle an action if another action of the same runtimeType was previously dispatched
-within the throttle period. In other words, the runtimeType is the "lock". If you want to throttle based on a
-different lock, you can override the `lockBuilder` method.
-For example, here we throttle two different actions based on the same lock:
+For example, here we throttle two different actions using the same lock:
 
 ```dart
 class MyAction1 extends AppAction with Throttle {
-    Object? lockBuilder() => 'myLock';
-    ...
+  Object? lockBuilder() => 'myLock';
+  ...
 }
 
 class MyAction2 extends AppAction with Throttle {
-    Object? lockBuilder() => 'myLock';
-    ...
+  Object? lockBuilder() => 'myLock';
+  ...
 }
 ```
 
@@ -347,17 +337,19 @@ Another example is to throttle based on some field of the action:
 
 ```dart
 class MyAction extends AppAction with Throttle {
-    final String lock;
-    MyAction(this.lock);
-    Object? lockBuilder() => lock;
-    ...
+  final String lock;
+  MyAction(this.lock);
+  Object? lockBuilder() => lock;
+  ...
 }
 ```
 
-Compatibility:
+**Compatibility:**
 
-* The `Throttle` mixin should **not** be combined with `NonReentrant` or or `UnlimitedRetryCheckInternet`.
-* It should **not** be combined with other mixins that override `abortDispatch`.
+* `Throttle` should **not** be combined with `NonReentrant` or `UnlimitedRetryCheckInternet`.
+* Should **not** be combined with other mixins that override `abortDispatch`.
+
+---
 
 ## Debounce
 
@@ -365,16 +357,14 @@ Debouncing delays the execution of a function until after a certain period of in
 Each time the debounced function is called, the period of inactivity (or wait time) is reset.
 
 The function will only execute after it stops being called for the duration of the wait time.
-Debouncing is useful in situations where you want to ensure that a function is not called too frequently
-and only runs after some “quiet time.”
+This is useful when you want to prevent a function from running too often and only run it after some "quiet time".
 
-For example, it’s commonly used for handling input validation in text fields,
-where you might not want to validate the input every time the user presses a key,
-but rather after they've stopped typing for a certain amount of time. For example:
+A common example is input validation in text fields.
+You may not want to validate the text on every key press,
+but only after the user has stopped typing for a moment. Example:
 
 ```dart
-class SearchText extends AppAction with Debounce {
-  
+class SearchText extends AppAction with Debounce {  
   final String searchTerm;
   SearchText(this.searchTerm);  
 
@@ -389,185 +379,225 @@ class SearchText extends AppAction with Debounce {
 }
 ```
 
-The `debounce` value is given in milliseconds, and the default is 333 milliseconds (1/3 of a second).
+The `debounce` value is given in milliseconds,
+and the default is 333 millis (one third of a second).
 You can override this default:
 
 ```dart
 class SearchText extends AppAction with Debounce {
-    final int debounce = 1000; // Here!
-    ...
+  final int debounce = 1000; // Here!
+  ...
 }
 ```
 
 ### Advanced debounce usage
 
-  The debounce is, by default, based on the action `runtimeType`. This means it will reset the debounce period
-  when another action of the same runtime-type is dispatched within the debounce period. In other words,
-  the runtime-type is the "lock". If you want to debounce based on a different lock, you can override
-  the `lockBuilder` method. For example, here we debounce two different actions based on the same lock:
+By default, the debounce is based on the action's `runtimeType`.
+This means the debounce period resets when another action of the same type is dispatched
+within that period. In other words, the runtime type is the _"lock"_.
 
-  ```dart
-  class MyAction1 extends AppAction with Debounce {
-     Object? lockBuilder() => 'myLock';
-     ...
-  }
+If you want to debounce based on a different lock, you can override the `lockBuilder` method.
+Here is an example where two actions share the same lock:
+
+```dart
+class MyAction1 extends AppAction with Debounce {
+  Object? lockBuilder() => 'myLock';
+  ...
+}
   
-  class MyAction2 extends AppAction with Debounce {
-     Object? lockBuilder() => 'myLock';
-     ...
-  }
-  ```
+class MyAction2 extends AppAction with Debounce {
+  Object? lockBuilder() => 'myLock';
+  ...
+}
+```
 
-  Another example is to debounce based on some field of the action:
+Another example is to debounce based on some field of the action:
 
-  ```dart
-  class MyAction extends AppAction with Debounce {
-     final String lock;
-     MyAction(this.lock);
-     Object? lockBuilder() => lock;
-     ...
-  }
-  ```
+```dart
+class MyAction extends AppAction with Debounce {
+  final String lock;
+  MyAction(this.lock);
+  Object? lockBuilder() => lock;
+  ...
+}
+```
 
-Compatibility:
+**Compatibility:**
 
-* The `Debounce` mixin should **not** be combined with `Retry` or or `UnlimitedRetryCheckInternet`.
-* It should **not** be combined with other mixins that override `wrapReduce`.
+* `Debounce` should **not** be combined with `Retry` or `UnlimitedRetryCheckInternet`.
+* Should **not** be combined with other mixins that override `wrapReduce`.
+
+---
 
 ## OptimisticUpdate
 
-To provide instant feedback on actions that save information to the server, this feature immediately
-applies state changes as if they were already successful, before confirming with the server.
-If the server update fails, the change is rolled back and, optionally, a notification can inform
+To provide instant feedback on actions that save information to the server,
+the `OptimisticUpdate` mixin immediately applies changes to the Redux state,
+as if the save had already finished successfully, before confirming with the server.
+If the server update then fails, the change is rolled back and, optionally, a notification can inform
 the user of the issue.
 
-The `OptimisticUpdate` mixin is available, but it's still **experimental**. You can use it, but test it well.
+The `OptimisticUpdate` mixin is available, but it is still **experimental**. You can use it, but test it well.
 
-Let's use a "Todo" app as an example. We want to save a new Todo to a TodoList.
-
-This code saves the Todo, then reloads the TotoList from the cloud:
-
-```dart
-class SaveTodo extends AppAction {
-   final Todo newTodo;
-   SaveTodo(this.newTodo);
-
-   Future<AppState> reduce() async {
-
-      try {
-         // Saves the new Todo to the cloud.
-         await saveTodo(newTodo);
-      }
-      finally {
-         // Loads the complete TodoList from the cloud.
-         var reloadedTodoList = await loadTodoList();
-         return state.copy(todoList: reloadedTodoList);
-      }
-   }
-}
-```
-
-The issue with the above code is that updating the todoList on the screen may take a second, 
-since it waits for both saving and loading operations to complete. 
-This delay results in a poor user experience.
-
-The solution is optimistically updating the TodoList before saving the new Todo to the cloud:
+Let's use a simple "Todo" app as an example. We want to save a new Todo to a TodoList.
+The code below saves the Todo, then reloads the whole TodoList from the cloud:
 
 ```dart
 class SaveTodo extends AppAction {
-   final Todo newTodo;
-   SaveTodo(this.newTodo);
+  final Todo newTodo;
+  SaveTodo(this.newTodo);
 
-   Future<AppState> reduce() async {
+  Future<AppState> reduce() async {
 
-      // Updates the TodoList optimistically.
-      dispatch(UpdateStateAction((state) => state.copy(todoList: state.todoList.add(newTodo))));
-
-      try {
-         // Saves the new Todo to the cloud.
-         await saveTodo(newTodo);
+    try {
+      // Saves the new Todo to the cloud.
+      await saveTodo(newTodo);
       }
-      finally {
-         // Loads the complete TodoList from the cloud.
-         var reloadedTodoList = await loadTodoList();
-         return state.copy(todoList: reloadedTodoList);
-      }
-   }
+    finally {
+      // Loads the complete TodoList from the cloud.
+      var reloadedTodoList = await loadTodoList();
+      return state.copy(todoList: reloadedTodoList);
+    }
+  }
 }
 ```
 
-That's better. But if the saving fails, the users still have to wait for
-the reload until they see the reverted state. We can further improve this:
+The problem is that updating the screen may take a second, 
+since it waits for both saving and loading to finish. 
+This delay hurts the user experience.
+
+The solution is optimistically updating the TodoList right away, and only then save it to the cloud:
 
 ```dart
 class SaveTodo extends AppAction {
-   final Todo newTodo;
-   SaveTodo(this.newTodo);
+  final Todo newTodo;
+  SaveTodo(this.newTodo);
 
-   Future<AppState> reduce() async {
+  Future<AppState> reduce() async {
 
-      // Updates the TodoList optimistically.
-      var newTodoList = state.todoList.add(newTodo);
-      dispatch(UpdateStateAction((state) => state.copy(todoList: newTodoList)));
+    // Updates the TodoList optimistically.
+    dispatch(UpdateStateAction((state) => state.copy(todoList: state.todoList.add(newTodo))));
 
-      try {
-         // Saves the new Todo to the cloud.
-         await saveTodo(newTodo);
+    try {
+      // Saves the new Todo to the cloud.
+      await saveTodo(newTodo);
       }
-      catch (e) {
-         // If the state still contains our optimistic update, we rollback.
-         // If the state now contains something else, we DO NOT rollback.
-         if (state.todoList == newTodoList) {
-            return state.copy(todoList: initialState.todoList); // Rollback.
-         }
-      }
-      finally {
-         // Loads the complete TodoList from the cloud.
-         var reloadedTodoList = await loadTodoList();
-         dispatch(UpdateStateAction((state) => state.copy(todoList: reloadedTodoList)));
-      }
-   }
+    finally {
+      // Loads the complete TodoList from the cloud.
+      var reloadedTodoList = await loadTodoList();
+      return state.copy(todoList: reloadedTodoList);
+    }
+  }
 }
 ```
 
-Now the user sees the rollback immediately after the saving fails.
+This is faster. The user sees the new Todo right away.
+But if saving fails, they still have to wait for the reload to see the rollback. We can improve that:
 
-Note: If you are using a realtime database or Websockets to receive real-time updates from the
-server, you may not need the finally block above, as long as the `newTodoList` above can be
+```dart
+class SaveTodo extends AppAction {
+  final Todo newTodo;
+  SaveTodo(this.newTodo);
+
+  Future<AppState> reduce() async {
+
+    // Updates the TodoList optimistically.
+    var newTodoList = state.todoList.add(newTodo);
+    dispatch(UpdateStateAction((state) => state.copy(todoList: newTodoList)));
+
+    try {
+      // Saves the new Todo to the cloud.
+      await saveTodo(newTodo);
+    }
+    catch (e) {
+      // If the state still contains our optimistic update, we rollback.
+      // If the state now contains something else, we DO NOT rollback.
+      if (state.todoList == newTodoList) {
+        return state.copy(todoList: initialState.todoList); // Rollback.
+      }
+    }
+    finally {
+      // Loads the complete TodoList from the cloud.
+      var reloadedTodoList = await loadTodoList();
+      dispatch(UpdateStateAction((state) => state.copy(todoList: reloadedTodoList)));
+    }
+  }
+}
+```
+
+Now the rollback happens right away if saving fails, so the user sees feedback instantly.
+
+Note: If you are using a realtime database or Websockets to receive live updates, 
+you may not need the finally block above, as long as the `newTodoList` above can be
 told apart from the current `state.todoList`. This can be a problem if the state in question
 is a primitive (boolean, number etc) or string.
 
-The `OptimisticUpdate` mixin helps you implement the above code for you, when you provide the following:
+### Mixin usage
 
-* `newValue`: Is the new value, that you want to see saved and applied to the state.
-  For example, if you want to add a new Todo to the todoList, you should return the new todoList with
-  the new Todo added. You can access the fields of the action, and the state, and return the new value:
-  
-  ```dart
-  Object? newValue() => state.todoList.add(newTodo);
-  ```
+The mixin helps you implement the above logic. You must provide the following:
 
-* `getValueFromState`: Is a function that extract the value from the given state. Example:
+* `newValue`: The new value that should appear in the state right away.
+  For example, to add a Todo:
 
   ```dart
-  Object? getValueFromState(state) => state.todoList.add(newTodo);
+  Object? newValue() 
+    => state.todoList.add(newTodo);
   ```
 
-* `applyState`: Is a function that applies the given value to the given state. Example:
+* `getValueFromState`: Extracts the value from the state. Example:
 
   ```dart
-  St applyState(state) => state.copy(todoList: newTodoList);
+  Object? getValueFromState(state) 
+    => state.todoList;
   ```
 
-* `saveValue`: Is a function that saves the value to the cloud. Example:
+* `applyState`: Applies the value to the state. Example:
 
   ```dart
-  void saveValue(newTodoList) => saveTodo(todo);
+  AppState applyState(newTodoList, state) 
+    => state.copy(todoList: newTodoList);
   ```
 
-* `reloadValue`: Is a function that reloads the value from the cloud. If you want to skip this step,
-  simply don't provide this method. Example:
+* `saveValue`: Saves the value to the cloud. Example:
 
   ```dart
-  Object? reloadValue() => loadTodoList();
+  Future<void> saveValue(todo) 
+    => saveTodo(todo);
   ```
+
+* `reloadValue`: Reloads the value from the cloud. Omit this if you want to skip reloading. Example:
+
+  ```dart
+  Future<Object?> reloadValue() 
+    => loadTodoList();
+  ```
+                        
+Here is the complete example using the mixin:
+
+```dart
+class SaveTodo extends AppAction with OptimisticUpdate {
+  final Todo newTodo;
+  SaveTodo(this.newTodo);
+
+  // The optimistic value to be applied right away.
+  Object? newValue() 
+    => state.todoList.add(newTodo);  
+
+  // Read the current value from the state.
+  Object? getValueFromState(AppState state) 
+    => state.todoList;  
+
+  // Apply thr value to the state.
+  AppState applyState(AppState state, Object? value) 
+    => state.copy(todoList: value);  
+
+  // Save the value to the cloud.
+  Future<void> saveValue(Object? value) async 
+    => await saveTodo(newTodo);
+
+  // Reload the value from the cloud. Omit to not reload.
+  Future<Object?> reloadValue() async 
+    => await loadTodoList();  
+}
+
+```

@@ -1,15 +1,48 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # Action status
 
-All actions have a `status` property of type `ActionStatus`,
-that provides information about the action execution.
+All actions have a `status` property 
+that help you do something only if an action finished without errors.
 
-You can read the action status at any point in time.
-The status object is immutable, so it will
-always reflect the state of the action at the time you read it.
+For example, consider this action that saves some information:
+
+```dart
+class SaveAction extends AppAction {     
+  Future<AppState> reduce() async {
+    bool isSaved = await saveMyInfo(); 
+    if (!isSaved) throw UserException('Save failed');	 
+    return null;
+  }
+}
+```
+
+Then, in your widget, if you want to pop the current screen 
+only if the saving succeeded, use `status.isCompletedOk`:
+
+```dart
+var status = await dispatch(SaveAction());
+if (status.isCompletedOk) Navigator.pop(context); // Here! 
+```
+
+---
+
+## Testing with action status
+
+:::warning
+The features below are meant for testing and debugging.
+You likely will not use them in production.
+In production code, you are interested in state changes, not action statuses.
+:::
+
+The `status` property is of type `ActionStatus`.
+
+You can read the action status at any time,
+while the action is running, and after it finishes.
+However, since the status object is immutable, 
+it always shows the state of the action at the moment you read it:
 
 ```dart
 var action = MyAction();
@@ -25,16 +58,15 @@ print(status);
 
 ## Has the action completed?
 
-You can use `action.status.isCompleted` to check if a dispatched action finished.
-It will be `false` if the action is still running, or if it hasn't been dispatched yet.
+* `action.status.isCompleted`: Use it to check if a dispatched action has finished.
+It will be `false` if the action is still running or has not been dispatched yet.
 
-You can use `action.status.isCompletedOk` to check if a dispatched action finished without
-errors (in more detail, if the action methods `before` and `reduce` finished without throwing
-any errors).
+* `action.status.isCompletedOk`: Use it to check if the action finished without errors
+(that is, both `before` and `reduce` ran without throwing errors).
 
-You can use `action.status.isCompletedFailed` to check if the action finished with errors.
+* `action.status.isCompletedFailed`: Use it  to check if the action finished with errors.
 
-An example:
+Example:
 
 ```dart
 var action = MyAction(); 
@@ -42,7 +74,7 @@ await store.dispatchAndWait(action);
 print(action.isCompletedOk);
 ```
 
-Better yet, you can get the status directly from the `dispatchAndWait` method:
+Or you can get the status directly from `dispatchAndWait`:
 
 ```dart       
 var status = await store.dispatchAndWait(MyAction());
@@ -51,60 +83,28 @@ print(status.isCompletedOk);
 
 ## Getting the action error
 
-If the action finished with an error, you can get the original error:
+If the action finished with an error, you can read the original error:
 
 ```dart
 var error = action.status.originalError;
 ```
 
-That's called an "original error" because it's the error that was originally thrown by the
-action's `before` or `reduce` methods.
-However, this error might have been changed by the action's `wrapError()` method.
+It is called the "original error" because it comes from the `before` or `reduce` methods.
+However, it may have been changed by the `wrapError()` method.
 
-For this reason you can also get the "wrapped error":
+To get the changed version, use:
 
 ```dart
 var error = action.status.wrappedError;
 ```
 
-## Up until which point did the action run?
+## How far did the action run?
 
-You can also use the status properties to check if the action has finished running
-the `before`, `reduce`, and `after` methods:
+You can check if the action finished running the `before`, `reduce`, and `after` methods:
 
 ```dart
 var status = await dispatch(MyAction(info));
 print(action.status.hasFinishedMethodBefore);
 print(action.status.hasFinishedMethodReduce);
 print(action.status.hasFinishedMethodAfter);
-```
-
-## Use cases
-
-The action status is useful mainly in testing and debugging scenarios.
-In production code, you are usually more interested in the state change that the action caused,
-rather than the action status.
-
-However, one possible use case in production is doing something only if an action completed.
-
-As an example, suppose you want to save some info,
-and you want to leave the current screen if and only if a save process succeeded.
-
-You could have the following save action:
-
-```dart
-class SaveAction extends AppAction {     
-  Future<AppState> reduce() async {
-    bool isSaved = await saveMyInfo(); 
-    if (!isSaved) throw UserException('Save failed');	 
-    return null;
-  }
-}
-```
-
-Then, in your widget, you can write:
-
-```dart
-var status = await dispatch(SaveAction(info));
-if (status.isCompletedOk) Navigator.pop(context);  
 ```
