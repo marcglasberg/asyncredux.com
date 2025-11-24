@@ -2,20 +2,32 @@
 sidebar_position: 21
 ---
 
-# Business logic
+# Where to put the business logic?
 
-Where to put your business logic?
+## Business Layer
 
-* Actions, reducers and state classes are part of the **business code**.
-* Widgets, Connectors and ViewModels are part of the **client code**.
+These are part of the business layer:
 
-## Rules of thumb
+* State classes
+* Actions and their reducers
+* Action selectors
 
-* Recommended: Put your business logic in your state classes.  
-* You can also put your business logic in your Action reducers, but that's not the best place.
+## UI Layer
+
+These are part of the UI layer:
+
+* Widgets
+* `StoreConnector`, `ViewModel` and `Factory`
+* Context extensions
+* Widget selectors
+
+## Where to put your business logic?
+
+* Recommended: Put your business logic in your **state classes**.
+* Action selectors can also contain business logic.
+* You can also put business logic in your **actions**, but that's **not the best place**.
 
 However:
- 
-* Don't put your business logic in Widgets
-* Don't put your business logic in Connectors
-* Don't put your business logic in the ViewModels of Connectors
+
+* Don't put your business logic in widgets
+* Don't put your business logic in the `StoreConnector`, `ViewModel` or `Factory`
