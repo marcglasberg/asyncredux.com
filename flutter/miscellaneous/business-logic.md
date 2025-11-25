@@ -17,14 +17,13 @@ These are part of the business layer:
 These are part of the UI layer:
 
 * Widgets
-* `StoreConnector`, `ViewModel` and `Factory`
 * Context extensions
 * Widget selectors
+* `StoreConnector`, `ViewModel` and `Factory`
 
 ## Where to put your business logic?
 
 * Recommended: Put your business logic in your **state classes**.
-* Action selectors can also contain business logic.
 * You can also put business logic in your **actions**, but that's **not the best place**.
 
 However:
