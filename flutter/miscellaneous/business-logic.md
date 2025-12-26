@@ -2,7 +2,7 @@
 sidebar_position: 21
 ---
 
-# Where to put the business logic?
+# Where to put business logic?
 
 ## Business Layer
 
