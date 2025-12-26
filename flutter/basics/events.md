@@ -37,7 +37,7 @@ so they only trigger once.
 ## Setting up
 
 Make sure you included the following extension code in your app, as shown in
-[Using the store state](./using-the-store-state.md):
+[Using the store state](./using-the-store-state):
 
 ```dart
 extension BuildContextExtension on BuildContext {

@@ -66,16 +66,19 @@ because they are tightly integrated with the tool itself.
 
 ### Useful mixins:
 
-* [`CheckInternet`](./action-mixins#check-for-internet-connectivity) - Checks if there is internet before running the action, shows dialog if not.
-* [`NoDialog`](./action-mixins#check-for-internet-connectivity) - Used with `CheckInternet` to turn off the dialog when there is no internet.
-* [`AbortWhenNoInternet`](./action-mixins#abort-the-action-when-there-is-no-internet) - Silently aborts the action if there is no internet.
-* [`NonReentrant`](./action-mixins#nonreentrant) - Prevents the action from being dispatched if it's already running.
-* [`Retry`](./action-mixins#retry) - Retries the action if it fails, with configurable delays and max retries.
-* [`UnlimitedRetries`](./action-mixins#retry) - Used with `Retry` to retry indefinitely.
-* [`UnlimitedRetryCheckInternet`](./action-mixins#retry-until-there-is-internet-connectivity) - Retries indefinitely with internet checking, prevents reentrant dispatches.
-* [`Debounce`](./action-mixins#debounce) - Delays action execution until after a period of inactivity.
-* [`Throttle`](./action-mixins#throttle) - Ensures the action is dispatched at most once per throttle period.
-* [`OptimisticUpdate`](./action-mixins#optimisticupdate) - Updates the state optimistically before saving to the cloud.
+* [`CheckInternet`](internet-mixins#checkinternet) - Checks if there is internet before running the action, shows dialog if not.
+* [`NoDialog`](internet-mixins#nodialog) - Used with `CheckInternet` to turn off the dialog when there is no internet.
+* [`AbortWhenNoInternet`](internet-mixins#abortwhennointernet) - Silently aborts the action if there is no internet.
+* [`UnlimitedRetryCheckInternet`](internet-mixins#unlimitedretrycheckinternet) - Retries indefinitely with internet checking, prevents reentrant dispatches.
+* [`NonReentrant`](control-mixins#nonreentrant) - Prevents the action from being dispatched if it's already running.
+* [`Retry`](control-mixins#retry) - Retries the action if it fails, with configurable delays and max retries.
+* [`UnlimitedRetries`](control-mixins#retry) - Used with `Retry` to retry indefinitely.
+* [`Debounce`](control-mixins#debounce) - Delays action execution until after a period of inactivity.
+* [`Throttle`](control-mixins#throttle) - Ensures the action is dispatched at most once per throttle period.
+* [`OptimisticCommand`](optimistic-mixins#optimisticcommand) - Applies state changes optimistically, rolls back on error.
+* [`OptimisticSync`](optimistic-mixins#optimisticsync) - Optimistic updates with coalescing; merges rapid dispatches into one sync.
+* [`OptimisticSyncWithPush`](optimistic-mixins#optimisticsyncwithpush-and-serverpush) - Like `OptimisticSync` but with revision tracking for server pushes.
+* [`ServerPush`](optimistic-mixins#optimisticsyncwithpush-and-serverpush) - Handles server-pushed updates for `OptimisticSyncWithPush`.
 
 ### Finally, these are one-offs for special cases:
 

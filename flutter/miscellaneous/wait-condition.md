@@ -56,5 +56,5 @@ throw an exception, and fail the test.
 
 Note: `waitCondition` returns the action that caused the condition to complete.
 This is helpful in tests when you need to verify that the right action was dispatched or check the
-[action's status](../advanced-actions/action-status.md).
+[action's status](../advanced-actions/action-status).
 

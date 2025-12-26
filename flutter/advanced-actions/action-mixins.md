@@ -25,22 +25,22 @@ class LoadText extends AppAction with CheckInternet, NonReentrant, Retry { ...
 
 ## All available mixins
 
-| Mixin                                               | Purpose                                                                   | Overrides                     |
-|-----------------------------------------------------|---------------------------------------------------------------------------|-------------------------------|
-| [CheckInternet](./internet-mixins.md)               | Checks internet before action; shows dialog if no connection              | `before`                      |
-| [NoDialog](/.internet-mixins.md)                    | Modifier for `CheckInternet` to suppress dialog                           | (requires `CheckInternet`)    |
-| [AbortWhenNoInternet](/.internet-mixins.md)         | Checks internet before action; aborts silently if no connection           | `before`                      |
-| [NonReentrant](/.control-mixins.md)                 | Aborts if the same action is already running                              | `abortDispatch`               |
-| [Retry](/.control-mixins.md)                        | Retries the action on error with exponential backoff                      | `wrapReduce`                  |
-| [UnlimitedRetries](/.control-mixins.md)             | Modifier for `Retry` to retry indefinitely                                | (requires `Retry`)            |
-| [UnlimitedRetryCheckInternet](/.internet-mixins.md) | Combines internet check + unlimited retry + non-reentrant                 | `abortDispatch`, `wrapReduce` |
-| [Throttle](/.control-mixins.md)                     | Limits action execution to at most once per throttle period               | `abortDispatch`, `after`      |
-| [Debounce](/.control-mixins.md)                     | Delays execution until after a period of inactivity                       | `wrapReduce`                  |
-| [Fresh](/.control-mixins.md)                        | Skips action if data is still fresh (not stale)                           | `abortDispatch`, `after`      |
-| [OptimisticCommand](/.optimistic-mixins.md)         | Applies state changes optimistically, rolls back on error                 | `reduce`                      |
-| [OptimisticSync](/.optimistic-mixins.md)            | Optimistic updates with coalescing; merges rapid dispatches into one sync | `reduce`                      |
-| [OptimisticSyncWithPush](/.optimistic-mixins.md)    | Like `OptimisticSync` but with revision tracking for server pushes        | `reduce`                      |
-| [ServerPush](/.optimistic-mixins.md)                | Handles server-pushed updates for `OptimisticSyncWithPush`                | `reduce`                      |
+| Mixin                                            | Purpose                                                                   | Overrides                     |
+|--------------------------------------------------|---------------------------------------------------------------------------|-------------------------------|
+| [CheckInternet](./internet-mixins)               | Checks internet before action; shows dialog if no connection              | `before`                      |
+| [NoDialog](./internet-mixins)                    | Modifier for `CheckInternet` to suppress dialog                           | (requires `CheckInternet`)    |
+| [AbortWhenNoInternet](./internet-mixins)         | Checks internet before action; aborts silently if no connection           | `before`                      |
+| [NonReentrant](./control-mixins)                 | Aborts if the same action is already running                              | `abortDispatch`               |
+| [Retry](./control-mixins)                        | Retries the action on error with exponential backoff                      | `wrapReduce`                  |
+| [UnlimitedRetries](./control-mixins)             | Modifier for `Retry` to retry indefinitely                                | (requires `Retry`)            |
+| [UnlimitedRetryCheckInternet](./internet-mixins) | Combines internet check + unlimited retry + non-reentrant                 | `abortDispatch`, `wrapReduce` |
+| [Throttle](./control-mixins)                     | Limits action execution to at most once per throttle period               | `abortDispatch`, `after`      |
+| [Debounce](./control-mixins)                     | Delays execution until after a period of inactivity                       | `wrapReduce`                  |
+| [Fresh](./control-mixins)                        | Skips action if data is still fresh (not stale)                           | `abortDispatch`, `after`      |
+| [OptimisticCommand](./optimistic-mixins)         | Applies state changes optimistically, rolls back on error                 | `reduce`                      |
+| [OptimisticSync](./optimistic-mixins)            | Optimistic updates with coalescing; merges rapid dispatches into one sync | `reduce`                      |
+| [OptimisticSyncWithPush](./optimistic-mixins)    | Like `OptimisticSync` but with revision tracking for server pushes        | `reduce`                      |
+| [ServerPush](./optimistic-mixins)                | Handles server-pushed updates for `OptimisticSyncWithPush`                | `reduce`                      |
 
 ## Compatibility matrix
 
@@ -75,7 +75,7 @@ and in some cases it will warn you at compile time.
 
 All mixins will be explained in detail in the following pages:
 
-* [Internet mixins](./internet-mixins.md)
-* [Control mixins](./control-mixins.md)
-* [Optimistic mixins](./optimistic-mixins.md)
+* [Internet mixins](./internet-mixins)
+* [Control mixins](./control-mixins)
+* [Optimistic mixins](./optimistic-mixins)
 

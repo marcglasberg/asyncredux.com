@@ -51,7 +51,7 @@ var item = Item('A');
 dispatch(ViewItem(item));
 ```
 
-Previously, in [Action simplification](../basics/action-simplification.md), we saw how to create an
+Previously, in [Action simplification](../basics/action-simplification), we saw how to create an
 **abstract** base action class `AppAction` to reduce boilerplate.
 
 That same class can also be used to simplify state access:
@@ -151,5 +151,6 @@ Your IDE should be able to auto complete them for you!
 
 ### Other usages
 
-Selectors are not limited to actions. You can also use them in your widgets.
-More on this in [Advanced Selectors](../miscellaneous/selectors.md).
+Selectors are not limited to actions. 
+You can also use [widget selectors](../miscellaneous/widget-selectors).
+                                                                 

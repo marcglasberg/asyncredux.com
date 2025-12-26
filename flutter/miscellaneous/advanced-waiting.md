@@ -18,7 +18,7 @@ Examples include:
 
 <br></br>
 
-In [Wait, fail, succeed](/flutter/basics/wait-fail-succeed.md) I explain that the easiest way to handle this is to use:
+In [Wait, fail, succeed](../basics/wait-fail-succeed) I explain that the easiest way to handle this is to use:
 
 * `isWaiting(MyAction)` in actions
 * `context.isWaiting(MyAction)` in widgets
@@ -30,7 +30,7 @@ If you find a case where `isWaiting()` is not enough, keep reading.
 
 ## WaitAction and Wait
 
-In [Before and After the Reducer](/flutter/advanced-actions/before-and-after-the-reducer.md) section I show
+In [Before and After the Reducer](../advanced-actions/before-and-after-the-reducer) section I show
 how to manually create a `BarrierAction` with a boolean flag used to add or remove a modal 
 barrier in the screen (see the
 code <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_before_and_after.dart">here</a>).

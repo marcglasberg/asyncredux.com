@@ -5,7 +5,7 @@ sidebar_position: 2
 # StoreConnector
 
 The connector pattern can easily be implemented with the `BuildContext` extensions,
-as [previously discussed](connector-pattern.md).
+as [previously discussed](connector-pattern).
 
 However, Async Redux optionally provides three classes 
 to help you implement the connector pattern in a more structured way:

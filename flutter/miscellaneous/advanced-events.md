@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Advanced Events
 
-We have previously discussed [how to use events](../basics/events.md) to interact with
+We have previously discussed [how to use events](../basics/events) to interact with
 controllers or run one-time actions in your app.
 
 On this page we answer common questions and explore advanced event features.

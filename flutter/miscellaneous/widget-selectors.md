@@ -12,14 +12,14 @@ Why selectors are useful:
 * They hide the structure of the state, so components don't depend on how the state is organized.
 * Selectors can be _cached_ (or _memoized_) to avoid unnecessary recalculations.
                  
-We have previously seen in [Action Selectors](../advanced-actions/action-selectors.md) how to create simple selectors
+We have previously seen in [Action Selectors](../advanced-actions/action-selectors) how to create simple selectors
 to retrieve parts of the state, and to make them accessible from your **actions**.
 
 However, selectors are also very useful in **widgets**, to retrieve the data they need from the store.
 
 ## BuildContext extension 
 
-As [previously discussed](../basics/using-the-store-state.md), 
+As [previously discussed](../basics/using-the-store-state), 
 you should have already added an extension on `BuildContext` to your code.
 Here we suggest you add an extra line:
 

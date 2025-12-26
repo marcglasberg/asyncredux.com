@@ -18,7 +18,7 @@ We recommend that you begin by typing:
 
 ## Deploy
 
-- To deploy, simply push to the `main` branch. The website will be automatically deployed by CloudFlare
+- To deploy, push to the `main` branch. CloudFlare will automatically deploy the website
   after a few seconds.
 
 ## Test on Android Simulator for Windows
