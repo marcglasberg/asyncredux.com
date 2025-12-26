@@ -1,16 +1,30 @@
 ---
-sidebar_position: 24
+sidebar_position: 2
 ---
 
-# Comparisons
+# Comparing with Vanilla Redux
 
-Front end developers learning state management solutions often feel overwhelmed by
-new concepts and the amount of knowledge needed just to navigate the pitfalls.
+There are three principles to Redux: 
 
-Async Redux takes the opposite approach.
-You don't need to be clever or jump through hoops just to make things work.
+1. All the app state is stored as a single immutable object in a single store.
+2. The only way to change the state is to dispatch an action, an object describing what happened.
+3. Pure functions specify how the state is transformed by actions.
 
-## Comparing with the original Redux
+In vanilla Redux, reducers are pure functions that synchronously transform the state, 
+while the async part is handled by middleware.
+
+In Async Redux, just the `return state.copy(...)` at the end of the `reduce()` method is the
+pure function that synchronously transforms the state,
+while the rest of the code in the `reduce()` method is the async part.
+
+### Features
+
+Async Redux source code is larger than vanilla Redux, but still small overall.
+More importantly, it reduces boilerplate, so the total app code ends up smaller.
+
+People often say Redux is not worth it for small projects because of its boilerplate and limits.
+But since Async Redux is simpler and cuts most of that boilerplate,
+it can be used for projects of any size.
 
 The original vanilla Redux is very low level. 
 This gives it flexibility but also leads to lots of boilerplate and a steep learning curve. 
