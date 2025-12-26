@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Getting Started
 
-Async Redux is:
+AsyncRedux is:
 
 * Simple to learn and easy to use
 * Powerful enough to handle complex applications with millions of users
@@ -15,7 +15,7 @@ and other people on your team will easily understand and modify your code.
 
 ## What is it?
 
-Async Redux is a modern version of Redux, created
+AsyncRedux is a modern version of Redux, created
 by [Marcelo Glasberg](https://github.com/marcglasberg), available
 on [pub.dev](https://pub.dev/packages/async_redux) since August 2019.
 It's a mature solution, and its features have been battle-tested in hundreds of real-world
@@ -25,11 +25,11 @@ Since May 2025, it's also available for React under the name [Kiss State](https:
 
 ### How does it compare?
 
-Async Redux is a powerful alternative to Bloc, MobX, and the original vanilla Redux, but it’s
+AsyncRedux is a powerful alternative to Bloc, MobX, and the original vanilla Redux, but it’s
 designed to be much easier to use than those. Check out [this page](https://asyncredux.com/flutter/miscellaneous/comparisons) to
-compare Async Redux with the original Redux.
+compare AsyncRedux with the original Redux.
 
-Async Redux is a full state management solution and doesn't compete with packages like Provider and
+AsyncRedux is a full state management solution and doesn't compete with packages like Provider and
 Flutter Hooks, which aren't full solutions. Instead, it
 can [work with them](https://asyncredux.com/flutter/category/other-packages) if you want, though it's not required.
 
@@ -45,7 +45,7 @@ the [most recent version here](https://pub.dev/packages/async_redux)):
 
 ## Resources
 
-After you finish learning Async Redux, you can visit these example projects:
+After you finish learning AsyncRedux, you can visit these example projects:
 
 * The
   [Stock Example App](https://github.com/marcglasberg/SameAppDifferentTech/blob/main/MobileAppFlutterRedux/README.md)

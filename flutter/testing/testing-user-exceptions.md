@@ -49,7 +49,7 @@ expect(error.msg, "You can't do this.");
 
 ## Checking the error queue
 
-Since `UserException`s don't represent bugs in the code, Async Redux puts them into the
+Since `UserException`s don't represent bugs in the code, AsyncRedux puts them into the
 store's `errors` queue. In other words, this queue is a list of `UserException`s that were thrown
 by actions, and it will be consumed by the UI (usually a modal error dialog) to show the user.
 

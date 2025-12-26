@@ -11,7 +11,7 @@ inside the `reduce()` method, such as accessing a database, calling a web servic
 a file, etc.
 
 > Note: In other Redux versions you can only do async work by using the so-called "middleware",
-> which is complex. In Async Redux you can simply return a `Future` and it works.
+> which is complex. In AsyncRedux you can simply return a `Future` and it works.
 
 &nbsp;
 
@@ -62,7 +62,7 @@ one `await` keyword.
 
 In other words, **don't return a Future if you don't need it**.
 
-If you don't follow this rule, Async Redux may seem to work ok, but will eventually misbehave.
+If you don't follow this rule, AsyncRedux may seem to work ok, but will eventually misbehave.
 
 If your reducer has no `await`s, you must return `AppState?` instead of `Future<AppState?>`,
 or simply add `await microtask;` to the start of your reducer, or return `null`.

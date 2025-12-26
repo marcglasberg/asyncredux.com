@@ -48,7 +48,7 @@ It provides both `newState` and `lastPersistedState`, so you can compare them
 and save only the difference. Or, if the state is simple, you can just save
 the whole `newState` each time.
 
-Note Async Redux will call `persistDifference` whenever the state changes,
+Note AsyncRedux will call `persistDifference` whenever the state changes,
 but never more than once every 2 seconds,
 which is the throttle period.
 All changes within this time will be collected and saved in a single call.

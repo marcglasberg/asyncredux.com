@@ -22,7 +22,7 @@ This works, but will filter the list repeatedly, once for each index.
 This is not a problem for small lists, but will become slow if the list contains thousands of users.
 
 The solution to this problem is caching the filtered list. 
-To that end, you can use the cache functionality provided by Async Redux,
+To that end, you can use the cache functionality provided by AsyncRedux,
 which is also called a "reselector".
 
 First, create a **selector** that returns the information you need:
@@ -41,7 +41,7 @@ selectUsersWithNamesStartingWith(state, text: "A")[index].name;
 Next, we have to modify the selector so that it caches the filtered list, 
 turning into a **reselector**. 
 
-Async Redux provides a few global functions which you can use, 
+AsyncRedux provides a few global functions which you can use, 
 depending on the number of states, and the number of parameters your selector needs.
 
 In this example, we have a single state and a single parameter, so we're going to use the `cache1_1`
@@ -79,7 +79,7 @@ static final _selectUsersWithNamesStartingWith = cache1_1(
 
 ## Cache syntax
 
-For the moment, Async Redux provides these ten methods that 
+For the moment, AsyncRedux provides these ten methods that 
 combine 1, or 2, or 3 states 
 with 0, 1, or 2 parameters 
 to create cached selectors:
@@ -110,21 +110,21 @@ one for each parameter.
 However, as soon as you call the selector with a **changed state**, it will delete all of its
 previous cached information, since it understands that they are no longer useful. And even if you
 don't call that selector ever again, it will delete the cached information if it detects that the
-state is no longer used in other parts of the program. In other words, Async Redux keeps the cached
+state is no longer used in other parts of the program. In other words, AsyncRedux keeps the cached
 information in <a href="https://pub.dev/packages/weak_map">weak-map</a>, so that the cache will not
 hold to old information and have a negative impact in memory usage.
 
 ## External reselect package
 
-The reselect functionality explained above is provided out-of-the-box with Async Redux. However,
-Async Redux also works perfectly with the external [reselect](https://pub.dev/packages/reselect) package.
+The reselect functionality explained above is provided out-of-the-box with AsyncRedux. However,
+AsyncRedux also works perfectly with the external [reselect](https://pub.dev/packages/reselect) package.
 
 Then, why did I care to reimplement a similar functionality? What are the differences?
 
-First, the Async Redux caches can keep any number of cached results for each selector, one for each
+First, the AsyncRedux caches can keep any number of cached results for each selector, one for each
 time the selector is called with the same states and different parameters. Meanwhile, the reselect
 package keeps a single cached result per selector.
 
-And second, the Async Redux selector discards the cached information when the state changes or is
+And second, the AsyncRedux selector discards the cached information when the state changes or is
 no longer used. Meanwhile, the reselect package will always keep the states and cached results in
 memory.

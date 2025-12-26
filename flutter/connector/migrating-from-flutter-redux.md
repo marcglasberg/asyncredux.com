@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Migrating from flutter_redux
 
-Read this page only if you are migrating from `flutter_redux` (vanilla Redux) to Async Redux.
+Read this page only if you are migrating from `flutter_redux` (vanilla Redux) to AsyncRedux.
 
 ## The converter parameter
 
@@ -18,7 +18,7 @@ constructor:
 We have already discusses the `vm` parameter, and that's the **recommended way** to provide the
 `ViewModel` to the `StoreConnector`. 
 
-However, if you are migrating from `flutter_redux` (vanilla Redux) to Async Redux, 
+However, if you are migrating from `flutter_redux` (vanilla Redux) to AsyncRedux, 
 you can keep using `flutter_redux`'s `converter` parameter:
 
 ```dart

@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # flutter_hooks
 
-How to use Async Redux with the `flutter_hooks` package?
+How to use AsyncRedux with the `flutter_hooks` package?
 
 Add the [flutter_hooks_async_redux](https://pub.dev/packages/flutter_hooks_async_redux) package to your app.
 This is a very lightweight package that provides a `useSelector` hook,

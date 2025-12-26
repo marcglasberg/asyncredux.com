@@ -7,7 +7,7 @@ sidebar_position: 2
 The connector pattern can easily be implemented with the `BuildContext` extensions,
 as [previously discussed](connector-pattern).
 
-However, Async Redux optionally provides three classes 
+However, AsyncRedux optionally provides three classes 
 to help you implement the connector pattern in a more structured way:
 
 * **`ViewModel`**: Contains only the information your dumb widget needs.
@@ -99,11 +99,11 @@ class MyCounterConnector extends StatelessWidget {
 
 The `vm` parameter is a function that when called should return a factory of type `VmFactory`:
 
-Async Redux will use the `vm` parameter to create a factory,
+AsyncRedux will use the `vm` parameter to create a factory,
 and then will use this factory to create the current view-model of type `Vm`.
 
 The current view-model will be compared with the previous view-model. In case they
-are different, Async Redux will call the `builder` and pass it the new view-model.
+are different, AsyncRedux will call the `builder` and pass it the new view-model.
 
 Finally, the `builder` will use the view-model to create the dumb widget.
 
@@ -142,7 +142,7 @@ class ViewModel extends Vm {
 }
 ```
 
-As discussed, Async Redux needs to compare the previous and current view-models.
+As discussed, AsyncRedux needs to compare the previous and current view-models.
 This means your `ViewModel` object needs to implement the `operator ==` method.
 
 If you don't, all view-models will be considered different from each other,
@@ -220,7 +220,7 @@ class Factory
 }
 ```
 
-The `fromStore` method is called automatically by Async Redux, when necessary.
+The `fromStore` method is called automatically by AsyncRedux, when necessary.
 Note it has direct access to the `state` and to all dispatch methods
 like `dispatch`, `dispatchAndWait`
 etc.

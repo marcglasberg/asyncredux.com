@@ -5,7 +5,7 @@ sidebar_position: 11
 # Dependency Injection
 
 While you can always use <a href="https://pub.dev/packages/get_it">get_it</a> or any other
-dependency injection solution, Async Redux lets you inject your dependencies directly in the
+dependency injection solution, AsyncRedux lets you inject your dependencies directly in the
 **store**, and then access them in your actions, widgets, and view-model factories.
 
 One advantage of this approach is that the dependencies are scoped to the store, 

@@ -13,17 +13,17 @@ There are three principles to Redux:
 In vanilla Redux, reducers are pure functions that synchronously transform the state, 
 while the async part is handled by middleware.
 
-In Async Redux, just the `return state.copy(...)` at the end of the `reduce()` method is the
+In AsyncRedux, just the `return state.copy(...)` at the end of the `reduce()` method is the
 pure function that synchronously transforms the state,
 while the rest of the code in the `reduce()` method is the async part.
 
 ### Features
 
-Async Redux source code is larger than vanilla Redux, but still small overall.
+AsyncRedux source code is larger than vanilla Redux, but still small overall.
 More importantly, it reduces boilerplate, so the total app code ends up smaller.
 
 People often say Redux is not worth it for small projects because of its boilerplate and limits.
-But since Async Redux is simpler and cuts most of that boilerplate,
+But since AsyncRedux is simpler and cuts most of that boilerplate,
 it can be used for projects of any size.
 
 The original vanilla Redux is very low level. 
@@ -52,9 +52,9 @@ Here are some of its problems:
   when it arrives. This would be easy if the scroll position was in the store, 
   but it must be in the `ScrollController` instead.
 
-### Why use Async Redux over the original Redux?
+### Why use AsyncRedux over the original Redux?
 
-Async Redux solves all these problems and more:
+AsyncRedux solves all these problems and more:
 
 * It's easier to learn and use than vanilla Redux.
 * It includes testing tools that make even complex tests easy to write and run.

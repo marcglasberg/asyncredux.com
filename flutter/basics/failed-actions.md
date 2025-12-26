@@ -9,13 +9,13 @@ Actions that fail can simply throw errors using `throw SomeError()`.
 Throwing an error interrupts the execution of the action reducer,
 meaning it will not return a new state, and will not modify the application state.
 
-Async Redux will also automatically catch those errors and deal with them globally,
+AsyncRedux will also automatically catch those errors and deal with them globally,
 depending on the error type. We will see later how to set up this general error handling,
 but for the moment let's see how to deal with a specific type of error called a **user exception**.
 
 ## User exceptions
 
-An `UserException` is a special type of error, provided natively by Async Redux.
+An `UserException` is a special type of error, provided natively by AsyncRedux.
 It's meant to be shown to the user, and not to be considered a bug in the code.
 
 If something wrong happens, and it's something the user can fix,
@@ -69,7 +69,7 @@ After that, developers only need to throw `UserExceptions`  in their code to sho
 
 ## Showing error messages
 
-Async Redux includes a built-in error dialog.
+AsyncRedux includes a built-in error dialog.
 To use it, wrap your home page with `UserExceptionDialog`, below both `StoreProvider` and `MaterialApp`:
 
 ```dart

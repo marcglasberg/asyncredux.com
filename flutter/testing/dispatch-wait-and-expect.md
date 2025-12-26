@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Dispatch, wait and expect
 
-Testing an Async Redux app generally involves these steps, in order:
+Testing an AsyncRedux app generally involves these steps, in order:
 
 1. Set up the store and some initial state.
 2. Dispatch actions.

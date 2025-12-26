@@ -24,6 +24,6 @@ Future<AppState> reduce() async {
 In this example, the code that handles the database interaction is not in the reducer itself.
 It is kept inside the DAO, in the `loadSomething` method.
 
-To see some complete examples of using Async Redux with DAOs, check out these GitHub repos:
+To see some complete examples of using AsyncRedux with DAOs, check out these GitHub repos:
 * [SameAppDifferentTech - Flutter with Redux](https://github.com/marcglasberg/SameAppDifferentTech/blob/main/MobileAppFlutterRedux/README.md) 
 * [Redux App Example](https://github.com/marcglasberg/redux_app_example) 

@@ -23,7 +23,7 @@ Then, in your widget, if you want to pop the current screen
 only if the saving succeeded, use `status.isCompletedOk`:
 
 ```dart
-var status = await dispatch(SaveAction());
+var status = await dispatchAndWait(SaveAction());
 if (status.isCompletedOk) Navigator.pop(context); // Here! 
 ```
 

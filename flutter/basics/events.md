@@ -29,7 +29,7 @@ There are also situations where no controller is involved,
 but you still need to perform a one time action 
 such as opening a dialog or hiding the keyboard.
 
-Async Redux solves these cases with the `Evt` class, which introduces *events*.
+AsyncRedux solves these cases with the `Evt` class, which introduces *events*.
 Events are single use notifications used to trigger side effects in widgets.
 They differ from regular state values because once read they are automatically consumed,
 so they only trigger once.
@@ -137,11 +137,11 @@ Try running the:
 
 <hr></hr>
 
-This concludes the basics of Async Redux. You now know how to create and read the state,
+This concludes the basics of AsyncRedux. You now know how to create and read the state,
 dispatch actions to change the state, run asynchronous actions,
 show spinners when actions are running, and error messages when they fail.
-That is enough for you to be productive with Async Redux, and create your own apps with it.
+That is enough for you to be productive with AsyncRedux, and create your own apps with it.
 
-However, if you want to become an advanced Async Redux user, continue reading the next sections.
+However, if you want to become an advanced AsyncRedux user, continue reading the next sections.
 The next one will cover advanced topics related to actions.
 

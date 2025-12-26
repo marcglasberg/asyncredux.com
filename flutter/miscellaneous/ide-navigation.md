@@ -9,7 +9,7 @@ so it is not always easy to know which reducers will run when an action is dispa
 You also have to wire reducers to actions manually, which makes it harder to move from
 the dispatching code to the reducer that handles it.
 
-With Async Redux, if you want to see what an action does, 
+With AsyncRedux, if you want to see what an action does, 
 you can simply navigate to the action in your IDE and the reducer is right there. 
 There is no need for manual wiring because reducers are methods on the action objects themselves.
                                                                                  

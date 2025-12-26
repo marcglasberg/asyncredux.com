@@ -4,7 +4,7 @@ sidebar_position: 19
 
 # Undo and Redo
 
-Async Redux makes it easy to add undo and redo features to your app.
+AsyncRedux makes it easy to add undo and redo features to your app.
 The approach is straightforward:
 
 1. Create a state observer to save states to a history list

@@ -14,11 +14,11 @@ When an action runs, it may run into problems. For example:
 * A user tries to log in with a wrong password
 * A user tries to delete an item that does not exist
 
-In Async Redux, when an action hits a problem,
+In AsyncRedux, when an action hits a problem,
 you are allowed to do the obvious thing and simply throw an error.
 In this case, we say the action **failed**.
 
-Async Redux has built in support for handling these errors.
+AsyncRedux has built in support for handling these errors.
 It lets you observe them, show them to the user, or wrap them with better descriptions.
 
 ## Showing a dialog when an action fails
@@ -289,7 +289,7 @@ The `observe()` method returns a boolean:
 
 As explained in
 [failed actions](../basics/failed-actions),
-`UserException` is a special error that Async Redux catches
+`UserException` is a special error that AsyncRedux catches
 and shows to the user in a dialog or another UI.
 
 For this to work, the `UserException` must be thrown

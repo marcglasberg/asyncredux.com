@@ -200,5 +200,5 @@ This is a suggested prompt for an AI agent:
 
 <hr></hr>
 
-Now that we know how to create the state, let's see next how to create the Async Redux **store**
+Now that we know how to create the state, let's see next how to create the AsyncRedux **store**
 that will hold it.

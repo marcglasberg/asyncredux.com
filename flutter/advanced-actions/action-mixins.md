@@ -45,7 +45,7 @@ class LoadText extends AppAction with CheckInternet, NonReentrant, Retry { ...
 ## Compatibility matrix
 
 Not all mixins can be combined. 
-Async Redux throws an exception if you try to use incompatible mixins together, 
+AsyncRedux throws an exception if you try to use incompatible mixins together, 
 and in some cases it will warn you at compile time.
 
 |                                 | Check<br/>Internet | No<br/>Dialog | Abort<br/>When<br/>No<br/>Internet | Non<br/>Reentrant | Retry | Unlimited<br/>Retries | Unlimited<br/>Retry<br/>Check<br/>Internet | Throttle | Debounce | Fresh | Optimistic<br/>Command | Optimistic<br/>Sync | Optimistic<br/>Sync<br/>WithPush | Server<br/>Push |

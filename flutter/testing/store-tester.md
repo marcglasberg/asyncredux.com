@@ -227,7 +227,7 @@ expect(storeTester.lastInfo.state.name, "Mark");
 
 ## Testing UserExceptions
 
-Since `UserException`s don't represent bugs in the code, Async Redux puts them into the
+Since `UserException`s don't represent bugs in the code, AsyncRedux puts them into the
 store's `errors` queue, and then swallows them. This is usually what you want during production,
 where errors from this queue are shown in a dialog to the user.
 But it may or may not be what you want during tests.

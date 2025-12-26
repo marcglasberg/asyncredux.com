@@ -11,7 +11,7 @@ Instead, you create a new state object with the changes you want and tell the Re
 
 The only way to do that is by **dispatching** an **action**.
 
-In Async Redux, every action is a class that extends `ReduxAction<AppState>`,
+In AsyncRedux, every action is a class that extends `ReduxAction<AppState>`,
 and it includes an abstract `reduce()` method that you need to override.
 
 The `reduce()` method is called the "reducer". 
@@ -77,13 +77,13 @@ This means your `reduce()` methods must return one of the following:
 * `Future<AppState?>` if you want the action to be **asynchronous**.
 
 In other words, 
-Async Redux determines whether an action is sync or async by checking what your `reduce()` method returns.
+AsyncRedux determines whether an action is sync or async by checking what your `reduce()` method returns.
 
-In other words, Async Redux knows if an action is synchronous or asynchronous by checking
+In other words, AsyncRedux knows if an action is synchronous or asynchronous by checking
 the return value of your `reduce()` methods. 
 
 Important: Do not return `FutureOr<AppState?>` directly. 
-If you do, Async Redux cannot know if the action is sync or async, and will throw a `StoreException`:
+If you do, AsyncRedux cannot know if the action is sync or async, and will throw a `StoreException`:
 
 ```
 Reducer should return `St?` or `Future<St?>`. 

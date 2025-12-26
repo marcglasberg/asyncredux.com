@@ -15,10 +15,10 @@ These are called "process states":
 * **Failed**: The process failed with an error.
 * **Succeeded**: The process succeeded.
 
-In Async Redux, these processes happen when actions are dispatched, which means we need a way to
+In AsyncRedux, these processes happen when actions are dispatched, which means we need a way to
 know if an action is currently being processed, if it succeeded, or if it just failed.
 
-Thankfully, this is very easy to do with Async Redux, by using the following methods:
+Thankfully, this is very easy to do with AsyncRedux, by using the following methods:
 
 * `isWaiting(actionType)`: Returns true if the given action type is currently being processed.
 * `isFailed(actionType)`: Returns true if the given action type just failed.
@@ -139,7 +139,7 @@ dispatching the action again.
 
 <hr></hr>
 
-Now, let's see how Async Redux supports interacting with widgets 
+Now, let's see how AsyncRedux supports interacting with widgets 
 that manage their own internal state,
 as well as how to trigger one-time side effects, 
 like opening a dialog or hiding the keyboard.

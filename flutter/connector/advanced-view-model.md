@@ -7,7 +7,7 @@ sidebar_position: 4
 We have already discussed how to create the `ViewModel` using the `vm` parameter.
 
 This page will discuss some advanced topics related to the `ViewModel`.
-Note you don't need to know the information on this page to use Async Redux.
+Note you don't need to know the information on this page to use AsyncRedux.
 But keep reading if you want to know everything there is to know about the `ViewModel`
 and its edge cases.
 

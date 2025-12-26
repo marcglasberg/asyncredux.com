@@ -4,17 +4,17 @@ sidebar_position: 1000
              
 # About 
 
-_Async Redux is developed by **Marcelo Glasberg**_<br></br>
+_AsyncRedux is developed by **Marcelo Glasberg**_<br></br>
 _https://github.com/marcglasberg_<br></br>
 _https://linkedin.com/in/marcglasberg_<br></br>
 _https://twitter.com/glasbergmarcelo_<br></br>
 _https://stackoverflow.com/users/3411681/marcg_<br></br>
 _https://medium.com/@marcglasberg_<br></br>
 
-*The Async Redux code is based upon packages <a href="https://pub.dev/packages/redux">redux</a> by
+*The AsyncRedux code is based upon packages <a href="https://pub.dev/packages/redux">redux</a> by
 Brian Egan, and <a href="https://pub.dev/packages/flutter_redux">flutter_redux</a> by Brian Egan and
 John Ryan. Also uses code from package <a href="https://pub.dev/packages/equatable">equatable</a> by
-Felix Angelov. The dependency injection idea in Async Redux was contributed by Craig McMahon. Special
+Felix Angelov. The dependency injection idea in AsyncRedux was contributed by Craig McMahon. Special
 thanks: Eduardo Yamauchi and Hugo Passos helped me with the async code, checking the documentation,
 testing everything and making suggestions. This work started after Thomas Burkhart explained to me
 why he didn't like Redux. Reducers as methods of action classes were shown to me by Scott Stoll and
@@ -40,7 +40,7 @@ Simon Lightfoot.*
 
 *My Medium Articles:*
 
-* <a href="https://medium.com/flutter-community/https-medium-com-marcglasberg-async-redux-33ac5e27d5f6">Async Redux: Flutter’s non-boilerplate version of Redux</a> (
+* <a href="https://medium.com/flutter-community/https-medium-com-marcglasberg-async-redux-33ac5e27d5f6">AsyncRedux: Flutter’s non-boilerplate version of Redux</a> (
   versions: <a href="https://medium.com/flutterando/async-redux-pt-brasil-e783ceb13c43">Português</a>)
 * <a href="https://medium.com/flutter-community/i18n-extension-flutter-b966f4c65df9">i18n_extension</a> (
   versions: <a href="https://medium.com/flutterando/qual-a-forma-f%C3%A1cil-de-traduzir-seu-app-flutter-para-outros-idiomas-ab5178cf0336">Português</a>)

@@ -95,7 +95,7 @@ collect metrics.
 
 ## Printing actions to the console
 
-Async Redux comes with a built-in `ConsoleActionObserver` class that you can use as
+AsyncRedux comes with a built-in `ConsoleActionObserver` class that you can use as
 a state observer. It will print all actions to the console, in yellow, like this:
 
 ```dart

@@ -5,19 +5,19 @@ sidebar_position: 1
 # Navigation
 
 Navigation in Flutter is a complex topic, and it's not directly related to state management.
-However, Async Redux lets you navigate your app by dispatching actions, 
+However, AsyncRedux lets you navigate your app by dispatching actions, 
 mainly because this makes it easy to write unit tests to test navigation.
 
-Using Async Redux for navigation is completely optional.
+Using AsyncRedux for navigation is completely optional.
 If you prefer to handle navigation in another way, you can skip this page.
 
 At the moment, navigation support is only available for *Navigator 1*.
 If you use a newer navigation package, you can create your own actions for it,
-or simply avoid using Async Redux for navigation.
+or simply avoid using AsyncRedux for navigation.
 
 # Setup
 
-Async Redux provides a `NavigateAction` that you can dispatch to navigate your Flutter app.
+AsyncRedux provides a `NavigateAction` that you can dispatch to navigate your Flutter app.
 
 To make this work, you first need to create a "navigator key" during app initialization
 and inject it into the navigation action:

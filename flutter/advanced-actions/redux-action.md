@@ -13,10 +13,10 @@ and those are **enough to be productive**.
                                        
 &nbsp;
 
-So why the long list? App development is complex, and Async Redux aims to cover a wide range 
+So why the long list? App development is complex, and AsyncRedux aims to cover a wide range 
 of real situations. Other state management tools may offer fewer features, but then you have 
 to solve those problems on your own, which is difficult. 
-Async Redux, instead, asks how it can help you, and offers solutions that work great 
+AsyncRedux, instead, asks how it can help you, and offers solutions that work great 
 because they are tightly integrated with the tool itself.
 
 ### Most important ones are:
