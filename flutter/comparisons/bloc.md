@@ -3,7 +3,7 @@ sidebar_position: 2
 ---
 
 # Comparing with Bloc
-  
+
 The claim we are going to prove:
 
 > Building your apps with **AsyncRedux** is much easier and faster than building them with **Bloc plus Cubit**.
@@ -11,16 +11,16 @@ The claim we are going to prove:
 ## The design difference
 
 What allows AsyncRedux to be so much more productive than Bloc/Cubit,
-is that AsyncRedux changes state via **classes** (called "actions"), 
+is that AsyncRedux changes state via **classes** (called "actions"),
 while Bloc/Cubit does it with **methods**.
 
-This difference may seem small, but classes are made to be extended. 
+This difference may seem small, but classes are made to be extended.
 Because of this, AsyncRedux can and does provide a load of features out-of-the-box,
 that are non-existent or hard to implement with Cubit.
 
 Classes also give you a stable, typed identifier (the action type) that you can use in many ways.
 
-Let's see the practical advantages of AsyncRedux in detail, 
+Let's see the practical advantages of AsyncRedux in detail,
 and then at the end of this page we are going to talk about the only advantage Bloc has over AsyncRedux.
 
 ## In more detail
@@ -185,7 +185,7 @@ Widget build(BuildContext context) {
 > intercept errors globally with `onError` and show a dialog, but you cannot throw errors in
 > your Cubit methods. You have to try/catch errors and use `addError()` manually.
 
-## Mixins 
+## Mixins
 
 AsyncRedux provides many built-in mixins that can be added to your actions.
 For example, suppose you want to check for internet connectivity before executing an action,
@@ -200,7 +200,7 @@ To do it with AsyncRedux:
 * Retry the action using the `with Retry` mixin.
 * You don't need to do anything to show a loading indicator, it's automatic.
 * Also, no need to do anything to show an error in the screen, it's automatic.
-       
+
 This is what the action looks like:
 
 ```dart 
@@ -328,7 +328,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     emit(SearchLoading());
-    final results = await repository.search(event.query);
+    final results = await repo.search(event.query);
     emit(SearchLoaded(results));
   }
 }
@@ -408,39 +408,36 @@ Here is how you would change the text in a `TextField` after an action is dispat
 class AppState {
   final Evt<String> changeEvt;
   AppState({Evt<String>? changeEvt}) : changeEvt = changeEvt ?? Evt<String>.spent();
-  
-  AppState copy({Evt<String>? changeEvt}) 
-    => AppState(changeEvt: changeEvt ?? this.changeEvt);
+  AppState copy({Evt<String>? changeEvt}) => AppState(changeEvt: changeEvt ?? this.changeEvt);
 }
 
 // The action
 class ChangeText extends AppAction {    
   Future<AppState> reduce() async {
-    String newText = await fetchTextFromApi();
-    return state.copy(changeEvt: Evt<String>(newText)); // Here!
+    String newText = await repo.fetchTextFromApi();
+    return state.copy(changeEvt: Evt<String>(newText)); 
   }
 }
 
-// In the widget    
+// The widget    
 Widget build(BuildContext context) {
   String? newText = context.event((st) => st.changeEvt);
   if (newText != null) controller.text = newText;
-  
   return TextField(controller: controller);
 }
 ```
 
-And this is how you would do it in Bloc/Cubit. 
-There is no built-in equivalent to AsyncRedux `Evt`, 
-so you have to add extra state fields (a token counter) 
+And this is how you would do it in Bloc/Cubit.
+There is no built-in equivalent to AsyncRedux `Evt`,
+so you have to add extra state fields (a token counter)
 and wire up a `BlocListener` to perform the one-time side effect.
 
 ```dart
+// The state
 class AppState {
   final String changeText;
   final int changeTextToken;
   const AppState({this.changeText = '', this.changeTextToken = 0});
-
   AppState copyWith({String? changeText, int? changeTextToken}) 
     => AppState(
       changeText: changeText ?? this.changeText,
@@ -448,11 +445,11 @@ class AppState {
     );  
 }
 
+// The Cubit
 class AppCubit extends Cubit<AppState> {
   AppCubit() : super(const AppState());
-
   Future<void> changeText() async {
-    final newText = await fetchTextFromApi();
+    final newText = await repo.fetchTextFromApi();
     emit(state.copyWith(
       changeText: newText,
       changeTextToken: state.changeTextToken + 1,
@@ -460,7 +457,7 @@ class AppCubit extends Cubit<AppState> {
   }
 }
 
-// In the widget
+// The widget
 Widget build(BuildContext context) {
   return BlocListener<AppCubit, AppState>(
     listenWhen: (prev, next) => prev.changeTextToken != next.changeTextToken,
@@ -468,6 +465,275 @@ Widget build(BuildContext context) {
       controller.text = state.changeText;
     },
     child: TextField(controller: controller),
+  );
+}
+```
+
+## Testing
+
+Here we show how a complex business flow can be tested with AsyncRedux, without involving any UI code.
+
+Let's create some state that contains a `Product` with a name and price.
+We have two actions: `Search`, which searches for a product by name;
+and `SavePrice`, which saves a new price for the product.
+
+```dart
+// Domain model
+class Product {
+  final String name;
+  final double price;
+  const Product({required this.name, required this.price});
+  Product copyWith({String? name, double? price}) => Product(
+    name: name ?? this.name,
+    price: price ?? this.price,
+  );
+}
+
+// App state
+class AppState {
+  final Product? product;
+  const AppState({this.product});
+  AppState copy({Product? product}) => AppState(product: product ?? this.product);  
+}
+
+// Action
+class Search extends ReduxAction<AppState> {
+  final ProductRepo repo;
+  final String name;
+  Search({required this.repo, required this.name});
+  
+  Future<AppState?> reduce() async {
+    final product = await repo.searchByName(name);
+    return state.copy(product: product);
+  }
+}
+
+// Action
+class SavePrice extends ReduxAction<AppState> {
+  final String name;
+  final double price;
+  SavePrice({required this.name, required this.price});
+  
+  Future<AppState?> reduce() async {
+    if (price < 0) throw UserException('Price cannot be negative');
+    await repo.savePrice(name: name, price: price);    
+    return state.copy(product: Product(name: name, price: price));
+  }
+}
+```
+
+Now, here is the test we are going to create:
+
+> The test simulates a user searching for a product by name, waiting for the asynchronous search to finish,
+> and verifying that the product is loaded into the state.
+> It then simulates editing the product price and saving it,
+> again waiting for the save action to complete successfully
+> and checking that the state reflects the new price.
+> Then, the test performs another search to confirm
+> that the updated price was persisted and is returned by the repository.
+> Finally, we test that trying to save a negative invalid price results in an error
+> that can be shown in the UI, and that the price does not change in the state.
+
+```dart
+void main() {
+  test('Search loads product, save updates price, reload confirms persistence, '
+    'and saving an invalid price fails without changing state.', () async {
+  
+    final store = Store<AppState>(initialState: AppState());
+    final repo = SimulatedProductRepo({'Coffee': const Product(name: 'Coffee', price: 10.0)});
+
+    // 1. User taps Search     
+    await store.dispatchAndWait(Search(name: 'Coffee'));    
+    expect(store.state.product, Product(name: 'Coffee', price: 10.0));
+    
+    // 2. User edits price in the dialog and taps Save 
+    await store.dispatchAndWait(SavePrice(name: 'Coffee', price: 12.5));
+    expect(store.state.product, Product(name: 'Coffee', price: 12.5));              
+
+    // 3) User searches again to confirm persisted value
+    final reloadStatus = await store.dispatchAndWait(Search(name: 'Coffee'));
+    expect(store.state.product, Product(name: 'Coffee', price: 12.5));       
+    
+    // 6. When user tries to save an invalid negative price, state is not changed
+    final status = await store.dispatchAndWait(SavePrice(name: 'Coffee', price: -5.0));    
+    expect(status.isCompletedFailed, isTrue);
+    expect(store.state.product, Product(name: 'Coffee', price: 12.5));
+  });
+}
+```
+
+Ok, now let's see how to do the same test with Bloc/Cubit.
+
+In Bloc/Cubit, loading flags and errors are usually part of the state,
+so they are also something you test.
+
+Below is a minimal Cubit version that matches the same flow and the same expectations
+as the AsyncRedux version.
+
+```dart
+// App state
+class AppState {
+  final Product? product;
+  final bool isSearching;
+  final bool isSaving;
+  final String? error;
+
+  const AppState({
+    this.product,
+    this.isSearching = false,
+    this.isSaving = false,
+    this.error,
+  });
+
+  AppState copyWith({
+    Product? product,
+    bool? isSearching,
+    bool? isSaving,
+    String? error,
+    bool clearError = false,
+  }) {
+    return AppState(
+      product: product ?? this.product,
+      isSearching: isSearching ?? this.isSearching,
+      isSaving: isSaving ?? this.isSaving,
+      error: clearError ? null : (error ?? this.error),
+    );
+  }
+}
+
+// Cubit
+class AppCubit extends Cubit<AppState> {
+  final ProductRepo repo;
+
+  AppCubit(this.repo) : super(const AppState());
+
+  Future<void> search(String name) async {
+    emit(state.copyWith(isSearching: true, clearError: true));
+    try {
+      final product = await repo.searchByName(name);
+      emit(state.copyWith(product: product, isSearching: false));
+    } catch (e) {
+      emit(state.copyWith(isSearching: false, error: e.toString()));
+    }
+  }
+
+  Future<void> savePrice({required String name, required double price}) async {
+    if (price < 0) {
+      emit(state.copyWith(error: 'Price cannot be negative'));
+      return;
+    }
+
+    emit(state.copyWith(isSaving: true, clearError: true));
+    try {
+      await repo.savePrice(name: name, price: price);
+      emit(state.copyWith(
+        product: Product(name: name, price: price),
+        isSaving: false,
+      ));
+    } catch (e) {
+      emit(state.copyWith(isSaving: false, error: e.toString()));
+    }
+  }
+}
+```
+
+And here is the equivalent test in Bloc/Cubit:
+
+```dart
+void main() {
+  test(
+    'Search loads product, save updates price, reload confirms persistence, '
+    'and saving an invalid price fails without changing state.',
+    () async {
+      final cubit = AppCubit(repo);
+      addTearDown(cubit.close);
+      final repo = SimulatedProductRepo({'Coffee': const Product(name: 'Coffee', price: 10.0)});
+
+      // 1. User taps Search. Spinner shows while searching.  
+      final searchFuture = cubit.search('Coffee');
+      expect(cubit.state.isSearching, isTrue); // spinner on
+      await searchFuture;
+      
+      // 2. Verify product loaded and spinner off
+      expect(cubit.state.isSearching, isFalse); 
+      expect(cubit.state.error, isNull);
+      expect(cubit.state.product?.name, 'Coffee');
+      expect(cubit.state.product?.price, 10.0);
+
+      // 3. User edits price in the dialog and taps Save. Spinner shows while saving.
+      final saveFuture = cubit.savePrice(name: 'Coffee', price: 12.5);
+      expect(cubit.state.isSaving, isTrue); // spinner on
+      await saveFuture;
+      
+      // 4. Verify price updated and spinner off
+      expect(cubit.state.isSaving, isFalse); // spinner off
+      expect(cubit.state.error, isNull);
+      expect(cubit.state.product?.price, 12.5);
+
+      // 5. User searches again to confirm persisted value
+      await cubit.search('Coffee');
+      expect(cubit.state.error, isNull);
+      expect(cubit.state.product?.price, 12.5);
+
+      // 6. When user tries to save an invalid negative price, state is not changed
+      await cubit.savePrice(name: 'Coffee', price: -5.0);
+      expect(cubit.state.product?.price, 12.5);
+      
+      // 7. Verify error is set
+      expect(cubit.state.error, 'Price cannot be negative');
+    },
+  );
+}
+```
+
+And here is the same test using the recommended `bloc_test` package:
+
+```dart
+void main() {
+  blocTest<AppCubit, AppState>(
+    'Search loads product, save updates price, reload confirms persistence, '
+    'and saving an invalid price fails without changing state.',
+    build: () {
+      final repo = SimulatedProductRepo({'Coffee': const Product(name: 'Coffee', price: 10.0)});
+      return AppCubit(repo);
+    },
+    act: (cubit) async {
+      await cubit.search('Coffee');
+      await cubit.savePrice(name: 'Coffee', price: 12.5);
+      await cubit.search('Coffee');
+      await cubit.savePrice(name: 'Coffee', price: -5.0);
+    },
+    expect: () => [
+      // 1) Search started
+      const AppState(isSearching: true),
+
+      // 2) Search finished
+      const AppState(product: Product(name: 'Coffee', price: 10.0)),
+
+      // 3) Save started
+      const AppState(
+        product: Product(name: 'Coffee', price: 10.0),
+        isSaving: true,
+      ),
+
+      // 4) Save finished
+      const AppState(product: Product(name: 'Coffee', price: 12.5)),
+
+      // 5) Search again started
+      const AppState(
+        product: Product(name: 'Coffee', price: 12.5),
+        isSearching: true,
+      ),
+
+      // 6) Search again finished
+      const AppState(product: Product(name: 'Coffee', price: 12.5)),
+
+      // 7) Invalid save sets error, keeps price
+      const AppState(
+        product: Product(name: 'Coffee', price: 12.5),
+        error: 'Price cannot be negative',
+      ),
+    ],
   );
 }
 ```
@@ -605,17 +871,15 @@ onPressed: () async {
 ```
 
 [//]: # (## Create your own mixins)
+
 [//]: # (ABORT-DISPATCH)
 
-[//]: # (## Persistence)
-[//]: # (HOW DOES CUBIT HANDLE LOCAL PERSISTENCE)
-
-[//]: # (## Testing)
-[//]: # (HOW DOES CUBIT HANDLE TESTING?)
-
 [//]: # (## Logging and Metrics)
+
 [//]: # (ASYNC REDUX KNOWS ABOUT THE LIFECYCLE OF ACTIONS AND CAN LOG THEM AUTOMATICALLY.)
+
 [//]: # (HOW DOES CUBIT HANDLE LOGGING AND METRICS?)
 
 [//]: # (## Conclusion)
+
 [//]: # (AsyncRedux is more powerful than pure Bloc, while being simpler than Bloc plus Cubit.)
