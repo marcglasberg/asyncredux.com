@@ -25,13 +25,12 @@ Since May 2025, it's also available for React under the name [Kiss State](https:
 
 ### How does it compare?
 
-AsyncRedux is a powerful alternative to Bloc, MobX, and the original vanilla Redux, but it’s
-designed to be much easier to use than those. Check out [this page](https://asyncredux.com/flutter/miscellaneous/comparisons) to
-compare AsyncRedux with the original Redux.
+Check out [this page](./comparisons/bloc) to compare AsyncRedux with Bloc,
+and [this page](./comparisons/vanilla-redux) to compare it with the original Redux.
 
-AsyncRedux is a full state management solution and doesn't compete with packages like Provider and
-Flutter Hooks, which aren't full solutions. Instead, it
-can [work with them](https://asyncredux.com/flutter/category/other-packages) if you want, though it's not required.
+Note AsyncRedux doesn't compete with packages like Provider and Flutter Hooks, 
+which aren't full state management solutions. 
+Instead, it can [work with them](https://asyncredux.com/flutter/category/other-packages) if you want, though it's not required.
 
 ## Installation
 
