@@ -17,11 +17,7 @@ while Bloc/Cubit does it with **methods**.
 This difference may seem small, but classes are made to be extended.
 Because of this, AsyncRedux can and does provide a load of features out-of-the-box,
 that are non-existent or hard to implement with Cubit.
-
 Classes also give you a stable, typed identifier (the action type) that you can use in many ways.
-
-Let's see the practical advantages of AsyncRedux in detail,
-and then at the end of this page we are going to talk about the only advantage Bloc has over AsyncRedux.
 
 ## In more detail
 
@@ -53,6 +49,11 @@ and to show an error message if it fails,
 you can use the `isWaiting` and `isFailed` methods provided by AsyncRedux:
 
 ```dart
+// Widget
+if (context.isFailed(Increment)) return Text('Error');
+else if (context.waiting(Increment)) return CircularProgressIndicator();
+else return Text('Counter: ${context.state.counter}');
+
 // State (no need to add loading or error fields to the state)
 class AppState {
   final int counter;
@@ -69,11 +70,6 @@ class Increment extends AppAction {
     return state.copy(counter: state.counter + amount);
   }
 }
-
-// Widget
-if (context.isFailed(Increment)) return Text('Error');
-else if (context.waiting(Increment)) return CircularProgressIndicator();
-else return Text('Counter: ${context.state.counter}');
 ```
 
 While in Bloc/Cubit, you need to implement this logic manually,
@@ -81,6 +77,12 @@ by adding `isLoading` and `error` fields to your state,
 and updating them in your Cubit methods:
 
 ```dart
+// Widget
+final state = context.watch<CounterCubit>().state;
+if (state.error != null) return Text('Error');
+else if (state.isLoading) return CircularProgressIndicator();
+else return Text('Counter: ${state.counter}');
+
 // State (needs isLoading and error fields)
 class CounterState {
   final int counter;
@@ -89,7 +91,7 @@ class CounterState {
   CounterState({required this.counter, required this.isLoading, this.error});
 }
 
-// Cubit
+// Cubit (needs to set isLoading and error fields)
 class CounterCubit extends Cubit<CounterState> {
   CounterCubit() : super(CounterState(counter: 0, isLoading: false));
 
@@ -103,12 +105,6 @@ class CounterCubit extends Cubit<CounterState> {
     }
   }
 }
-
-// Widget
-final state = context.watch<CounterCubit>().state;
-if (state.error != null) return Text('Error');
-else if (state.isLoading) return CircularProgressIndicator();
-else return Text('Counter: ${state.counter}');
 ```
 
 In other words, AsyncRedux provides built-in support for loading indicators and error handling,
