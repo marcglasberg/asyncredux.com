@@ -25,12 +25,13 @@ Since May 2025, it's also available for React under the name [Kiss State](https:
 
 ### How does it compare?
 
-Check out [this page](./comparisons/bloc) to compare AsyncRedux with Bloc,
-and [this page](./comparisons/vanilla-redux) to compare it with the original Redux.
+Check out [this page](https://asyncredux.com/flutter/comparisons/bloc) to compare AsyncRedux with Bloc,
+and [this page](https://asyncredux.com/flutter/comparisons/vanilla-redux) to compare it with the original Redux.
 
-Note AsyncRedux doesn't compete with packages like Provider and Flutter Hooks, 
-which aren't full state management solutions. 
-Instead, it can [work with them](https://asyncredux.com/flutter/category/other-packages) if you want, though it's not required.
+Note AsyncRedux doesn't compete with packages like Provider and Flutter Hooks,
+which aren't full state management solutions.
+Instead, it can [work with them](https://asyncredux.com/flutter/category/other-packages) if you want, 
+though it's not required.
 
 ## Installation
 
