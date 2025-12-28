@@ -10,23 +10,11 @@ The claim we are going to prove:
 
 ## The design difference
 
-What allows AsyncRedux to be so much more productive than Bloc/Cubit,
-is that AsyncRedux changes state via **classes** (called "actions"),
-while Bloc/Cubit does it with **methods**.
-
-This difference may seem small, but classes are made to be extended.
-Because of this, AsyncRedux can and does provide a load of features out-of-the-box,
-that are non-existent or hard to implement with Cubit.
-Classes also give you a stable, typed identifier (the action type) that you can use in many ways.
-
-## In more detail
-
-Both AsyncRedux and Bloc implement an MVI architecture.
+The code to trigger a state change is similar,
+because both AsyncRedux and Bloc/Cubit implement an MVI architecture:
 Your widgets don't know **how** the state is changed, but only **what** should change.
 
-The code to trigger a state change from your widgets is very similar.
-In AsyncRedux you dispatch actions, while in Cubit you call methods,
-but in both you type a name and payload that describe what should happen:
+For example, to increment a counter by an amount of 1:
 
 ```dart
 // AsyncRedux
@@ -36,10 +24,15 @@ dispatch(Increment(amount: 1));
 counterCubit.increment(amount: 1);
 ```
 
-In AsyncRedux, actions are classes that extend your `AppAction`,
-while Bloc/Cubit just uses regular methods inside your Cubit class.
+As you can see, AsyncRedux changes state via **classes** (called "actions"),
+while Bloc/Cubit just uses regular **methods** inside your Cubit class.
+That's the main design difference.
 
-Actions change the state by returning a new state from their `reduce()` method,
+Since classes are made to be extended, and give you a stable identifier (the action type), 
+it allows AsyncRedux to provide a load of features out-of-the-box,
+that are non-existent or hard to implement with Cubit.
+
+Actions extend your `AppAction`, and change the state by returning a new state from their `reduce()` method,
 while Cubit methods change the state by calling `emit(newState)`.
 
 ## Loading and error indicators
