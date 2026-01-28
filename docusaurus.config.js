@@ -127,7 +127,7 @@ const config = {
             title: 'My links',
             items: [
               {
-                label: 'Website',
+                label: 'Personal website',
                 href: 'https://glasberg.dev',
               },
               {
@@ -160,8 +160,8 @@ const config = {
                 href: 'https://kissforreact.org/',
               },
               {
-                label: 'MyText.ai',
-                href: 'https://mytext.ai'
+                "label": "Bloc Superpowers",
+                "href": "https://blocsuperpowers.org"
               },
               {
                 label: 'Translate your Flutter app',
