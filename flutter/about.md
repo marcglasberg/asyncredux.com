@@ -4,7 +4,7 @@ sidebar_position: 1000
              
 # About 
 
-_AsyncRedux is developed by **Marcelo Glasberg**_<br></br>
+_AsyncRedux is created by **Marcelo Glasberg**_<br></br>
 _https://github.com/marcglasberg_<br></br>
 _https://linkedin.com/in/marcglasberg_<br></br>
 _https://twitter.com/glasbergmarcelo_<br></br>
