@@ -5,17 +5,18 @@ sidebar_position: 6
 # Control mixins
 
 The mixins explained in this page help you control when and how actions run.
-They let you prevent duplicate work, retry on failure, limit how often actions execute, 
+They let you prevent duplicate work, retry on failure, limit how often actions execute,
 and skip work when data is already up to date.
 
-| Mixin                         | Purpose                                                                   | Overrides                     |
-|-------------------------------|---------------------------------------------------------------------------|-------------------------------|
-| `NonReentrant`                | Aborts if the same action is already running                              | `abortDispatch`               |
-| `Retry`                       | Retries the action on error with exponential backoff                      | `wrapReduce`                  |
-| `UnlimitedRetries`            | Modifier for `Retry` to retry indefinitely                                | (requires `Retry`)            |
-| `Throttle`                    | Limits action execution to at most once per throttle period               | `abortDispatch`, `after`      |
-| `Debounce`                    | Delays execution until after a period of inactivity                       | `wrapReduce`                  |
-| `Fresh`                       | Skips action if data is still fresh (not stale)                           | `abortDispatch`, `after`      |
+| Mixin              | Purpose                                                     | Overrides                |
+|--------------------|-------------------------------------------------------------|--------------------------|
+| `NonReentrant`     | Aborts if the same action is already running                | `abortDispatch`          |
+| `Retry`            | Retries the action on error with exponential backoff        | `wrapReduce`             |
+| `UnlimitedRetries` | Modifier for `Retry` to retry indefinitely                  | (requires `Retry`)       |
+| `Throttle`         | Limits action execution to at most once per throttle period | `abortDispatch`, `after` |
+| `Debounce`         | Delays execution until after a period of inactivity         | `wrapReduce`             |
+| `Fresh`            | Skips action if data is still fresh (not stale)             | `abortDispatch`, `after` |
+| `Polling`          | Periodically dispatches an action at a fixed interval       | `wrapReduce`             |
 
 ---
 
@@ -411,5 +412,210 @@ class LoadUserSettings extends AppAction with Fresh {
 Here, `LoadUserProfile('123')` and `LoadUserSettings('123')` share one fresh period
 because they return the same key.
 
+---
+
+## Polling
+
+The `Polling` mixin periodically dispatches an action at a fixed interval.
+This is useful when you need to keep data fresh by fetching it from a server
+at regular intervals, such as refreshing prices, checking for new messages,
+or monitoring wallet balances.
+
+```dart
+class PollPrices extends AppAction with Polling {
+  @override final Poll poll;
+  PollPrices([this.poll = Poll.once]);
+
+  @override
+  ReduxAction<AppState> createPollingAction() => PollPrices();
+
+  @override
+  Future<AppState?> reduce() async {
+    final prices = await api.getPrices();
+    return state.copy(prices: prices);
+  }
+}
+
+// Run only once 
+dispatch(PollPrices());
+
+// Start polling
+dispatch(PollPrices(Poll.start));
+
+// Stop polling
+dispatch(PollPrices(Poll.stop));
+```
+
+### Poll interval
+
+The `pollInterval` is the delay between polling ticks. The default is 10 seconds.
+Override it to change the frequency:
+
+```dart
+@override
+Duration get pollInterval => const Duration(minutes: 5);
+```
+
+Note: Instead of using a periodic timer, each run schedules the next one,
+so the polling interval is measured from the **end** of each run.
+
+### Poll values
+
+The `poll` field controls the behavior of each dispatch:
+
+| Value                   | Behavior                                                                                                                        |
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `Poll.start`            | Starts polling and runs `reduce` immediately. If polling is already active for this key, does nothing.                          |
+| `Poll.stop`             | Cancels the polling for this key and skips `reduce`.                                                                            |
+| `Poll.runNowAndRestart` | Runs `reduce` immediately and restarts the polling timer from that moment. If polling is not active, behaves like `Poll.start`. |
+| `Poll.once`             | Runs `reduce` immediately, without affecting the polling (does not start or stop the timer).                                    |
+
+### Option 1: Single action for everything
+
+Use one action class that both controls polling and does the work.
+The `createPollingAction` returns the same action type with `Poll.once`
+(or with no poll field at all, since `Poll.once` is the default),
+so timer ticks run the action without restarting the timer:
+
+```dart
+class LoadBalanceAction extends AppAction with Polling {
+  final WalletAddress address;
+  @override final Poll poll;
+
+  LoadBalanceAction(this.address, {this.poll = Poll.once});
+
+  @override
+  Duration get pollInterval => const Duration(minutes: 5);
+
+  @override
+  ReduxAction<AppState> createPollingAction() => LoadBalanceAction(address);
+
+  @override
+  Future<AppState?> reduce() async {
+    final balance = await api.getBalance(address);
+    return state.copy(balance: balance);
+  }
+}
+
+// Run only once
+dispatch(LoadBalanceAction(address));
+
+// Start polling
+dispatch(LoadBalanceAction(address, poll: Poll.start));
+
+// Stop polling
+dispatch(LoadBalanceAction(address, poll: Poll.stop));
+```
+
+### Option 2: Separate action types
+
+Use one action to control polling, and a different action to do the work.
+
+```dart
+class PollBalance extends AppAction with Polling {
+  final WalletAddress address;
+  @override final Poll poll;
+
+  PollBalance(this.address, {this.poll = Poll.once});
+
+  @override
+  Duration get pollInterval => const Duration(minutes: 5);
+
+  @override
+  ReduxAction<AppState> createPollingAction() => LoadBalanceAction(address);
+
+  @override
+  Future<AppState?> reduce() async {
+    await dispatchAndWait(LoadBalanceAction(address));
+    return null;
+  }
+}
+
+class LoadBalanceAction extends AppAction {
+  final WalletAddress address;
+  LoadBalanceAction(this.address);
+
+  @override
+  Future<AppState?> reduce() async {
+    final balance = await api.getBalance(address);
+    return state.copy(balance: balance);
+  }
+}
+
+// Start polling
+dispatch(PollBalance(address, poll: Poll.start));
+
+// Stop polling
+dispatch(PollBalance(address, poll: Poll.stop));
+```
+
+### Polling keys
+
+By default, each action type gets its own independent polling timer,
+keyed by its `runtimeType`. All instances of the same action type share one timer.
+
+#### Using pollingKeyParams to separate instances
+
+If you need separate polling timers per id, address, or some other field,
+override `pollingKeyParams`. Actions of the same type but with different
+`pollingKeyParams` values get independent timers.
+
+```dart
+class PollBalance extends AppAction with Polling {
+  final WalletAddress address;
+  @override final Poll poll;
+
+  PollBalance(this.address, {this.poll = Poll.once});
+
+  // Each address gets its own independent polling timer.
+  @override
+  Object? pollingKeyParams() => address;
+
+  @override
+  ReduxAction<AppState> createPollingAction() =>
+      LoadBalanceAction(address);
+
+  @override
+  Future<AppState?> reduce() async {
+    await dispatchAndWait(LoadBalanceAction(address));
+    return null;
+  }  
+}
+
+// These start two independent polling timers:
+dispatch(PollBalance(address1, poll: Poll.start));
+dispatch(PollBalance(address2, poll: Poll.start));
+
+// Stop only address1:
+dispatch(PollBalance(address1, poll: Poll.stop));
+```
+
+You can also return more than one field by using a tuple:
+
+```dart
+// Each (userId, walletId) pair gets its own timer.
+Object? pollingKeyParams() => (userId, walletId);
+```
+
+#### Sharing a timer across action types
+
+If you want different action types to share the same polling timer,
+override `computePollingKey` and return any key you want:
+
+```dart
+class PollPrices extends AppAction with Polling {
+  Object computePollingKey() => 'market-data';
+  ...
+}
+
+class PollVolumes extends AppAction with Polling {
+  Object computePollingKey() => 'market-data'; // same key
+  ...
+}
+```
+
+With this setup, starting `PollPrices` and then `PollVolumes` means
+`PollVolumes` is a no-op (the key is already active). Stopping either
+one cancels the shared timer.
 
 
