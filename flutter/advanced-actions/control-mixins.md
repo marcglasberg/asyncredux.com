@@ -422,14 +422,11 @@ at regular intervals, such as refreshing prices, checking for new messages,
 or monitoring wallet balances.
 
 ```dart
-class PollPrices extends AppAction with Polling {
-  @override final Poll poll;
+class PollPrices extends AppAction with Polling {  
   PollPrices([this.poll = Poll.once]);
 
-  @override
   ReduxAction<AppState> createPollingAction() => PollPrices();
 
-  @override
   Future<AppState?> reduce() async {
     final prices = await api.getPrices();
     return state.copy(prices: prices);
@@ -452,7 +449,6 @@ The `pollInterval` is the delay between polling ticks. The default is 10 seconds
 Override it to change the frequency:
 
 ```dart
-@override
 Duration get pollInterval => const Duration(minutes: 5);
 ```
 
@@ -480,17 +476,14 @@ so timer ticks run the action without restarting the timer:
 ```dart
 class LoadBalanceAction extends AppAction with Polling {
   final WalletAddress address;
-  @override final Poll poll;
+  final Poll poll;
 
   LoadBalanceAction(this.address, {this.poll = Poll.once});
 
-  @override
   Duration get pollInterval => const Duration(minutes: 5);
 
-  @override
   ReduxAction<AppState> createPollingAction() => LoadBalanceAction(address);
 
-  @override
   Future<AppState?> reduce() async {
     final balance = await api.getBalance(address);
     return state.copy(balance: balance);
@@ -514,17 +507,14 @@ Use one action to control polling, and a different action to do the work.
 ```dart
 class PollBalance extends AppAction with Polling {
   final WalletAddress address;
-  @override final Poll poll;
+  final Poll poll;
 
   PollBalance(this.address, {this.poll = Poll.once});
 
-  @override
   Duration get pollInterval => const Duration(minutes: 5);
 
-  @override
   ReduxAction<AppState> createPollingAction() => LoadBalanceAction(address);
 
-  @override
   Future<AppState?> reduce() async {
     await dispatchAndWait(LoadBalanceAction(address));
     return null;
@@ -535,7 +525,6 @@ class LoadBalanceAction extends AppAction {
   final WalletAddress address;
   LoadBalanceAction(this.address);
 
-  @override
   Future<AppState?> reduce() async {
     final balance = await api.getBalance(address);
     return state.copy(balance: balance);
@@ -563,19 +552,16 @@ override `pollingKeyParams`. Actions of the same type but with different
 ```dart
 class PollBalance extends AppAction with Polling {
   final WalletAddress address;
-  @override final Poll poll;
+  final Poll poll;
 
   PollBalance(this.address, {this.poll = Poll.once});
 
   // Each address gets its own independent polling timer.
-  @override
   Object? pollingKeyParams() => address;
 
-  @override
   ReduxAction<AppState> createPollingAction() =>
       LoadBalanceAction(address);
 
-  @override
   Future<AppState?> reduce() async {
     await dispatchAndWait(LoadBalanceAction(address));
     return null;

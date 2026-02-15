@@ -37,11 +37,11 @@ class LoadText extends AppAction with CheckInternet, NonReentrant, Retry { ...
 | [Throttle](./control-mixins)                     | Limits action execution to at most once per throttle period               | `abortDispatch`, `after`      |
 | [Debounce](./control-mixins)                     | Delays execution until after a period of inactivity                       | `wrapReduce`                  |
 | [Fresh](./control-mixins)                        | Skips action if data is still fresh (not stale)                           | `abortDispatch`, `after`      |
+| [Polling](./control-mixins)                      | Adds periodic polling to any action                                       | `wrapReduce`                  |
 | [OptimisticCommand](./optimistic-mixins)         | Applies state changes optimistically, rolls back on error                 | `reduce`                      |
 | [OptimisticSync](./optimistic-mixins)            | Optimistic updates with coalescing; merges rapid dispatches into one sync | `reduce`                      |
 | [OptimisticSyncWithPush](./optimistic-mixins)    | Like `OptimisticSync` but with revision tracking for server pushes        | `reduce`                      |
 | [ServerPush](./optimistic-mixins)                | Handles server-pushed updates for `OptimisticSyncWithPush`                | `reduce`                      |
-| [Polling](./control-mixins)                      | Adds periodic polling to any action                                       | `wrapReduce`                  |
 
 ## Compatibility matrix
 
