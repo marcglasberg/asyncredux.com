@@ -207,33 +207,39 @@ class MyAction extends AppAction {
 
 But this would need to be added to all actions that use Firebase.
 
-A better way is to handle it globally with a `GlobalWrapError`, when creating the store:
+A better way is to handle it globally with a `GlobalErrorObserver`, when creating the store:
 
-```dart              
+```dart
 var store = Store<AppState>(
   initialState: AppState.initialState(),
-  globalWrapError: MyGlobalWrapError(),
+  globalErrorObserver: (store) => MyErrorObserver(),
 );
 
-class MyGlobalWrapError extends GlobalWrapError {
-  
-  Object? wrap(error, stackTrace, action) {
+class MyErrorObserver extends GlobalErrorObserver<AppState> {
+
+  @override
+  Object? observe() {
     if ((error is PlatformException) && (error.code == "Error performing get") &&
-       (error.message == 'Failed to get document because the client is offline')) { 
+       (error.message == 'Failed to get document because the client is offline')) {
       return UserException('Check your internet connection').addCause(error);
-    } else {  
+    } else {
       return error;
+    }
   }
-}    
+}
 ```
 
-The `GlobalWrapError` receives all errors.
-It may return a `UserException`,
+The `GlobalErrorObserver` receives all errors thrown by actions.
+Its `observe()` method may return a `UserException`,
 or return the original error unchanged,
 or return `null` to disable (swallow) the error.
 
-> Note: The global wrapper runs **after** `wrapError()` from the action,
-> and **before** the `ErrorObserver` described below.
+Inside `observe()`, you can access `error`, `originalError`, `stackTrace`,
+`action`, and `store`. See the
+[Error Monitoring](../miscellaneous/error-monitoring) page for complete details
+and a full example with environment-specific observers.
+
+> Note: The `GlobalErrorObserver` runs **after** `wrapError()` from the action.
 
 ## Disabling errors
 
@@ -242,48 +248,20 @@ To disable an error inside `wrapError()`, return `null`.
 For example, if you want to swallow errors of type `MyException`:
 
 ```dart
-wrapError(error, stacktrace) 
+wrapError(error, stacktrace)
   => (error is MyException) ? null : error
 ```
 
-To do this globally, use `GlobalWrapError`:
+To do this globally, use `GlobalErrorObserver`:
 
 ```dart
-class MyGlobalWrapError extends GlobalWrapError {
-  
-  Object? wrap(error, stackTrace, action) 
+class MyErrorObserver extends GlobalErrorObserver<AppState> {
+
+  @override
+  Object? observe()
     => (error is MyException) ? null : error;
 }
 ```
-
-## Error observer
-
-When creating the store, you may pass an `ErrorObserver`.
-
-All errors thrown by actions are sent to it,
-along with the stack trace, the action, and the store.
-
-For example:
-
-```dart
-var store = Store<AppState>(
-  initialState: AppState.initialState(),
-  errorObserver: MyErrorObserver<AppState>(),
-);
-
-class MyErrorObserver<St> implements ErrorObserver<St> {
-  
-  bool observe(Object error, StackTrace stackTrace, ReduxAction<St> action, Store store) {
-    print("Error thrown during $action: $error");
-    return true;
-  }
-}                                                                                               
-```
-
-The `observe()` method returns a boolean:
-
-* If it returns `true`, the error will be rethrown.
-* If it returns `false`, the error is swallowed.
 
 ## UserExceptionAction
 

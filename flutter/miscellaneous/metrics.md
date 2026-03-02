@@ -1,5 +1,5 @@
 ---
-sidebar_position: 15
+sidebar_position: 16
 ---
 
 # Metrics
@@ -36,7 +36,7 @@ It will then be notified of all **state changes**, right after the reducer retur
 for all dispatched actions.
 
 This notification happens before the `after()` method is called, and before the
-action `wrapError()` and the global `globalWrapError()` methods are called.
+action `wrapError()` and the global `GlobalErrorObserver` methods are called.
 
 The parameters are:
 
@@ -96,7 +96,7 @@ collect metrics.
 ## Printing actions to the console
 
 AsyncRedux comes with a built-in `ConsoleActionObserver` class that you can use as
-a state observer. It will print all actions to the console, in yellow, like this:
+an action observer. It will print all actions to the console, in yellow, like this:
 
 ```dart
 I/flutter (15304): | Action MyAction
