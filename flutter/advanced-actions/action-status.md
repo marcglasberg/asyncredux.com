@@ -29,6 +29,25 @@ if (status.isCompletedOk) Navigator.pop(context); // Here!
 
 ---
 
+## Chaining code after an action
+
+Since `dispatchAndWait` completes with an `ActionStatus` even when the action fails,
+a plain `.then()` would run no matter if the action succeeded or not.
+Use `thenIfCompletedOk` and `thenIfCompletedFailed` instead:
+
+```dart
+// Only if `InitializeWeb3` succeeds:
+dispatchAndWait(InitializeWeb3())
+    .thenIfCompletedOk((_) => dispatch(PollBlockNumber()));
+
+// You can chain both, to handle success and failure:
+dispatchAndWait(InitializeWeb3())
+    .thenIfCompletedOk((_) => dispatch(PollBlockNumber()))
+    .thenIfCompletedFailed((status) => log(status.wrappedError));
+```
+
+---
+
 ## Testing with action status
 
 :::warning
