@@ -239,3 +239,26 @@ To disable the timeout, make it equal to `-1`.
 
 If you want, you can also modify the static value `Store.defaultTimeoutMillis` to change the
 default timeout for all methods.
+
+# Removing errors
+
+When an action fails with a `UserException`, that error also goes into the store's
+[error queue](./testing-user-exceptions#checking-the-error-queue), waiting for the UI to show it.
+In tests, after you've checked the error, remove it from the queue with `store.removeError`,
+which accepts a `UserException`, an `ActionStatus`, or a `ReduxAction`:
+
+```dart
+// Dispatch some action.
+var status = await store.dispatchAndWait(SomeAction());
+
+// Check the action failed as expected.
+expect(status.originalError, isA<UserException>());
+
+// Make sure there are no more errors.
+store.removeError(status);
+expect(store.errors, isEmpty);
+```
+
+This is useful when your test teardown asserts the queue is empty
+(`tearDown(() { expect(store.errors, isEmpty); });`), so that only the errors you expected
+are removed, and any unexpected one still fails the test.
