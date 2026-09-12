@@ -62,8 +62,11 @@ because they are tightly integrated with the tool itself.
 * [`disposeProp`](../miscellaneous/streams-and-timers) - Disposes a single property by its key.
 * [`disposeProps`](../miscellaneous/streams-and-timers) - Disposes all or selected properties (timers, streams,
   futures).
-* [`env`](../miscellaneous/dependency-injection) - Gets the store environment, useful for global values scoped to the
-  store.
+* [`store.environment`](../miscellaneous/dependency-injection) - Gets the store environment (production, staging,
+  testing, etc.).
+* [`store.dependencies`](../miscellaneous/dependency-injection) - Gets the injected dependencies (services,
+  repositories, etc.).
+* [`store.configuration`](../miscellaneous/dependency-injection) - Gets the store configuration (feature flags, etc.).
 * [`microtask`](../basics/async-actions#one-important-rule) - Returns a future that completes in the next microtask.
 * [`assertUncompletedFuture`](../basics/async-actions#one-important-rule) - Asserts that an async reducer has at least
   one await.
