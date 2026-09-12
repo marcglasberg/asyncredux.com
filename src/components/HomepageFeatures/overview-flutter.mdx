@@ -431,6 +431,29 @@ dispatch(GetStockPrice(Poll.stop));
 
 &nbsp;
 
+## Sequential
+
+Mixin `Sequential` makes actions run one at a time, in the exact order they were dispatched.
+All actions using the mixin share a FIFO queue, and each one waits for the previous to finish.
+Override `sequentialKeyParams` if you want independent queues.
+
+```dart
+class SaveItem extends AppAction with Sequential {
+  final Item item;
+  SaveItem(this.item);
+
+  // Each different `itemId` has its own queue.
+  Object? sequentialKeyParams() => item.id;
+
+  Future<AppState?> reduce() async {
+    await http.put('http://myapi.com/items', body: item.toJson());
+    return null;
+  }
+}
+```
+
+&nbsp;
+
 ## OptimisticCommand
 
 Mixin `OptimisticCommand` helps you provide instant feedback on **blocking** actions that

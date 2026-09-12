@@ -6,7 +6,7 @@ sidebar_position: 6
 
 The mixins explained in this page help you control when and how actions run.
 They let you prevent duplicate work, retry on failure, limit how often actions execute,
-and skip work when data is already up to date.
+skip work when data is already up to date, and run actions one at a time.
 
 | Mixin              | Purpose                                                     | Overrides                |
 |--------------------|-------------------------------------------------------------|--------------------------|
@@ -17,6 +17,7 @@ and skip work when data is already up to date.
 | `Debounce`         | Delays execution until after a period of inactivity         | `wrapReduce`             |
 | `Fresh`            | Skips action if data is still fresh (not stale)             | `abortDispatch`, `after` |
 | `Polling`          | Periodically dispatches an action at a fixed interval       | `wrapReduce`             |
+| `Sequential`       | Runs actions one at a time, in the order they were dispatched | `before`, `after`      |
 
 ---
 
@@ -605,3 +606,249 @@ With this setup, starting `PollPrices` and then `PollVolumes` means
 one cancels the shared timer.
 
 
+
+---
+
+## Sequential
+
+The `Sequential` mixin makes actions run one at a time, in the exact order they were dispatched.
+This is useful when each action depends on the ones dispatched before it,
+or when the server must receive your changes in the right order.
+
+```dart
+class SaveItem extends AppAction with Sequential {
+  final Item item;
+  SaveItem(this.item);
+
+  Future<AppState?> reduce() async {
+    await http.put('http://myapi.com/items', body: item.toJson());
+    return null;
+  }
+}
+```
+
+All actions that use this mixin share a single FIFO queue (first in, first out).
+When an action is dispatched, it takes its place at the end of the queue,
+and then waits until every action dispatched before it has finished.
+Only then does it run its `before`, `reduce` and `after` methods.
+
+This works across all participating action types: if `SaveItem` and `DeleteItem`
+both use the mixin, they wait for each other.
+Two actions of the same type also enter the queue and run one after the other.
+
+The queue position is reserved synchronously, at the moment `dispatch` is called,
+before any asynchronous gap. This guarantees the run order is the dispatch order,
+even if the actions are dispatched from different places or in quick succession.
+
+When an action finishes, the next action in the queue is released.
+This happens no matter how the action finished:
+
+- It completed successfully.
+- It threw an error (from `before` or `reduce`).
+- It was aborted by throwing an `AbortDispatchException` in `before`.
+
+Note that when `abortDispatch` returns `true`, the action never enters the queue,
+since none of its lifecycle methods run.
+
+### Using parameters to separate queues
+
+By default, all actions that use this mixin share **one** queue, whose key is `null`.
+If you want independent queues, override `sequentialKeyParams` to return any object.
+Actions with the same key wait for each other,
+while actions with different keys run in parallel.
+
+For example, here each user has its own queue,
+so the actions of different users don't block each other:
+
+```dart
+class SaveUser extends AppAction with Sequential {
+  final String userId;
+  SaveUser(this.userId);
+
+  Object? sequentialKeyParams() => userId;
+  ...
+}
+
+class DeleteUser extends AppAction with Sequential {
+  final String userId;
+  DeleteUser(this.userId);
+
+  Object? sequentialKeyParams() => userId;
+  ...
+}
+```
+
+With this setup, `SaveUser('A')` and `DeleteUser('A')` run one after the other,
+but `SaveUser('A')` and `SaveUser('B')` may run at the same time.
+
+You can also return the `runtimeType`, so that only actions of the same type
+wait for each other:
+
+```dart
+Object? sequentialKeyParams() => runtimeType;
+```
+
+Keys are removed from memory as soon as their queue becomes empty.
+
+### Discarding the queue when an action fails
+
+Actions are often queued because each one depends on the previous ones.
+For example, an action that creates an item, followed by one that updates it.
+In that case, if the first action fails, running the rest makes no sense.
+
+Override `discardQueueOnError` to return `true` when you want a failure
+to abort all the actions that are waiting behind the failed one:
+
+```dart
+class SaveItem extends AppAction with Sequential {
+  bool discardQueueOnError(Object error) => error is! AbortDispatchException;
+  ...
+}
+```
+
+The discarded actions are aborted: they don't run their `reduce` method,
+and they finish with an `AbortDispatchException`
+(which the store treats silently, without showing any error dialog).
+You can check `wasDiscardedFromSequentialQueue` on those actions, if you need to know.
+
+Actions dispatched after the failure are not affected, and start a fresh queue.
+The default is `false`, which means the queue simply continues with the next action.
+
+Note the error given to `discardQueueOnError` may itself be an `AbortDispatchException`,
+if the action was aborted in its `before` method (for example, by `AbortWhenNoInternet`).
+You may want to keep the queue in that case, as shown in the code above.
+
+### Do not wait for an action in the same queue
+
+An action that is running (and therefore holds the queue)
+must **not** wait for another action that uses the same queue.
+If it does, both actions will wait for each other forever (a deadlock):
+
+```dart
+class Parent extends AppAction with Sequential {
+  Future<AppState?> reduce() async {
+    // WRONG: `Child` enters the queue behind `Parent`, and waits for
+    // `Parent` to finish. But `Parent` waits for `Child` here. Deadlock!
+    await dispatchAndWait(Child());
+    return null;
+  }
+}
+
+class Child extends AppAction with Sequential { ... }
+```
+
+The same applies to any other way of waiting for a queued action, such as
+`waitActionType(Child)`, `waitAllActions`, or a `waitCondition`
+that only becomes true after `Child` runs.
+
+If you need to dispatch another action of the same queue from inside a running action,
+you have these options:
+
+- Dispatch it without waiting for it: `dispatch(Child())`.
+  The child is queued and will run right after the parent finishes.
+- Give the child a different key, so it uses a different queue.
+- Don't use the mixin in the child.
+
+### Overriding before and after
+
+This mixin holds the action in the `before` method until it's the action's turn to run,
+and releases the queue in the `after` method.
+If you override these methods, you must call `super`:
+
+- In `before`, call `await super.before()` as the **first** statement.
+  Your code after that will run when it's the action's turn.
+  If you put code before `super.before()`, it will run immediately when the action is
+  dispatched, which is usually not what you want.
+  Never `await` anything before calling `super.before()`,
+  because that would delay the queue reservation
+  and the action could lose its position in the order.
+
+- In `after`, call `super.after()`, preferably in a `finally` block,
+  so the queue is released even if your own code throws.
+
+```dart
+class MyAction extends AppAction with Sequential {
+
+  Future<void> before() async {
+    await super.before(); // Waits for its turn.
+    doSomething(); // Runs when it's the action's turn.
+  }
+
+  void after() {
+    try {
+      doSomethingElse();
+    } finally {
+      super.after(); // Releases the queue.
+    }
+  }
+  ...
+}
+```
+
+### Combining with other mixins
+
+`Sequential` can be combined with `CheckInternet`, `NoDialog`, `AbortWhenNoInternet`,
+`NonReentrant`, `Retry`, `UnlimitedRetries`, `Throttle`, `Fresh` and `OptimisticCommand`,
+in any mixin order.
+Retries happen while the action holds the queue,
+and the internet check happens when the action gets its turn.
+For example, `NonReentrant` plus `Sequential` means duplicates are dropped
+while the original is queued or running,
+and the ones that get through still run one at a time.
+
+It cannot be combined with the mixins below,
+and AsyncRedux throws an assertion error in debug mode if you try:
+
+- `Debounce`: the debounce period would only start when the action gets its turn
+  in the queue, which defeats the purpose of debouncing.
+
+- `UnlimitedRetryCheckInternet`: it aborts the dispatch while another action of the same
+  type is in progress, and an action waiting in the queue does count as in progress.
+  Two actions of the same type would then never queue behind each other: the later ones
+  would be silently dropped instead of being ordered,
+  which is the opposite of what `Sequential` is for.
+  It also retries forever while holding the queue,
+  so a single action can block everything behind it for as long as the internet is down.
+  To keep the ordering and still retry, use `Retry` with a limited number of attempts,
+  optionally together with `discardQueueOnError`.
+
+- `OptimisticSync`: it applies the optimistic value on dispatch,
+  and coalesces overlapping dispatches into a single follow-up request.
+  Both features need dispatches to overlap.
+  Under `Sequential` the optimistic update would only land when the action gets its turn,
+  so the UI would stop giving immediate feedback.
+  And since queued actions never overlap, nothing would ever be coalesced,
+  so every dispatch would send its own request.
+  It already guarantees a single in-flight request per key,
+  so `Sequential` adds nothing.
+
+- `OptimisticSyncWithPush`: same reasons, plus its revision tracking assumes
+  server pushes can be applied to the state while a request is in flight.
+
+- `ServerPush`: pushed values must be applied as soon as they arrive,
+  and `Sequential` would delay them behind unrelated queued actions.
+  Worse, a push is what tells an in-flight `OptimisticSyncWithPush` request
+  that no follow-up is needed.
+  Queued behind that very request, the signal would arrive too late.
+
+#### Combining with Polling
+
+You can combine `Sequential` with `Polling`, but add it to the action returned by
+`createPollingAction()`, and not to the action that starts and stops the polling.
+Otherwise a `Poll.stop` dispatch also has to wait its turn,
+and you can't stop the polling while the queue is busy.
+
+Also, if a tick can take longer than `pollInterval`,
+add `NonReentrant` or `Throttle` to the tick action, so that ticks don't pile up
+in the queue.
+
+### Other notes
+
+- Actions using this mixin are always asynchronous, even if their `reduce` method is
+  synchronous. This means you can't use `dispatchSync` with them.
+
+- While an action is waiting in the queue, it counts as being "in progress",
+  so `isWaiting(MyAction)` returns `true` for it.
+  This is usually what you want, as it lets you show a spinner
+  as soon as the action is dispatched.
+  You can also check `isWaitingInSequentialQueue` on the action itself.

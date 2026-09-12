@@ -318,6 +318,12 @@ that may modify the same state your action controls.
 
 If your app does **not** receive server-pushed updates, use `OptimisticSync` instead.
 
+**Note:** `ServerPush` must be used alone.
+It cannot be combined with any other mixin,
+because a pushed value has to be applied to the state as soon as it arrives.
+Any mixin that delays, aborts, retries or reorders the action
+would break that guarantee.
+
 ### When to use
 
 Use these mixins when:
