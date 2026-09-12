@@ -50,7 +50,12 @@ because they are tightly integrated with the tool itself.
   from the failed actions list.
 * [`waitCondition`](../miscellaneous/wait-condition) - Returns a future that completes when the given state condition is
   true.
-* [`waitAllActions`](../miscellaneous/advanced-waiting) - Returns a future that completes when all given actions finish.
+* `waitAllActions` - Returns a future that completes when all the given actions finish. If the list is empty, it
+  completes when no actions at all are in progress.
+* `waitActionType` - Returns a future that completes when the action of the given type that may be running right now
+  finishes. If no action of that type is running, it completes at once.
+* `waitAllActionTypes` - Returns a future that completes when all actions of the given types that may be running right
+  now finish. If none of them is running, it completes at once.
 * [`status`](./action-status) - Returns the current status of the action (waiting, failed, completed, etc.).
 * [`prop`](../miscellaneous/streams-and-timers) - Gets a property from the store (timers, streams, etc.).
 * [`setProp`](../miscellaneous/streams-and-timers) - Sets a property in the store.
