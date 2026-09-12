@@ -2,6 +2,8 @@
 sidebar_position: 14
 ---
 
+# Error monitoring
+
 This page explains how to set up your app to use 3rd-party services like Sentry
 or Firebase Crashlytics to monitor your app for errors in production,
 and print them to the console in development and testing.
