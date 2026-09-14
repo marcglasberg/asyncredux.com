@@ -453,8 +453,25 @@ Override it to change the frequency:
 Duration get pollInterval => const Duration(minutes: 5);
 ```
 
-Note: Instead of using a periodic timer, each run schedules the next one,
-so the polling interval is measured from the **end** of each run.
+### Overlapping runs
+
+By default, polling runs never overlap. Each tick waits for the previous run to finish,
+and only then does `pollInterval` start counting for the next tick.
+In other words, the interval is measured from the **end** of each run,
+and the actual period is `runDuration + pollInterval`.
+If a run takes longer than the interval, ticks simply happen less often,
+instead of piling up.
+
+If you'd rather have ticks at a fixed rate, measured from the **start** of each run,
+override `pollWaitsForRun`:
+
+```dart
+bool get pollWaitsForRun => false;
+```
+
+Now runs may overlap when they take longer than `pollInterval`.
+If that's a problem, add `NonReentrant`, `Throttle` or `Sequential`
+to the action returned by `createPollingAction`.
 
 ### Poll values
 
@@ -503,7 +520,7 @@ dispatch(LoadBalanceAction(address, poll: Poll.stop));
 
 ### Option 2: Separate action types
 
-Use one action to control polling, and a different action to do the work.
+Use one action to control polling and a different action to do the work.
 
 ```dart
 class PollBalance extends AppAction with Polling {
@@ -605,7 +622,44 @@ With this setup, starting `PollPrices` and then `PollVolumes` means
 `PollVolumes` is a no-op (the key is already active). Stopping either
 one cancels the shared timer.
 
+### Combining with other mixins
 
+`Polling` can be combined with `CheckInternet`, `AbortWhenNoInternet`,
+`NonReentrant`, `Throttle`, `Fresh` and `Sequential`.
+But add them to the action returned by `createPollingAction`,
+and not to the action that starts and stops the polling.
+
+The reason is that all of them can abort or fail a dispatch,
+and none of them can tell a `Poll.stop` apart from a regular tick.
+On the polling action, they may block the `Poll.stop` itself,
+leaving you unable to stop the polling:
+
+| Mixin                 | A `Poll.stop` is blocked when                       |
+|-----------------------|-----------------------------------------------------|
+| `Throttle`            | it's dispatched inside the throttle period          |
+| `NonReentrant`        | a run is still in progress                          |
+| `Fresh`               | the data is still fresh                             |
+| `CheckInternet`       | there is no internet, as it fails in `before`       |
+| `AbortWhenNoInternet` | there is no internet, as it's silently aborted      |
+| `Sequential`          | the queue is busy, as it waits for its turn         |
+
+Putting them on the tick action instead is both safe and more useful:
+
+```dart
+class PollBalance extends AppAction with Polling {
+  final WalletAddress address;
+  final Poll poll;
+
+  PollBalance(this.address, {this.poll = Poll.once});
+
+  // The tick action is the one that checks the internet.
+  ReduxAction<AppState> createPollingAction() => LoadBalanceAction(address);
+}
+
+class LoadBalanceAction extends AppAction with AbortWhenNoInternet {
+  ...
+}
+```
 
 ---
 
@@ -838,9 +892,9 @@ You can combine `Sequential` with `Polling`, but add it to the action returned b
 Otherwise a `Poll.stop` dispatch also has to wait its turn,
 and you can't stop the polling while the queue is busy.
 
-Also, if a tick can take longer than `pollInterval`,
-add `NonReentrant` or `Throttle` to the tick action, so that ticks don't pile up
-in the queue.
+Note ticks can only pile up in the queue if you set `pollWaitsForRun` to `false`
+on the polling action. By default, a tick is only dispatched
+after the previous one has finished.
 
 ### Other notes
 

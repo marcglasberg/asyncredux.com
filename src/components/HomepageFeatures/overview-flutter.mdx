@@ -429,6 +429,10 @@ dispatch(GetStockPrice(Poll.start));
 dispatch(GetStockPrice(Poll.stop));
 ```
 
+By default, runs never overlap: each tick waits for the previous run to finish,
+so the interval is measured from the end of each run.
+Override `pollWaitsForRun` to `false` if you want ticks at a fixed rate instead.
+
 &nbsp;
 
 ## Sequential
