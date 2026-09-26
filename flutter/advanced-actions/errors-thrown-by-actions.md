@@ -229,13 +229,15 @@ class MyErrorObserver extends GlobalErrorObserver<AppState> {
 }
 ```
 
-The `GlobalErrorObserver` receives all errors thrown by actions.
+The `GlobalErrorObserver` receives all errors thrown by actions
+(and also the errors thrown by the [persistor](../miscellaneous/persistence#errors-when-saving-the-state)).
 Its `observe()` method may return a `UserException`,
 or return the original error unchanged,
 or return `null` to disable (swallow) the error.
 
 Inside `observe()`, you can access `error`, `originalError`, `stackTrace`,
-`action`, and `store`. See the
+`action`, and `store`. Note that `action` is `null` when the error came from the persistor,
+so check for `null` before using it. See the
 [Error Monitoring](../miscellaneous/error-monitoring) page for complete details
 and a full example with environment-specific observers.
 

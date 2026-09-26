@@ -30,7 +30,8 @@ which you can implement to be notified of any actions that throw errors,
 and even modify or swallow the error.
 
 Your observer will be given all errors thrown in your actions
-(including those of type `UserException`). Then:
+(including those of type `UserException`), and also the errors thrown by the
+[persistor](./persistence#errors-when-saving-the-state) when saving the state. Then:
 
 * If it returns the same `error` unaltered, the original error will be used.
 * If it returns something else, that will be used instead of `error`.
@@ -65,11 +66,16 @@ Inside the `observe` method, you can access the following:
 
 - **`stackTrace`** — The stack trace associated with the error.
  
-- **`action`** — The action that triggered the error.
+- **`action`** — The action that triggered the error, or `null` if the error didn't come
+  from an action (for example, if it came from the [persistor](./persistence#errors-when-saving-the-state)).
+  Always check for `null` before using it.
  
 - **`store`** — Use it to read `store.environment`, `store.configuration` or `store.state`.
   Do **not** use it to dispatch new actions, because the store is still processing the current
   action and dispatching another may cause unexpected behavior.
+
+For errors thrown by the persistor, `error` is the error **after** the persistor's `wrapError`,
+and `originalError` is the error **before** it.
 
 For example:
 
@@ -164,7 +170,7 @@ class _ProductionObserver extends AppErrorObserver {
         error,
         stackTrace: stackTrace,
         withScope: (scope) {
-          scope.setTag('action', action.runtimeType.toString());
+          scope.setTag('action', action?.runtimeType.toString() ?? 'persistor');
         },
       );
     }
@@ -173,7 +179,7 @@ class _ProductionObserver extends AppErrorObserver {
 ```
 
 Note how `action.runtimeType` is sent to Sentry as a tag, so you can easily see which action
-caused the error.
+caused the error. When `action` is `null`, the error came from the persistor.
 
 ### Staging
 
@@ -185,7 +191,7 @@ class _StagingObserver extends AppErrorObserver {
 
   @override
   Object _convertError() {
-    debugPrint('Error in ${action.runtimeType}: $error\n$stackTrace');
+    debugPrint('Error in ${action?.runtimeType ?? 'persistor'}: $error\n$stackTrace');
 
     if (error is UserException)
       return error;

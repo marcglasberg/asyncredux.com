@@ -9,6 +9,7 @@ This object handles local persistence,
 meaning it keeps the current app state saved to the device's disk.
 
 You should create your own `MyPersistor` class that extends the `Persistor` abstract class.
+Note: Always use `extends Persistor`, never `implements Persistor`.
 Here is the recommended way to use it:
 
 ```dart                       
@@ -39,7 +40,9 @@ abstract class Persistor<St> {
   Future<void> deleteState();  
   Future<void> persistDifference({required St? lastPersistedState, required St newState});  
   Future<void> saveInitialState(St state) => persistDifference(lastPersistedState: null, newState: state);    
-  Duration get throttle => const Duration(seconds: 2);
+  Duration? get throttle => const Duration(seconds: 2);
+  Object? wrapError(Object error, StackTrace stackTrace) => error;
+  void addError(Object error, [StackTrace? stackTrace]); // Protected.
 }
 ```                   
 
@@ -94,9 +97,91 @@ class MyPersistor extends Persistor<AppState> {
   Future<void> saveInitialState(AppState state) =>
       persistDifference(lastPersistedState: null, newState: state);
   
-  Duration get throttle => const Duration(seconds: 2);
+  Duration? get throttle => const Duration(seconds: 2);
+
+  Object? wrapError(Object error, StackTrace stackTrace) => error;
 }
 ```
+
+## Errors when saving the state
+
+If `persistDifference` throws an error, AsyncRedux keeps working normally,
+and the persistor will keep saving the state in the future.
+The state that failed to be saved is **not** considered persisted,
+so the next call to `persistDifference` will get the same `lastPersistedState`,
+and the difference will include the changes that failed to be saved.
+
+The error is then processed the same way as errors thrown by actions:
+
+1. First, it's given to the persistor's `wrapError` method.
+   It works just like the action's [wrapError](../advanced-actions/errors-thrown-by-actions):
+   return the error unaltered to keep it, return another error to replace it,
+   or return `null` to swallow it. By default, it returns the error unaltered.
+
+2. Then, it's given to the [GlobalErrorObserver](./error-monitoring), if you defined one,
+   so that you can log it, change it, or swallow it.
+   In this case, the observer's `action` is `null`,
+   and its `originalError` is the error before `wrapError`.
+
+3. Finally, if the resulting error is a `UserException`, it goes to the store's error queue,
+   so that it's shown to the user, just like a `UserException` thrown by an action.
+   Any other error is thrown as an unhandled async error
+   (which is usually printed to the console).
+
+For example, this will show an error dialog to the user if saving to disk fails:
+
+```dart
+class MyPersistor extends Persistor<AppState> {
+  ...
+
+  @override
+  Object? wrapError(Object error, StackTrace stackTrace) =>
+      (error is FileSystemException)
+          ? UserException('Could not save your data.').addCause(error)
+          : error;
+}
+```
+
+## Reporting errors when reading the state
+
+The `readState` method is usually called when the app starts, before the store is created.
+For this reason, it can't show errors to the user by throwing them.
+
+For example, suppose the saved data is in the format of an old version of your app,
+and can't be read. You may decide to delete it and start over,
+but the user should know their data was reset.
+
+To do that, call the persistor's `addError` method.
+The persistor keeps the error until the store is created,
+and then the store processes it:
+
+```dart
+class MyPersistor extends Persistor<AppState> {
+  ...
+
+  @override
+  Future<AppState?> readState() async {
+    try {
+      return await _read();
+    } on FormatException catch (error) {
+      await deleteState();
+      addError(UserException('Could not read your data, so it was reset.').addCause(error));
+      return null;
+    }
+  }
+}
+```
+
+The errors added with `addError` are processed like the errors thrown when saving the state:
+they are given to the [GlobalErrorObserver](./error-monitoring) (with a `null` action),
+and then a `UserException` goes to the store's error queue,
+so that it's shown to the user as soon as the `UserExceptionDialog` is mounted.
+The only difference is that they are not given to the persistor's `wrapError`,
+since you are adding them on purpose, already in the form you want.
+
+You can call `addError` from any persistor method, not only from `readState`.
+The store gets the added errors when it's created,
+and then again after each persistence operation (reading, deleting or saving the state).
 
 ## Other Persistor Features
 
