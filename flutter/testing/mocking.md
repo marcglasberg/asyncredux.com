@@ -125,7 +125,7 @@ There are 5 different ways to define mocks:
     ```       
 
 You can also change the mocks after a store is created, by using the following methods of
-the `MockStore` and `StoreTester` classes:
+the `MockStore` class:
 
 ```dart
 MockStore<St> addMock(Type actionType, dynamic mock);

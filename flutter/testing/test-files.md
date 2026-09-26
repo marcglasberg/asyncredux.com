@@ -8,7 +8,7 @@ If you want your tests to be comprehensive you should probably have 3 different 
 each widget:
 
 1. **State Tests** — Test the state of the app, including actions/reducers. This type of tests make
-   use of the `StoreTester` described above.
+   use of the `Store` directly, as described above.
 
 2. **Connector Tests** — Test the connection between the store and the "dumb-widget". In other words
    it tests the "connector-widget" and the "view-model".
