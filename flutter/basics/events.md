@@ -127,6 +127,9 @@ Widget build(BuildContext context) {
   ...  
 ```
 
+You can also consume events in the `didChangeDependencies` method of a `StatefulWidget`.
+It runs again when the event changes, before `build`.
+
 &nbsp;
 
 > Note each event can be consumed by only one widget.

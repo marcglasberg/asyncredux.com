@@ -130,6 +130,25 @@ Widget build(BuildContext context) {
   );
 ```
 
+### Dispatching without `context`
+
+Inside a `StatelessWidget`, or inside the `State` of a `StatefulWidget`,
+you can drop the `context` from the dispatch methods:
+
+```dart
+onPressed: () => dispatch(Increment()),
+```
+
+This works for all five dispatch methods, anywhere in the widget class,
+including `initState()` and `dispose()`. It doesn't work in other places,
+like top-level functions or helper classes.
+
+This assumes your app has a single `StoreProvider`, which is almost always the case.
+If it has more than one, keep using `context.dispatch()`.
+
+Other methods, like `context.state`, `context.select()` and `context.isWaiting()`,
+still need the `context`.
+
 ## Action status
 
 Some of the dispatch methods return an `ActionStatus` (or a future of it),

@@ -111,6 +111,7 @@ class MyWidgetState extends State<MyWidget> {
 **Where to use them:**
 
 - `context.state` and `context.select()` belong in the `build` method.
+  `context.select()` also works in `didChangeDependencies`, which runs again when the selected part changes.
 - `context.read()` is used in event handlers and in the `initState` of stateful widgets.
 
 **Summary table**
