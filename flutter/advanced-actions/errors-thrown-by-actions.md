@@ -265,6 +265,47 @@ class MyErrorObserver extends GlobalErrorObserver<AppState> {
 }
 ```
 
+## Catching errors where you dispatch
+
+You may want to wrap the dispatch itself in a `try/catch`:
+
+```dart
+try {
+  await dispatchAndWait(MyAction());
+} catch (error) {
+  ...
+}
+```
+
+Whether this works depends on the type of the action, the type of the error,
+and how you dispatch:
+
+| Action | Error         | `try { dispatch() }` | `try { await dispatchAndWait() }` |
+|--------|---------------|----------------------|-----------------------------------|
+| Sync   | Other errors  | ✅ Caught             | ✅ Caught                          |
+| Sync   | UserException | ❌ Not caught         | ❌ Not caught                      |
+| Async  | Other errors  | ❌ Not caught         | ✅ Caught                          |
+| Async  | UserException | ❌ Not caught         | ❌ Not caught                      |
+
+* A `UserException` is never rethrown. AsyncRedux handles it
+  and shows it to the user, as explained in [failed actions](../basics/failed-actions).
+
+* Other errors are rethrown. A sync action throws while `dispatch()` is still running,
+  so you can catch the error either way. But `dispatch()` returns before an async action
+  finishes, so its error becomes an uncaught async error. To catch it,
+  use `await dispatchAndWait()`.
+
+The table assumes the error is not changed by `wrapError()` or a `GlobalErrorObserver`.
+For example, if those return `null`, nothing is thrown.
+
+If you only need to know whether the action failed, and with which error,
+use the [action status](./action-status) instead, which works in all cases:
+
+```dart
+var status = await dispatchAndWait(MyAction());
+if (status.isCompletedFailed) print(status.originalError);
+```
+
 ## UserExceptionAction
 
 As explained in

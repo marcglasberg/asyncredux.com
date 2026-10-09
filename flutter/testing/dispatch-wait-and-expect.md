@@ -145,14 +145,26 @@ expect(state.stocks, ['IBM', 'TSLA']);
 
 ## `store.waitActionType`
 
-This method returns a future that completes when an action of the given type in **not** in
-progress (it's not being dispatched).
+This method returns a future that completes when an action of the given type is **not** in
+progress (it's not being dispatched):
+
+- If **no** action of the given type is in progress when the method is called,
+  and `completeImmediately` is `false` (the default), this method throws an error.
+
+- If **no** action of the given type is in progress when the method is called,
+  and `completeImmediately` is `true`, the future completes immediately and returns `null`.
+
+- If an action of the given type is in progress, the future completes when the action
+  finishes, and returns the action, so that you can check its `status`.
+
+Note this method does **not** wait for an action of the given type to be dispatched.
+To do that, use [`store.waitAnyActionTypeFinishes`](#storewaitanyactiontypefinishes).
 
 ```dart
-// Wait for some action of a given type.
-dispatch(ChangeNameAction());
+// Dispatch an action and wait until no action of its type is in progress.
+dispatch(ChangeNameAction("Bill"));
  
-var action = store.waitActionType(ChangeNameAction);
+var action = await store.waitActionType(ChangeNameAction);
 
 expect(action, isA<ChangeNameAction>());
 expect(action.status.isCompleteOk, isTrue);
