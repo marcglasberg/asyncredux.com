@@ -131,6 +131,27 @@ class LoadInitialData extends AppAction with UnlimitedRetryCheckInternet {
 }
 ```
 
+### Giving up on some errors
+
+By default, every error is retried forever, including `UserException`s. To stop retrying
+errors that will fail again anyway (like a 404), override `shouldRetry`. It gets the error
+and the attempt number. When it returns `false`, the action fails right away with that
+error:
+
+```dart
+class LoadInitialData extends AppAction with UnlimitedRetryCheckInternet {
+  bool shouldRetry(Object error, int attempt) => error is! NotFoundException;
+  ...
+}
+```
+
+`shouldRetry` is not called while there is no internet, since the action then just waits
+for the connection. Note the attempt number also counts the attempts aborted for no internet,
+the same as the `attempts` getter.
+
+An `AbortDispatchException` thrown by the reducer is never retried: the action is aborted
+right away, and `shouldRetry` is not called.
+
 ### Logging retries
 
 All retries are printed to the console by default.

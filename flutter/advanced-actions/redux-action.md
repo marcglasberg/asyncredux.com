@@ -29,8 +29,8 @@ because they are tightly integrated with the tool itself.
   that resolves when it finishes.
 * [`isWaiting`](../basics/wait-fail-succeed#show-a-spinner) - Checks if one or more async actions are currently being
   processed.
-* [`isFailed`](../basics/wait-fail-succeed#show-an-error-message) - Returns true if an action failed with a
-  `UserException`.
+* [`isFailed`](../basics/wait-fail-succeed#show-an-error-message) - Returns true if an action failed,
+  with any error.
 
 ### Useful ones are:
 

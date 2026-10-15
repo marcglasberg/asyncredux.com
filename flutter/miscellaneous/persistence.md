@@ -65,7 +65,8 @@ If you return `null`, no throttle will be used and the state will be saved as so
 
 Sometimes you may want to save the state immediately, for example when the app is closing.
 You can do that by dispatching `PersistAction`, which ignores the throttle and
-calls `persistDifference` right away.
+calls `persistDifference` right away. If a save is running,
+the state is saved as soon as it finishes, still ignoring the throttle.
 
 ```dart
 store.dispatch(PersistAction());
@@ -187,9 +188,12 @@ and then again after each persistence operation (reading, deleting or saving the
 
 The persistor can be paused and resumed with `store.pausePersistor()`, `store.persistAndPausePersistor()` and
 `store.resumePersistor()`. This can be useful with the app lifecycle, so that persistence does not start while the app
-is shutting down.
+is shutting down. The `store.persistAndPausePersistor()` method saves the state right away,
+ignoring the throttle, or as soon as the running save finishes, if one is running.
 
-When the user logs out of your app, call `store.deletePersistedState()` to delete the state from disk.
+When the user logs out of your app, call `store.deleteStateFromPersistence()` to delete the state from disk.
+If a save is running, it waits for it to finish before deleting the state,
+so that the save can't put the deleted state back.
 
 First, add an `AppLifecycleManager` to your widget tree:
 

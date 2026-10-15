@@ -21,9 +21,9 @@ know if an action is currently being processed, if it succeeded, or if it just f
 Thankfully, this is very easy to do with AsyncRedux, by using the following methods:
 
 * `isWaiting(actionType)`: Returns true if the given action type is currently being processed.
-* `isFailed(actionType)`: Returns true if the given action type just failed.
-* `exceptionFor(actionType)`: Returns the exception that caused the action to fail.
-* `clearExceptionFor(actionType)`: Clears the exception that caused the action to fail.
+* `isFailed(actionType)`: Returns true if the given action type just failed, with any error.
+* `exceptionFor(actionType)`: Returns the `UserException` that caused the action to fail.
+* `clearExceptionFor(actionType)`: Clears the failed state of the action.
 
 ## In widgets
 
@@ -68,8 +68,8 @@ grey.
 
 ## Show an error message
 
-Method `isFailed(actionType)` returns true if the given action type just failed.
-By using this method, you can show an error message when an action fails:
+Method `isFailed(actionType)` returns true if the given action type just failed, with any
+error. By using this method, you can show an error message when an action fails:
 
 ```dart
 Widget build(BuildContext context) {
@@ -80,7 +80,9 @@ Widget build(BuildContext context) {
 
 If the action failed with a `UserException`, you can get the exception by doing
 `var exception = context.exceptionFor(actionType)` and then get the error message
-to eventually show it in the UI.
+to eventually show it in the UI. For any other kind of error, `isFailed` is still true,
+but `exceptionFor` returns `null`. If you want a message for those errors too, your action
+can turn them into `UserException`s in its `wrapError` method.
 
 ```dart
 Widget build(BuildContext context) {
@@ -136,6 +138,77 @@ This happens because the error message is cleared automatically when the action 
 You can always clear the error message explicitly by
 calling `context.clearExceptionFor(actionType)`, but it's not necessary to do so before
 dispatching the action again.
+
+## Status per key
+
+The methods above work per action class. `context.isWaiting(LoadUser)` is true while **any**
+`LoadUser` is running, and `context.isFailed(LoadUser)` is true if **any** `LoadUser` failed.
+
+Suppose a list of users, where each row dispatches `LoadUser(userId)` to load its own user.
+With the methods above, every row would show a spinner while any one user loads.
+
+To tell the actions apart, give the action a `statusKey`. It's a getter that returns a value
+made from the action's own fields:
+
+```dart
+class LoadUser extends ReduxAction<AppState> {
+  final String userId;
+  LoadUser(this.userId);
+
+  @override
+  Object? get statusKey => userId;
+
+  @override
+  Future<AppState?> reduce() async {
+    var user = await loadUser(userId);
+    return state.copy(users: state.users.add(userId, user));
+  }
+}
+```
+
+Then, pass the same value to the methods, in the `statusKey` parameter. Each row now sees only
+its own user:
+
+```dart
+Widget build(BuildContext context) {
+  if (context.isWaiting(LoadUser, statusKey: userId)) return CircularProgressIndicator();
+  if (context.isFailed(LoadUser, statusKey: userId)) {
+    var exception = context.exceptionFor(LoadUser, statusKey: userId);
+    return Text(exception?.message ?? 'Loading failed');
+  }
+  return Text(context.state.users[userId]?.name ?? '');
+}
+```
+
+The same parameter works in `store.isWaiting`, `store.isFailed`, `store.exceptionFor` and
+`store.clearExceptionFor`, in their versions inside actions and in view-model factories, and
+in `context.clearExceptionFor`. Without the parameter, they consider all actions of the type,
+whatever their keys, as before.
+
+The key can be any immutable value with `==` and `hashCode`: a String, a number, an enum, or a
+record like `(userId, cartId)` for a composite key. Records are compared by content.
+
+Two rules:
+
+* **The key must always be the same.** Make it only from the fields set in the action's
+  constructor. Don't use anything that can change: the state, the current time, or a field
+  the action changes while it runs. The store reads the key when the action is dispatched,
+  when it fails, and every time `isWaiting` is asked, so a key that changes would leave an
+  old error on screen, or make the spinner stop matching the action.
+
+* **Failures stay in memory until cleared.** For `isWaiting`, nothing extra is kept. For
+  `isFailed` and `exceptionFor`, the store keeps a small record of each failure (the action
+  type, the key, and the error). Without `statusKey` there is at most one record per action
+  class. With `statusKey`, there is one record per key that failed, for example one per user
+  whose `LoadUser` failed. A record goes away when the action runs again for that key, when
+  you call `context.clearExceptionFor(LoadUser, statusKey: userId)`, or when you call
+  `context.clearExceptionFor(LoadUser)` without a key, which clears all keys of that type.
+  `store.clearAllExceptions()` clears all types. You rarely need it, because
+  `store.internalMixinProps.clear()` (which you call on logout) and `store.shutdown()`
+  already call it.
+
+See [Advanced waiting](../miscellaneous/advanced-waiting) for a complete example, with a list
+of buttons that each show their own progress indicator.
 
 <hr></hr>
 

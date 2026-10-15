@@ -115,6 +115,26 @@ With the defaults, delays are: 350 ms, 700 ms, 1.4 sec.
 If `reduce()` takes 1 second to fail and `initialDelay` is 350 ms,
 the first retry starts 1.35 seconds after the action began.
 
+### Giving up on some errors
+
+By default, every error is retried, including `UserException`s. To give up on errors that
+will fail again anyway (like a 404 or a 401), override `shouldRetry`. It gets the error and
+the attempt number (starting at 1). When it returns `false`, the action fails right away
+with that error:
+
+```dart
+class LoadText extends AppAction with Retry {
+  bool shouldRetry(Object error, int attempt) => error is! NotFoundException;
+  ...
+}
+```
+
+`shouldRetry` is not called when the retries ran out, since the action fails anyway.
+If `shouldRetry` itself throws, the action fails with that error.
+
+An `AbortDispatchException` thrown by the reducer is never retried: the action is aborted
+right away, and `shouldRetry` is not called.
+
 ### Tracking retry attempts
 
 Use the `attempts` getter to check the current retry count:

@@ -142,6 +142,11 @@ When combined with `Retry`, only the `sendCommandToServer` call is retried,
 not the optimistic update or rollback. This prevents UI flickering.
 The optimistic state remains in place during retries.
 
+Every error is retried, including `UserException`s, unless `shouldRetry` returns `false`
+for it (see [Giving up on some errors](./control-mixins#giving-up-on-some-errors)).
+The command then rolls back and fails right away. An `AbortDispatchException` thrown by
+`sendCommandToServer` is never retried: the command rolls back and is aborted right away.
+
 ### Combining with CheckInternet
 
 When combined with `CheckInternet` or `AbortWhenNoInternet`, if offline:
