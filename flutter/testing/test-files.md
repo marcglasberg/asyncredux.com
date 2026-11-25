@@ -4,49 +4,48 @@ sidebar_position: 7
 
 # Test files
 
-If you want your tests to be comprehensive you should probably have 3 different types of test for
-each widget:
+Test actions, the widget that connects the store to the UI, and presentation at the level
+where each behavior lives. The [smart and presentational widgets](../basics/smart-and-presentational-widgets)
+guide uses a counter to show this split.
 
-1. **State Tests** — Test the state of the app, including actions/reducers. This type of tests make
-   use of the `Store` directly, as described above.
+1. **State test.** Create a store with a count of `0`, dispatch `IncrementAction`, and
+   assert that the count becomes `1`.
+2. **Smart widget test.** Mount `CounterConnector` under a `StoreProvider` with a test
+   store. Tap **Increment**, pump the widget, and check both the store and the rendered
+   count. This covers selection and dispatch together.
+3. **Presentation test.** Mount `CounterWidget` with a fixed count, description, and a
+   callback that records clicks. Assert what it renders and that pressing **Increment**
+   calls the callback. This test can run without a store.
 
-2. **Connector Tests** — Test the connection between the store and the "dumb-widget". In other words
-   it tests the "connector-widget" and the "view-model".
+## Test the smart widget
 
-3. **Presentation Tests** — Test the UI. In other words it tests the "dumb-widget", making sure that
-   the widget displays correctly depending on the parameters you use in its constructor. You pass in
-   the data the widget requires in each test for rendering, and then writes assertions against the
-   rendered output. Think of these tests as "pure function tests" of our UI. It also tests that the
-   callbacks are called when necessary.
+Mount the counter with an isolated store and assert that dispatch updates the presentation.
 
-For example, suppose you have the counter app
-shown <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_increment_async.dart">
-here</a>. Then:
+```dart
+testWidgets('CounterConnector dispatches and renders the new count', (tester) async {
+  final store = Store<AppState>(
+    initialState: AppState(counter: 0, description: 'Test description'),
+  );
 
-* The **state test** could create a store with count `0` and description empty, and then
-  dispatch `IncrementAction` and expect the count to become `1`. Then it could test
-  dispatching `IncrementAndGetDescriptionAction` alters the count to `2`
-  and the description to some non-empty string.
+  await tester.pumpWidget(
+    StoreProvider<AppState>(
+      store: store,
+      child: MaterialApp(
+        home: Scaffold(body: CounterConnector()),
+      ),
+    ),
+  );
 
-* The **connector test** would create a store and a page with the `MyHomePageConnector` widget. It
-  would then access the `MyHomePage` and make sure it gets the expected info from the store, and
-  also that the expected `IncrementAndGetDescriptionAction` is dispatched when the "+" button is
-  tapped.
+  expect(find.text('Counter: 0'), findsOneWidget);
+  await tester.tap(find.text('Increment'));
+  await tester.pump();
 
-* The **presentation test** would create the `MyHomePage` widget, pass `counter:0`
-  and `description:"abc"` parameters in its constructor, and make sure they appear in the screen as
-  expected. It would also test that the callback is called when the "+" button is tapped.
-         
+  expect(store.state.counter, 1);
+  expect(find.text('Counter: 1'), findsOneWidget);
+});
+```
+
 ## Naming convention
 
-Since each widget will have a bunch of related files, you should have some consistent naming
-convention. For example, this is my convention:
-
-* If some dumb-widget is called `MyWidget`, its file could be `my_widget.dart`.
-* The corresponding connector-widget could be `MyWidgetConnector` in `my_widget_CONNECTOR.dart`.
-* The three corresponding test files could be
-  named `my_widget_STATE_test.dart`, `my_widget_CONNECTOR_test.dart`
-  and `my_widget_PRESENTATION_test.dart`.
-
-If you don't like this convention use your own,
-but just choose one early and stick to it.
+If your counter lives in `counter.dart`, you can use `counter_state_test.dart`,
+`counter_connector_test.dart`, and `counter_widget_test.dart` for these three tests.

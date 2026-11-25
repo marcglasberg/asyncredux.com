@@ -25,13 +25,12 @@ Here we suggest you add an extra line:
 
 ```dart
 extension BuildContextExtension on BuildContext {
-  AppState get state => getState<AppState>();
   AppState read() => getRead<AppState>();
-  R select<R>(R Function(AppState state) selector) => getSelect<AppState, R>(selector);
-  R? event<R>(Evt<R> Function(AppState state) selector) => getEvent<AppState, R>(selector);
+  R select<R>(R Function(AppState st) selector) => getSelect<AppState, R>(selector);
+  R? event<R>(Evt<R> Function(AppState st) selector) => getEvent<AppState, R>(selector);
   
   // Add this:
-  WidgetSelect get selector => WidgetSelect(BuildContext context);
+  WidgetSelect get selector => WidgetSelect(this);
 }
 ```
 
@@ -61,15 +60,15 @@ To use the selector in your widget, do this:
 
 ```dart
 Widget build(BuildContext context) {  
-  final item = context.selector.findById(id);
+  var item = context.selector.findById(id);
   ...
 }
 ```
 
 **Important notes:**
 
-* Avoid using `context.state` inside your selectors, as that would cause the widget to
-  rebuild every time *any* part of the state changes, defeating the purpose of using selectors.
+* Read state from the callback parameter inside a selector. Use `context.read()` for
+  one-time reads in callbacks and `initState`.
 
 * You also cannot use `context.select` inside another `context.select`, as that would
   cause an error. Always use `context.select` only at the top level of your selector methods.
@@ -98,8 +97,3 @@ class WidgetSelect {
   int get selectedIndex => context.select((st) => ActionSelect(st).selectedIndex(st.selectedItem));  
 }
 ```
-
-## StoreConnector selectors
-
-If you use `StoreConnector`s in your project, 
-you may add selectors to your base `Factory` class as well.

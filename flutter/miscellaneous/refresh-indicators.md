@@ -20,18 +20,20 @@ This future can be provided by the `dispatchAndWait()` method.
 An example:
 
 ```dart
-// When the user pulls down the list
-Future<void> downloadStuff() => dispatchAndWait(DownloadStuffAction());
+Widget build(BuildContext context) {
+  var items = context.select((st) => st.items);
 
-// In the widget
-return RefreshIndicator(
-    onRefresh: downloadStuff;
-    child: ListView(...),
-```                 
+  return RefreshIndicator(
+    onRefresh: () async {
+      await context.dispatchAndWait(DownloadStuffAction()); // Here!
+    },
+    child: ListView(
+      physics: AlwaysScrollableScrollPhysics(),
+      children: [for (var item in items) Text(item)],
+    ),
+  );
+}
+```
 
 If you have multiple actions that need to be called to refresh the screen, 
 you can use `dispatchAndWaitAll`.
-
-Try running
-the: <a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_dispatch_future.dart">
-Dispatch Future Example</a>.

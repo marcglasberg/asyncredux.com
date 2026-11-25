@@ -4,35 +4,51 @@ sidebar_position: 13
 
 # Events
 
-Some native Flutter widgets, such as `TextField` and `ListView`, 
-manage their own state by using controllers.
+An action may need to trigger a **one-time side effect** in the UI, such as opening a
+dialog, hiding the keyboard, clearing a text field, or scrolling a list back to the top.
+
+Some Flutter widgets expose a **controller** for these operations. For example, you can
+call `clear()` on a `TextEditingController` to clear a `TextField`, or `jumpTo(0)` on a
+`ScrollController` to scroll a `ListView` to the top.
 
 ```dart
-// TextField example
-TextEditingController controller = TextEditingController();
-TextField(controller: controller);
+final textController = TextEditingController();
+TextField(controller: textController);
 
-// ListView example
-ScrollController scrollController = ScrollController();
+final scrollController = ScrollController();
 ListView(
   controller: scrollController,
-  children: [ // list items...
+  children: [
+    // List items...
+  ],
 );
 ```
 
-When an action is dispatched, you might need to use a controller
-to clear a text field or scroll a list view to the top.
-Should these controllers be stored in the Redux state?
-The answer is no.
+**Keep controllers in their widgets. Never put them in the store state.** 
 
-There are also situations where no controller is involved, 
-but you still need to perform a one time action 
-such as opening a dialog or hiding the keyboard.
-
-AsyncRedux solves these cases with the `Evt` class, which introduces *events*.
+AsyncRedux solves these cases with the `Evt` class,
+which introduces *events* that can indeed be put into the store state.
 Events are single use notifications used to trigger side effects in widgets.
 They differ from regular state values because once read they are automatically consumed,
 so they only trigger once.
+
+### When should I use events?
+
+Some guidelines:
+
+1. Use events to update the internal state of stateful widgets, after they are built.
+2. Use events for one-off controller actions, like clearing text, changing focus,
+   scrolling, or triggering an animation.
+3. Use events for one-off implicit UI state, like opening dialogs, showing snackbars,
+   toggling the keyboard,
+   or navigating.
+4. If you need to read the same value more than once, it should probably be regular store
+   state, not an event.
+5. Also use regular store state when widgets need to access state that's external to them.
+
+But the short answer is that you'll know it when you see it. When you want something to
+happen, and it's not clear how to do it with regular store state, 
+events are often the easier way to solve it.
 
 ## Setting up
 
@@ -41,22 +57,22 @@ Make sure you included the following extension code in your app, as shown in
 
 ```dart
 extension BuildContextExtension on BuildContext {
-  AppState get state => getState<AppState>();
   AppState read() => getRead<AppState>();
-  R select<R>(R Function(AppState state) selector) => getSelect<AppState, R>(selector);
-  R? event<R>(Evt<R> Function(AppState state) selector) => getEvent<AppState, R>(selector);
+  R select<R>(R Function(AppState st) selector) => getSelect<AppState, R>(selector);
+  R? event<R>(Evt<R> Function(AppState st) selector) => getEvent<AppState, R>(selector);
 }
 ```
 
-In special, note the `context.event` extension method
+In special, note the `context.event` extension method above
 that you will use to consume events in your widgets.
 
 ## Creating events
 
-Use the `Evt` suffix when naming events. 
+Use the `Evt` suffix when naming events.
 For example, an event that clears text can be named `clearTextEvt`.
 
-A boolean event is created with the `Evt()` constructor, with no value and no generic type.
+A boolean event is created with the `Evt()` constructor, with no value and no generic
+type.
 In this case, the event returns **true** once, and then **false** on later calls.
 
 ```dart
@@ -111,7 +127,7 @@ class ChangeText extends AppAction {
 
 ## Using events
 
-Use `context.event((state) => ...)` to consume the event in the widget `build` method.
+Use `context.event((st) => ...)` to consume the event in the widget `build` method.
 It will get the value of the event only once, and then false/null on later calls:
 
 ```dart
@@ -133,7 +149,11 @@ It runs again when the event changes, before `build`.
 &nbsp;
 
 > Note each event can be consumed by only one widget.
-> If more than one widget must react to the same trigger, create separate events in the state.
+> If more than one widget must react to the same trigger, create separate events in the
+> state.
+
+> You should **never persist events** when saving the app state to
+> the local storage of the device.
 
 Try running the:
 [Evt Example](https://github.com/marcglasberg/async_redux/blob/master/example/lib/main_event.dart).
@@ -145,6 +165,6 @@ dispatch actions to change the state, run asynchronous actions,
 show spinners when actions are running, and error messages when they fail.
 That is enough for you to be productive with AsyncRedux, and create your own apps with it.
 
-However, if you want to become an advanced AsyncRedux user, continue reading the next sections.
+However, if you want to become an advanced AsyncRedux user, continue reading the next
+sections.
 The next one will cover advanced topics related to actions.
-

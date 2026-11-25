@@ -37,27 +37,15 @@ Widget build(context) {
 
 # Widgets use the state
 
-Using `context.state`, your widgets rebuild when the state changes.
+Use `context.select()` to subscribe to the parts of the state your widget needs.
 
 ```dart
-class MyWidget extends StatelessWidget {
-
-  Widget build(context)
-   => Text('${context.state.name} is ${context.state.age} years old');
-}
-```
-
-&nbsp;
-
-Or use `context.select()` to get only the parts of the state you need.
-
-```dart
-Widget build(context) {
+Widget build(BuildContext context) {
 
   var state = context.select((st) => (
-     name: st.user.name,
-     age: st.user.age),
-  );
+    name: st.name,
+    age: st.age,
+  ));
 
   return Text('${state.name} is ${state.age} years old');
 }
@@ -66,7 +54,7 @@ Widget build(context) {
 This also works:
 
 ```dart
-Widget build(context) {
+Widget build(BuildContext context) {
   var name = context.select((st) => st.name);
   var age = context.select((st) => st.age);
 
@@ -121,10 +109,12 @@ In your widgets, use `dispatch` to dispatch actions.
 ```dart
 class MyWidget extends StatelessWidget {
 
-  Widget build(context) {
+  Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => dispatch(Increment());
-    }
+      onPressed: () => dispatch(Increment()),
+      child: Text('Increment'),
+    );
+  }
 }
 ```
 
@@ -135,17 +125,18 @@ class MyWidget extends StatelessWidget {
 Actions may download information from the internet, or do any other async work.
 
 ```dart
-class LoadText extends AppAction {
+class LoadName extends AppAction {
 
   // This reducer returns a Future
   Future<AppState> reduce() async {
 
-    // Download something from the internet
-    var response = await http.get('https://dummyjson.com/todos/1');
-    var newName = state.response.body;
+    // Load something from the internet
+    var response = await http.get(Uri.parse('https://myapp.com/user/123'));
+    var data = jsonDecode(response.body) as Map<String, dynamic>;
+    var name = data['name'] as String;
 
-    // Change the state with the downloaded information
-    return AppState(newName, state.age);
+    // Change the state with the loaded information
+    return AppState(name, state.age);
   }
 }
 ```
@@ -154,8 +145,9 @@ class LoadText extends AppAction {
 
 # Actions can throw errors
 
-If something bad happens, you can simply **throw an error**. In this case, the state will not
-change. Errors are caught globally and can be handled in a central place, later.
+If something bad happens, you can simply **throw an error**.
+In this case, the state will not change.
+Errors are caught globally and can be handled in a central place, later.
 
 In special, if you throw a `UserException`, which is a type provided by Async Redux,
 a dialog (or other UI) will open automatically, showing the error message to the user.
@@ -163,11 +155,13 @@ a dialog (or other UI) will open automatically, showing the error message to the
 ```dart
 class LoadText extends AppAction {
 
-  Future<String> reduce() async {
-    var response = await http.get('https://dummyjson.com/todos/1');
+  Future<AppState> reduce() async {
+    var response = await http.get(Uri.parse('https://myapp.com/user/123'));
+    if (response.statusCode != 200) throw UserException('Failed to load');
 
-    if (response.statusCode == 200) return response.body;
-    else throw UserException('Failed to load');
+    var data = jsonDecode(response.body) as Map<String, dynamic>;
+    var name = data['name'] as String;
+    return AppState(name, state.age);
   }
 }
 ```
@@ -181,11 +175,12 @@ To show an error message inside the widget, use `isFailed(action)`.
 ```dart
 class MyWidget extends StatelessWidget {
 
-  Widget build(context) {
+  Widget build(BuildContext context) {
 
     if (context.isWaiting(LoadText)) return CircularProgressIndicator();
     if (context.isFailed(LoadText)) return Text('Loading failed...');
-    return Text(context.state);
+    var name = context.select((st) => st.name);
+    return Text(name);
   }
 }
 ```
@@ -405,7 +400,7 @@ class GetStockPrice extends Action with Polling {
   final Poll poll;
   GetStockPrice([this.poll = Poll.once]);
 
-  Duration get pollInterval => const Duration(minutes: 1);
+  Duration get pollInterval => Duration(minutes: 1);
 
   Action createPollingAction() => GetStockPrice();
 

@@ -75,10 +75,6 @@ var waiting = context.isWaiting(GetDescriptionAction, statusKey: index);
 var waiting = context.isWaiting(GetDescriptionAction);
 ```
 
-The same example with `StoreConnector` and view-models is
-<a href="https://github.com/marcglasberg/async_redux/blob/master/example/lib/store_connector_examples/main_wait_action_advanced_1__store_connector.dart">here</a>.
-In the view-model factory you write `isWaiting(GetDescriptionAction, statusKey: connector.index)`.
-
 ### Composite keys
 
 If one value is not enough to identify the action, return a record. Records are compared by

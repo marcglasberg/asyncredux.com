@@ -141,7 +141,7 @@ First, create separate classes for each part of the state:
 // Todo List
 class TodoList {
   final IList<Todo> list;
-  TodoList({this.list = const IList<Todo>()});
+  TodoList({this.list = const IList.empty()});
 
   TodoList copy({IList<Todo>? list}) =>
     TodoList(list: list ?? this.list);

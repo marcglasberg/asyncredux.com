@@ -148,6 +148,3 @@ This concludes the explanation of advanced action features.
 You now know how to use `before()` and `after()` methods,
 wrap the reducer, abort the action dispatch, handle action errors,
 check actions status, and add selectors to your base action.
-
-The next section will explain how to uncouple accessing the store state,
-by using the connector (smart/dumb widget) pattern.

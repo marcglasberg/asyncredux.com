@@ -34,14 +34,18 @@ We have already previously seen how to read the state and dispatch actions from 
 
 ```dart
 Widget build(BuildContext context) {
+  var counter = context.select((st) => st.counter);
+
   return Column(
     children: [
-    Text('Counter: ${context.state.counter}'),
-    ElevatedButton(
-      onPressed: () => context.dispatch(IncrementAction()),
-      child: Text('Increment'),
+      Text('Counter: $counter'),
+      ElevatedButton(
+        onPressed: () => context.dispatch(IncrementAction()),
+        child: Text('Increment'),
+      ),
     ],
   );
+}
 ```
 
 Now, let's see how to show a spinner while an action is being processed, and show an error message.
@@ -53,10 +57,12 @@ processed. By using this method, you can show a spinner while an action is being
 
 ```dart
 Widget build(BuildContext context) {
-  return context.isWaiting(IncrementAction) 
-    ? CircularProgressIndicator(),
-    : Text('Counter: ${context.state.counter}');
-}    
+  var counter = context.select((st) => st.counter);
+
+  return context.isWaiting(IncrementAction)
+      ? CircularProgressIndicator()
+      : Text('Counter: $counter');
+}
 ```
 
 Try running
@@ -73,9 +79,11 @@ error. By using this method, you can show an error message when an action fails:
 
 ```dart
 Widget build(BuildContext context) {
+  var counter = context.select((st) => st.counter);
+
   if (context.isFailed(IncrementAction)) return Text('Failed');
-  else return Text('Counter: ${context.state.counter}');
-}  
+  return Text('Counter: $counter');
+}
 ```
 
 If the action failed with a `UserException`, you can get the exception by doing
@@ -86,11 +94,14 @@ can turn them into `UserException`s in its `wrapError` method.
 
 ```dart
 Widget build(BuildContext context) {
+  var counter = context.select((st) => st.counter);
+
   if (context.isFailed(IncrementAction)) {
     var exception = context.exceptionFor(IncrementAction);
-    return Text('Failed: ${exception.message}');
+    return Text(exception?.message ?? 'Failed');
   }
-  else return Text('Counter: ${context.state.counter}');
+
+  return Text('Counter: $counter');
 }
 ```
 
@@ -101,34 +112,43 @@ spinner while the action is being processed, and show an error message if the ac
 
 ```dart
 Widget build(BuildContext context) {
+  var items = context.select((st) => st.items);
+
   if (context.isWaiting(GetItemsAction)) return CircularProgressIndicator();
-  else if (context.isFailed(GetItemsAction)) return Text('Failed');
-  else return ListView.builder(
-    itemCount: context.state.items.length,
-    itemBuilder: (context, index) => Text(context.state.items[index].name),
+  if (context.isFailed(GetItemsAction)) return Text('Failed');
+
+  return ListView.builder(
+    itemCount: items.length,
+    itemBuilder: (context, index) => Text(items[index].name),
   );
-}          
+}
 ```
 
 Now let's repeat the previous code, but add a button (in a Column) that retries the action:
 
 ```dart
 Widget build(BuildContext context) {
+  var items = context.select((st) => st.items);
+
   if (context.isWaiting(GetItemsAction)) return CircularProgressIndicator();
-  else if (context.isFailed(GetItemsAction)) return Column(
-    children: [
-      Text('Failed'),
-      ElevatedButton(
-        onPressed: () => context.dispatch(GetItemsAction()),
-        child: Text('Retry'),
-      ),
-    ],
+
+  if (context.isFailed(GetItemsAction)) {
+    return Column(
+      children: [
+        Text('Failed'),
+        ElevatedButton(
+          onPressed: () => context.dispatch(GetItemsAction()),
+          child: Text('Retry'),
+        ),
+      ],
+    );
+  }
+
+  return ListView.builder(
+    itemCount: items.length,
+    itemBuilder: (context, index) => Text(items[index].name),
   );
-  else return ListView.builder(
-    itemCount: context.state.items.length,
-    itemBuilder: (context, index) => Text(context.state.items[index].name),
-  );
-}          
+}
 ```
 
 As soon as the user presses the retry button, the spinner will be shown again, 
@@ -171,19 +191,22 @@ its own user:
 
 ```dart
 Widget build(BuildContext context) {
+
   if (context.isWaiting(LoadUser, statusKey: userId)) return CircularProgressIndicator();
+
   if (context.isFailed(LoadUser, statusKey: userId)) {
     var exception = context.exceptionFor(LoadUser, statusKey: userId);
     return Text(exception?.message ?? 'Loading failed');
   }
-  return Text(context.state.users[userId]?.name ?? '');
+
+  var name = context.select((st) => st.users[userId]?.name);
+
+  return Text(name ?? '');
 }
 ```
 
-The same parameter works in `store.isWaiting`, `store.isFailed`, `store.exceptionFor` and
-`store.clearExceptionFor`, in their versions inside actions and in view-model factories, and
-in `context.clearExceptionFor`. Without the parameter, they consider all actions of the type,
-whatever their keys, as before.
+You can also pass `statusKey` when checking action status from the store or an action,
+and when calling `context.clearExceptionFor`. Omitting it considers every action of the type.
 
 The key can be any immutable value with `==` and `hashCode`: a String, a number, an enum, or a
 record like `(userId, cartId)` for a composite key. Records are compared by content.

@@ -146,7 +146,7 @@ like top-level functions or helper classes.
 This assumes your app has a single `StoreProvider`, which is almost always the case.
 If it has more than one, keep using `context.dispatch()`.
 
-Other methods, like `context.state`, `context.select()` and `context.isWaiting()`,
+Other methods, like `context.select()`, `context.read()` and `context.isWaiting()`,
 still need the `context`.
 
 ## Action status

@@ -470,7 +470,7 @@ The `pollInterval` is the delay between polling ticks. The default is 10 seconds
 Override it to change the frequency:
 
 ```dart
-Duration get pollInterval => const Duration(minutes: 5);
+Duration get pollInterval => Duration(minutes: 5);
 ```
 
 ### Overlapping runs
@@ -518,7 +518,7 @@ class LoadBalanceAction extends AppAction with Polling {
 
   LoadBalanceAction(this.address, {this.poll = Poll.once});
 
-  Duration get pollInterval => const Duration(minutes: 5);
+  Duration get pollInterval => Duration(minutes: 5);
 
   ReduxAction<AppState> createPollingAction() => LoadBalanceAction(address);
 
@@ -549,7 +549,7 @@ class PollBalance extends AppAction with Polling {
 
   PollBalance(this.address, {this.poll = Poll.once});
 
-  Duration get pollInterval => const Duration(minutes: 5);
+  Duration get pollInterval => Duration(minutes: 5);
 
   ReduxAction<AppState> createPollingAction() => LoadBalanceAction(address);
 

@@ -43,9 +43,10 @@ you can use the `isWaiting` and `isFailed` methods provided by AsyncRedux:
 
 ```dart
 // Widget
+var counter = context.select((st) => st.counter);
 if (context.isFailed(Increment)) return Text('Error');
 else if (context.waiting(Increment)) return CircularProgressIndicator();
-else return Text('Counter: ${context.state.counter}');
+else return Text('Counter: $counter');
 
 // State (no need to add loading or error fields to the state)
 class AppState {
@@ -71,10 +72,10 @@ and updating them in your Cubit methods:
 
 ```dart
 // Widget
-final state = context.watch<CounterCubit>().state;
-if (state.error != null) return Text('Error');
-else if (state.isLoading) return CircularProgressIndicator();
-else return Text('Counter: ${state.counter}');
+var st = context.watch<CounterCubit>().state;
+if (st.error != null) return Text('Error');
+else if (st.isLoading) return CircularProgressIndicator();
+else return Text('Counter: ${st.counter}');
 
 // State (needs isLoading and error fields)
 class CounterState {
@@ -353,7 +354,7 @@ class ItemsState {
   final List<Item> items;
   final bool isRefreshing;
 
-  const ItemsState({
+  ItemsState({
     required this.items,
     this.isRefreshing = false,
   });
@@ -372,7 +373,7 @@ class ItemsState {
 // Put the refresh logic in the Cubit and return a Future
 class ItemsCubit extends Cubit<ItemsState> {
   final ItemsRepository repo;
-  ItemsCubit(this.repo) : super(const ItemsState(items: []));
+  ItemsCubit(this.repo) : super(ItemsState(items: []));
 
   Future<void> refresh() async {
     emit(state.copyWith(isRefreshing: true));
@@ -426,7 +427,7 @@ and wire up a `BlocListener` to perform the one-time side effect.
 class AppState {
   final String changeText;
   final int changeTextToken;
-  const AppState({this.changeText = '', this.changeTextToken = 0});
+  AppState({this.changeText = '', this.changeTextToken = 0});
   AppState copyWith({String? changeText, int? changeTextToken}) 
     => AppState(
       changeText: changeText ?? this.changeText,
@@ -436,7 +437,7 @@ class AppState {
 
 // The Cubit
 class AppCubit extends Cubit<AppState> {
-  AppCubit() : super(const AppState());
+  AppCubit() : super(AppState());
   Future<void> changeText() async {
     final newText = await repo.fetchTextFromApi();
     emit(state.copyWith(
@@ -450,8 +451,8 @@ class AppCubit extends Cubit<AppState> {
 Widget build(BuildContext context) {
   return BlocListener<AppCubit, AppState>(
     listenWhen: (prev, next) => prev.changeTextToken != next.changeTextToken,
-    listener: (context, state) {      
-      controller.text = state.changeText;
+    listener: (context, st) {
+      controller.text = st.changeText;
     },
     child: TextField(controller: controller),
   );
@@ -471,7 +472,7 @@ and `SavePrice`, which saves a new price for the product.
 class Product {
   final String name;
   final double price;
-  const Product({required this.name, required this.price});
+  Product({required this.name, required this.price});
   Product copyWith({String? name, double? price}) => Product(
     name: name ?? this.name,
     price: price ?? this.price,
@@ -481,7 +482,7 @@ class Product {
 // App state
 class AppState {
   final Product? product;
-  const AppState({this.product});
+  AppState({this.product});
   AppState copy({Product? product}) => AppState(product: product ?? this.product);  
 }
 
@@ -529,7 +530,7 @@ void main() {
     'and saving an invalid price fails without changing state.', () async {
   
     final store = Store<AppState>(initialState: AppState());
-    final repo = SimulatedProductRepo({'Coffee': const Product(name: 'Coffee', price: 10.0)});
+    final repo = SimulatedProductRepo({'Coffee': Product(name: 'Coffee', price: 10.0)});
 
     // 1. User taps Search     
     await store.dispatchAndWait(Search(name: 'Coffee'));    
@@ -567,7 +568,7 @@ class AppState {
   final bool isSaving;
   final String? error;
 
-  const AppState({
+  AppState({
     this.product,
     this.isSearching = false,
     this.isSaving = false,
@@ -594,7 +595,7 @@ class AppState {
 class AppCubit extends Cubit<AppState> {
   final ProductRepo repo;
 
-  AppCubit(this.repo) : super(const AppState());
+  AppCubit(this.repo) : super(AppState());
 
   Future<void> search(String name) async {
     emit(state.copyWith(isSearching: true, clearError: true));
@@ -636,7 +637,7 @@ void main() {
     () async {
       final cubit = AppCubit(repo);
       addTearDown(cubit.close);
-      final repo = SimulatedProductRepo({'Coffee': const Product(name: 'Coffee', price: 10.0)});
+      final repo = SimulatedProductRepo({'Coffee': Product(name: 'Coffee', price: 10.0)});
 
       // 1. User taps Search. Spinner shows while searching.  
       final searchFuture = cubit.search('Coffee');
@@ -683,7 +684,7 @@ void main() {
     'Search loads product, save updates price, reload confirms persistence, '
     'and saving an invalid price fails without changing state.',
     build: () {
-      final repo = SimulatedProductRepo({'Coffee': const Product(name: 'Coffee', price: 10.0)});
+      final repo = SimulatedProductRepo({'Coffee': Product(name: 'Coffee', price: 10.0)});
       return AppCubit(repo);
     },
     act: (cubit) async {
@@ -694,31 +695,31 @@ void main() {
     },
     expect: () => [
       // 1) Search started
-      const AppState(isSearching: true),
+      AppState(isSearching: true),
 
       // 2) Search finished
-      const AppState(product: Product(name: 'Coffee', price: 10.0)),
+      AppState(product: Product(name: 'Coffee', price: 10.0)),
 
       // 3) Save started
-      const AppState(
+      AppState(
         product: Product(name: 'Coffee', price: 10.0),
         isSaving: true,
       ),
 
       // 4) Save finished
-      const AppState(product: Product(name: 'Coffee', price: 12.5)),
+      AppState(product: Product(name: 'Coffee', price: 12.5)),
 
       // 5) Search again started
-      const AppState(
+      AppState(
         product: Product(name: 'Coffee', price: 12.5),
         isSearching: true,
       ),
 
       // 6) Search again finished
-      const AppState(product: Product(name: 'Coffee', price: 12.5)),
+      AppState(product: Product(name: 'Coffee', price: 12.5)),
 
       // 7) Invalid save sets error, keeps price
-      const AppState(
+      AppState(
         product: Product(name: 'Coffee', price: 12.5),
         error: 'Price cannot be negative',
       ),

@@ -14,7 +14,7 @@ To work with **streams** and **timers**, follow these guidelines:
 
 ## Example
 
-Suppose you want to listen to username changes in Firestore.
+Suppose you want to listen to username changes in Google's Firestore.
 Create one action to start listening, and another to cancel it. For example:
 `StartListenUserNameAction` and `CancelListenUserNameAction`.
 
@@ -23,8 +23,9 @@ Create one action to start listening, and another to cancel it. For example:
   right after creating the store, possibly in `main`. Cancel it when the app finishes.
 
 * If it should run only while a screen is open,
-  dispatch the start action in the stateful widget's `initState` (or the `onInit` of a `StoreConnector`),
-  and cancel it in `dispose` (or `onDispose` of a `StoreConnector`).
+  dispatch the start action in the stateful widget's `initState` and the cancel action
+  in `dispose`. See [Testing widget lifecycle](../testing/testing-oninit-ondispose)
+  for an example that passes the callbacks through the constructor.
 
 * If it should run only when some action requires it,
   the action's reducer can dispatch other actions to start and cancel it as needed.
@@ -70,7 +71,7 @@ call `store.disposeProps()` when the app finishes.
 This will close, cancel, or ignore all stream-related objects, timers,
 and futures in the props, and then remove them.
 
-## How does a stream send data to the Redux state and then to widgets?
+## How does a stream send data to the store state and then to widgets?
 
 When creating the stream, define its callback to dispatch an action.
 Each time new data arrives, pass it to the action constructor.
@@ -96,4 +97,4 @@ streamSub = stream.listen(
 1. Put the stream or timer somewhere action reducers can access, such as in store _props_, but not in the state.
 2. Never use streams or timers directly in widgets.
 3. Create actions to start and cancel streams and timers, and call those actions when needed.
-4. The stream or timer callback should dispatch actions to put incoming data into the Redux state.
+4. The stream or timer callback should dispatch actions to put incoming data into the store state.

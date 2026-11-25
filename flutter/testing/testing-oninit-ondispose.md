@@ -2,49 +2,74 @@
 sidebar_position: 4
 ---
 
-# Testing onInit / onDispose
+# Testing widget lifecycle
 
-Suppose you want to start polling information when your user enters a particular screen,
-and stop when the user leaves it. This could be your `StoreConnector`:
+Use a stateful widget to dispatch actions when a screen enters or leaves the widget tree.
+For example, a screen can start polling in `initState` and stop in `dispose`.
+
+Keep the callbacks bound to the store before passing them to the widget. The stop callback
+can then dispatch during disposal without looking up an inherited widget.
 
 ```dart
-class MyScreen extends StatelessWidget {
-  
-  Widget build(BuildContext context) 
-    => StoreConnector<AppState, _Vm>(
-      vm: () => _Factory(),
-      onInit: _onInit,
-      onDispose: _onDispose,
-      builder: (context, vm) => MyWidget(...),
-    );
+class PollingScreen extends StatefulWidget {
+  PollingScreen({
+    required this.onStart,
+    required this.onStop,
+    super.key,
+  });
 
-  void _onInit(Store<AppState> store) { 
-    store.dispatch(PollInformationAction(true));
+  final VoidCallback onStart;
+  final VoidCallback onStop;
+
+  @override
+  State<PollingScreen> createState() => _PollingScreenState();
+}
+
+class _PollingScreenState extends State<PollingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    widget.onStart();
   }
-    
-  void _onDispose(Store<AppState> store) { 
-    store.dispatch(PollInformationAction(false));
-  }  
+
+  @override
+  void dispose() {
+    widget.onStop();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Text('Polling information');
 }
 ```
 
-Now you want to test that `onInit` and `onDispose` above dispatch the correct action to start and
-stop polling.
-
-One way to achieve this could be creating a widget test,
-entering and leaving the screen, and then checking that the actions were dispatched.
-
-Instead, you may simply use the `ConnectorTester`, which you can access from the store:
+When you create the screen, pass callbacks wired to your polling action.
 
 ```dart
-var store = Store(...);
-var connectorTester = store.getConnectorTester(MyScreen());
+PollingScreen(
+  onStart: () => store.dispatch(PollInformationAction(true)),
+  onStop: () => store.dispatch(PollInformationAction(false)),
+)
+```
 
-connectorTester.runOnInit();
-var action = await store.waitAnyActionTypeFinishes([PollInformationAction]);
-expect(action.start, true);
+In a widget test, mount the screen and then replace it. The test can record the callbacks
+directly. Test what the polling action does separately using the store.
 
-connectorTester.runOnDispose();
-var action = await store.waitAnyActionTypeFinishes([PollInformationAction]);
-expect(action.start, false);
+```dart
+testWidgets('Polling starts on mount and stops on removal', (tester) async {
+  final calls = <String>[];
+
+  await tester.pumpWidget(
+    MaterialApp(
+      home: PollingScreen(
+        onStart: () => calls.add('start'),
+        onStop: () => calls.add('stop'),
+      ),
+    ),
+  );
+  expect(calls, ['start']);
+
+  await tester.pumpWidget(SizedBox.shrink());
+  expect(calls, ['start', 'stop']);
+});
 ```

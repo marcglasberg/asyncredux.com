@@ -78,7 +78,7 @@ class BarrierAction extends AppAction {
 Then your widget tree shows the modal barrier only when `hasBarrier` is true:
 
 ```dart
-return context.state.hasBarrier 
+return context.select((st) => st.hasBarrier)
   ? ModalBarrier() 
   : Container();
 ```

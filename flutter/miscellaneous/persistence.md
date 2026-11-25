@@ -40,7 +40,7 @@ abstract class Persistor<St> {
   Future<void> deleteState();  
   Future<void> persistDifference({required St? lastPersistedState, required St newState});  
   Future<void> saveInitialState(St state) => persistDifference(lastPersistedState: null, newState: state);    
-  Duration? get throttle => const Duration(seconds: 2);
+  Duration? get throttle => Duration(seconds: 2);
   Object? wrapError(Object error, StackTrace stackTrace) => error;
   void addError(Object error, [StackTrace? stackTrace]); // Protected.
 }
@@ -98,7 +98,7 @@ class MyPersistor extends Persistor<AppState> {
   Future<void> saveInitialState(AppState state) =>
       persistDifference(lastPersistedState: null, newState: state);
   
-  Duration? get throttle => const Duration(seconds: 2);
+  Duration? get throttle => Duration(seconds: 2);
 
   Object? wrapError(Object error, StackTrace stackTrace) => error;
 }
@@ -211,7 +211,7 @@ a `ProcessLifecycleChange_Action`:
 ```dart
 class AppLifecycleManager extends StatefulWidget {
   final Widget child;
-  const AppLifecycleManager({Key? key, required this.child}) : super(key: key);  
+  AppLifecycleManager({Key? key, required this.child}) : super(key: key);
   _AppLifecycleManagerState createState() => _AppLifecycleManagerState();
 }
 

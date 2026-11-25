@@ -68,8 +68,6 @@ because they are tightly integrated with the tool itself.
   repositories, etc.).
 * [`store.configuration`](../miscellaneous/dependency-injection) - Gets the store configuration (feature flags, etc.).
 * [`microtask`](../basics/async-actions#one-important-rule) - Returns a future that completes in the next microtask.
-* [`assertUncompletedFuture`](../basics/async-actions#one-important-rule) - Asserts that an async reducer has at least
-  one await.
 * `initialState` - Action getter that hols the state as it was when the action was dispatched. This does NOT change.
 
 ### Useful mixins:
