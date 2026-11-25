@@ -18,6 +18,4 @@ To navigate from the code that dispatches an action to the action implementation
 * In IntelliJ, use `Ctrl + B` on Windows and Linux, or `Command + B` on macOS.
 * In VS Code, use `F12` or `Ctrl + click` on Windows and Linux, or `F12` or `Command + click` on macOS.
 
-If you need to list all your actions, just go to the `ReduxAction` class declaration
-(or your base action class `AppAction`) and ask
-the IDE to list all of its subclasses.
+To list your app actions, go to the `AppAction` declaration and use your IDE to list its subclasses.

@@ -34,7 +34,7 @@ There are 5 different ways to define mocks:
    action** as a getter to the mock action.
 
     ```dart                        
-    class MyAction extends ReduxAction<AppState> {
+    class MyAction extends AppAction {
       String url;
       MyAction(this.url);
       Future<AppState> reduce() => get(url);
@@ -56,16 +56,17 @@ There are 5 different ways to define mocks:
     }
     ```       
 
-3. Use a `ReduxAction<St>` instance to dispatch this mock action instead.
+3. Use a `ReduxAction<St>` instance as the replacement action. In this example,
+   `MyMockAction` inherits from `ReduxAction<AppState>` through `AppAction`.
 
     ```dart                        
-    class MyAction extends ReduxAction<AppState> {
+    class MyAction extends AppAction {
       String url;            
       MyAction(this.url);
       Future<AppState> reduce() => get(url);
     }
     
-    class MyMockAction extends ReduxAction<AppState> {  
+    class MyMockAction extends AppAction {
       Future<AppState> reduce() async => 123;
     }
     ```
@@ -79,7 +80,7 @@ There are 5 different ways to define mocks:
 4. Use a `ReduxAction<St> Function(ReduxAction<St>)` to create a mock from the original action.
 
     ```dart                        
-    class MyAction extends ReduxAction<AppState> {
+    class MyAction extends AppAction {
       String url;        
       MyAction(this.url);
       Future<AppState> reduce() => get(url);
@@ -107,7 +108,7 @@ There are 5 different ways to define mocks:
    to modify the state directly.
 
     ```dart                        
-    class MyAction extends ReduxAction<AppState> {
+    class MyAction extends AppAction {
       String url;        
       MyAction(this.url);
       Future<AppState> reduce() => get(url);

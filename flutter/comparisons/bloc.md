@@ -487,7 +487,7 @@ class AppState {
 }
 
 // Action
-class Search extends ReduxAction<AppState> {
+class Search extends AppAction {
   final ProductRepo repo;
   final String name;
   Search({required this.repo, required this.name});
@@ -499,7 +499,7 @@ class Search extends ReduxAction<AppState> {
 }
 
 // Action
-class SavePrice extends ReduxAction<AppState> {
+class SavePrice extends AppAction {
   final String name;
   final double price;
   SavePrice({required this.name, required this.price});

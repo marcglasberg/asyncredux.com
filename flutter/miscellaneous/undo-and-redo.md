@@ -90,14 +90,14 @@ var store = Store<AppState>(
 ### 3. Create Undo and Redo Actions
 
 ```dart
-class UndoAction extends ReduxAction<AppState> {  
+class UndoAction extends AppAction {
   AppState? reduce() {
     AppState? previousState = undoRedoObserver.getPreviousState();
     return previousState ?? null;
   }
 }
 
-class RedoAction extends ReduxAction<AppState> {  
+class RedoAction extends AppAction {
   AppState? reduce() {
     AppState? nextState = undoRedoObserver.getNextState();
     return nextState ?? null;

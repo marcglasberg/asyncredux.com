@@ -53,7 +53,7 @@ downloading.
 The key is simply the index of the button, from `0` to `9`:
 
 ```dart
-class GetDescriptionAction extends ReduxAction<AppState> {
+class GetDescriptionAction extends AppAction {
   final int index;
   GetDescriptionAction(this.index);
 
@@ -84,7 +84,7 @@ where each row has two buttons, one for the character's name and one for its hei
 same action downloads either of them:
 
 ```dart
-class GetFieldAction extends ReduxAction<AppState> {
+class GetFieldAction extends AppAction {
   final int index;
   final String field;
   GetFieldAction(this.index, this.field);

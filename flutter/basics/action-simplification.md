@@ -4,7 +4,8 @@ sidebar_position: 8
 
 # Action simplification
 
-All your actions must extend the abstract base class `ReduxAction<AppState>`.
+Assuming your store state is called `AppState`, 
+all your actions must extend the abstract base class `ReduxAction<AppState>`.
 
 To avoid repeating the generic type, add a custom "base action" to your code,
 such as `Action` or `AppAction`, with the type `AppState` already included:
@@ -13,7 +14,7 @@ such as `Action` or `AppAction`, with the type `AppState` already included:
 abstract class AppAction extends ReduxAction<AppState> { } 
 ```
 
-Then, all your actions can extend this `AppAction` class, instead of `ReduxAction<AppState>`.
+Your app actions can then inherit from `ReduxAction<AppState>` through `AppAction`.
 
 Instead of:
 
@@ -42,8 +43,9 @@ class Increment extends AppAction {
 
 ## Important
 
-From now on, this documentation will extend `AppAction` instead of `ReduxAction<AppState>`, 
-assuming you created the `AppAction` class in your code.
+From now on, all code examples extend `AppAction` when defining actions for your app.
+AsyncRedux APIs such as `Store.dispatch` use `ReduxAction<AppState>` so they can accept 
+both your app actions and actions supplied by AsyncRedux, such as `NavigateAction`.
 
 ## Naming conventions
 

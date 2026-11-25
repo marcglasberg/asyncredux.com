@@ -56,14 +56,13 @@ The parameters are:
 * `dispatchCount`: The sequential number of the dispatch.
 
 This is an implementation idea. Here, we define a method called `trackEvent()` in the base
-action class, which does nothing by default. Then, in the `MetricsObserver`, we call that method
-for all actions. Finally, in a specific action, we override `trackEvent()` to actually
-collect metrics.
+action class, which does nothing by default. The `MetricsObserver` calls that method on
+actions that extend `AppAction`. A specific action can override `trackEvent()` to collect metrics.
 
 ```dart
- abstract class AppAction extends AppAction {
+ abstract class AppAction extends ReduxAction<AppState> {
  
-   void trackEvent(AppState stateIni, AppState stateEnd) { 
+   void trackEvent(AppState prevState, AppState newState, Object? error) {
      // Do nothing 
    }
  }
@@ -114,7 +113,7 @@ If you implement method `toString()` of the action, you can display more informa
 For example, suppose a `LoginAction` that has a `username` field:
 
 ```dart
-class LoginAction extends ReduxAction {
+class LoginAction extends AppAction {
   final String username;
   ...
   String toString() => super.toString() + '(username)';

@@ -11,7 +11,7 @@ It's available both on the `Store` and on the `ReduxAction` classes.
 For example:
 
 ```dart
-class SaveAppointment extends ReduxAction<AppState> {  
+class SaveAppointment extends AppAction {
   final Appointment appointment;  
   SaveAppointment(this.appointment);    
 

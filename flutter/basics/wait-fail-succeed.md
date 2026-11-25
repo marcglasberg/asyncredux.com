@@ -171,7 +171,7 @@ To tell the actions apart, give the action a `statusKey`. It's a getter that ret
 made from the action's own fields:
 
 ```dart
-class LoadUser extends ReduxAction<AppState> {
+class LoadUser extends AppAction {
   final String userId;
   LoadUser(this.userId);
 
